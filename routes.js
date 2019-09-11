@@ -3,5 +3,4 @@ module.exports = (app) => {
 
     app.get('/', teste.getAll);
     app.get('/insere', teste.insere);
-
 }

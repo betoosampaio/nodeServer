@@ -9,11 +9,10 @@ module.exports.getAll = async (req,res) => {
     }
 }
 
-module.exports.insere = async (req,res) => {
+module.exports.cadastrar = async (req,res) => {
     try {
         let query = "insert into TB_TESTE(numero, nome) values (?, ?)";
-        await database.query(query, [obj.numero, obj.nome]);;
-        await database.query(query);
+        await database.query(query, [obj.numero, obj.nome]);
         res.json('OK');
     } catch (error) {
         throw error;
