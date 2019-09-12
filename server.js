@@ -7,6 +7,6 @@ app.use(bodyParser.json())
 
 require('./routes.js')(app);
 
-app.listen(3000, () => {
-  console.log("Server UP Port 3001");
+app.listen(3001, () => {
+  console.log("Server UP");
 });
