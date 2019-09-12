@@ -1,4 +1,5 @@
 module.exports = (app) => {
+
     const restaurante = require('./controllers/restaurante.controller');
     app.post('/restaurante/selectall', restaurante.selectAll);
     app.post('/restaurante/insert', restaurante.insert);
@@ -23,7 +24,7 @@ module.exports = (app) => {
     app.post('/menu/update', menu.update);
     app.post('/menu/delete', menu.delete);
 
-    const tabelasVariaveis = require('./controllers/menu.controller');
+    const tabelasVariaveis = require('./controllers/tabelasVariaveis.controller');
     app.post('/tabelasVariaveis/banco/selectAll', tabelasVariaveis.banco_selectAll);
     app.post('/tabelasVariaveis/municipio/selectAll', tabelasVariaveis.municipio_selectAll);
     app.post('/tabelasVariaveis/estado/selectAll', tabelasVariaveis.estado_selectAll);
