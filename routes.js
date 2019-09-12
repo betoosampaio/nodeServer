@@ -14,7 +14,7 @@ module.exports = (app) => {
     app.post('/cardapio/update', cardapio.update);
     app.post('/cardapio/delete', cardapio.delete);
 
-    app.post('/operador/selectall', operador.selectAll);
+    app.get('/operador/selectall', operador.selectAll);
     app.post('/operador/insert', operador.insert);
     app.post('/operador/update', operador.update);
     app.post('/operador/delete', operador.delete);

@@ -2,8 +2,8 @@ const database = require('../config/database.config')
 
 module.exports.selectAll = (req,res) => {
     try {
-        let data = database.query("select * from TB_OPERADOR");
-        res.json(data);
+        let data = database.query("select * from cadastro_operador");
+        res.json({data});
     } catch (error) {
         throw error;
     }
@@ -11,8 +11,11 @@ module.exports.selectAll = (req,res) => {
 
 module.exports.insert = (req,res) => {
     try {
-        let query = "insert into TB_OPERADOR() values (?)";
-     database.query(query, []);
+        let obj = req.body;
+        console.log(obj);
+        let query = "insert into cadastro_operador(nome_Operador, perfil, login_Operador, senha_Operador ) values (?,?,?,?)";
+        database.query(query, [obj.nome_Operador, obj.perfil, obj.login_Operador, obj.senha_Operador]);
+
         res.json('OK');
     } catch (error) {
         throw error;

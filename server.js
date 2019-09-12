@@ -8,5 +8,5 @@ app.use(bodyParser.json())
 require('./routes.js')(app);
 
 app.listen(3000, () => {
-  console.log("Server UP Port 3000");
+  console.log("Server UP Port 3001");
 });
