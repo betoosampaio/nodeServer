@@ -1,5 +1,7 @@
 module.exports = (app) => {
 
+    app.get('/', (req, res) =>{ res.json("Server Online") });
+
     const restaurante = require('./controllers/restaurante.controller');
     app.post('/restaurante/selectall', restaurante.selectAll);
     app.post('/restaurante/insert', restaurante.insert);
@@ -29,5 +31,6 @@ module.exports = (app) => {
     app.post('/tabelasVariaveis/municipio/selectAll', tabelasVariaveis.municipio_selectAll);
     app.post('/tabelasVariaveis/estado/selectAll', tabelasVariaveis.estado_selectAll);
     app.post('/tabelasVariaveis/tipoConta/selectAll', tabelasVariaveis.tipoConta_selectAll);
+    app.post('/tabelasVariaveis/tipoCadastroConta/selectAll', tabelasVariaveis.tipoCadastroConta_selectAll);
 
 }

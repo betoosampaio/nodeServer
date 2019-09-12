@@ -1,47 +1,47 @@
 const database = require('../config/database.config')
 
-module.exports.banco_selectAll = (req, res) => {
+module.exports.banco_selectAll = async (req, res) => {
     try {
-        let data = database.query("select * from tb_banco");
+        let data = await database.query("select * from tb_banco");
         res.json(data);
     } catch (error) {
-        throw error;
+        res.status(500).send(error.message);
     }
 }
 
-module.exports.municipio_selectAll = (req, res) => {
+module.exports.municipio_selectAll = async (req, res) => {
     try {
-        let data = database.query("select * from tb_municipio");
+        let data = await database.query("select * from tb_municipio");
         res.json(data);
     } catch (error) {
-        throw error;
+        res.status(500).send(error.message);
     }
 }
 
-module.exports.estado_selectAll = (req, res) => {
+module.exports.estado_selectAll = async (req, res) => {
     try {
-        let data = database.query("select * from tb_estado");
+        let data = await database.query("select * from tb_estado");
         res.json(data);
     } catch (error) {
-        throw error;
+        res.status(500).send(error.message);
     }
 }
 
-module.exports.tipoConta_selectAll = (req, res) => {
+module.exports.tipoConta_selectAll = async (req, res) => {
     try {
-        let data = database.query("select * from tb_tipo_conta");
+        let data = await database.query("select * from tb_tipo_conta");
         res.json(data);
     } catch (error) {
-        throw error;
+        res.status(500).send(error.message);
     }
 }
 
-module.exports.tipoCadastroConta_selectAll = (req, res) => {
+module.exports.tipoCadastroConta_selectAll = async (req, res) => {
     try {
-        let data = database.query("select * from tb_tipo_cadastro_conta");
+        let data = await database.query("select * from tb_tipo_cadastro_conta");
         res.json(data);
     } catch (error) {
-        throw error;
+        res.status(500).send(error.message);
     }
 }
 
