@@ -12,54 +12,57 @@ module.exports.selectAll = (req, res) => {
 module.exports.insert = (req, res) => {
     try {
         let obj = req.body;
-        let query = `insert into cadastro_restaurante(cnpj,
-             nome_Fantasia,
-             cep,
-             rua,
-             numero,
-             bairro,
-             cidade,
-             Estado,
-             complemento,
-             celular,
-             email,
-             banco,
-             tipo_Conta,
-             agencia,
-             conta,
-             cpf,
-             nome_Administrador,
-             login_Restaurante,
-             senha_Restaurante,
-             ativo) 
-             
-             values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)`;
-
+        console.log(obj);
+        let query = `insert into tb_restaurante(
+            cnpj,
+            nome_fantasia,
+            cep,
+            logradouro,
+            numero,
+            bairro,
+            municipio,
+            uf,
+            complemento,
+            celular,
+            email,
+            codigo_banco,
+            id_tipo_cadastro_conta,
+            id_tipo_conta,
+            agencia,
+            conta,
+            digito,
+            cpf_administrador,
+            nome_administrador,
+            login,
+            senha)             
+            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
 
         database.query(query, [
             obj.cnpj,
-             obj.nome_Fantasia,
-             obj.cep,
-             obj.rua,
-             obj.numero_endereco,
-             obj.bairro,
-             obj.cidade,
-             obj.estado,
-             obj.complemento,
-             obj.celular,
-             obj.email,
-             obj.banco,
-             obj.tipo_Conta,
-             obj.agencia,
-             obj.conta,
-             obj.cpf,
-             obj.nome_Administrador,
-             obj.login_Restaurante,
-             obj.senha
-            ]);
+            obj.nome_fantasia,
+            obj.cep,
+            obj.logradouro,
+            obj.numero,
+            obj.bairro,
+            obj.municipio,
+            obj.uf,
+            obj.complemento,
+            obj.celular,
+            obj.email,
+            obj.codigo_banco,
+            obj.id_tipo_cadastro_conta,
+            obj.id_tipo_conta,
+            obj.agencia,
+            obj.conta,
+            obj.digito,
+            obj.cpf_administrador,
+            obj.nome_administrador,
+            obj.login,
+            obj.senha,
+        ]);
         res.json('OK');
     } catch (error) {
-        throw error;
+        res.status(500).send(error.message);
     }
 }
 
