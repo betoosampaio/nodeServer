@@ -9,10 +9,21 @@ module.exports.selectAll = (req, res) => {
     }
 }
 
+
+
 module.exports.insert = (req, res) => {
     try {
+
         let obj = req.body;
-        console.log(obj);
+
+        obj.cnpj =  obj.cnpj.replace(/\D/g, '');
+        obj.cep =  obj.cep.replace(/\D/g, '');
+        obj.cpf_administrador =  obj.cpf_administrador.replace(/\D/g, '')
+        obj.celular =  obj.celular.replace(/\D/g, '')
+        
+
+
+              console.log(obj);
         let query = `insert into tb_restaurante(
             cnpj,
             nome_fantasia,
@@ -34,8 +45,9 @@ module.exports.insert = (req, res) => {
             cpf_administrador,
             nome_administrador,
             login,
-            senha)             
+            senha)
             values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+
 
         database.query(query, [
             obj.cnpj,
