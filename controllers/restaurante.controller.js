@@ -2,94 +2,69 @@ const database = require('../config/database.config')
 
 module.exports.selectAll = async (req, res) => {
     try {
-        let data = await database.query("select * from tb_restaurante");    
+        let data = await database.query("select * from tb_restaurante");
         console.log(data);
         res.json(data);
-        
+
     } catch (error) {
         throw error;
     }
 }
 
-
-
-module.exports.insert = (req, res) => {
+module.exports.insert = async (req, res) => {
     try {
 
         let obj = req.body;
 
         /* Validações campos vazios. */
-        if(obj.cnpj == ''){
-            console.log('Falta CPNPJ a ser preenchidos.')
-        }
-        else if(obj.nome_fantasia == ''){
-            console.log('Falta Nome Fantasia a ser preenchidos.')
-        }
-        else if(obj.cep == ''){
-            console.log('Falta o Cep a ser preenchidos.')
-        }
-        else if(obj.logradouro == ''){
-            console.log('Falta o Logradouro a ser preenchidos.')
-        }
-        else if(obj.numero == ''){
-            console.log('Falta o Numero a ser preenchidos.')
-        }
-        else if(obj.bairro == ''){
-            console.log('Falta o Bairro a ser preenchidos.')
-        }
-        else if(obj.municipio == ''){
-            console.log('Falta o Municipio a ser preenchidos.')
-        }
-        else if(obj.uf == ''){
-            console.log('Falta o uf a ser preenchidos.')
-        }
-        else if(obj.celular == ''){
-            console.log('Falta o Celular a ser preenchidos.')
-        }
-        else if(obj.email == ''){
-            console.log('Falta o Email a ser preenchidos.')
-        }
-        else if(obj.codigo_banco == ''){
-            console.log('Falta o Banco a ser preenchidos.')
-        }
-        else if(obj.id_tipo_cadastro_conta == ''){
-            console.log('Falta o tipo de cadastro a ser preenchidos.')
-        }
-        else if(obj.id_tipo_conta == ''){
-            console.log('Falta o Tipo de cona a ser preenchidos.')
-        }
-        else if(obj.agencia == ''){
-            console.log('Falta a Agencia a ser preenchidos.')
-        }
-        else if(obj.conta == ''){
-            console.log('Falta a Conta a ser preenchidos.')
-        }
-        else if(obj.digito == ''){
-            console.log('Falta o Digito a ser preenchidos.')
-        }
-        else if(obj.cpf_administrador == ''){
-            console.log('Falta o Cpf do Administrador a ser preenchidos.')
-        }
-        else if(obj.nome_administrador == ''){
-            console.log('Falta o Nome do Administrador a ser preenchidos.')
-        }
-        else if(obj.login == ''){
-            console.log('Falta o Login a ser preenchidos.')
-        }
-        else if(obj.senha == ''){
-            console.log('Falta a Senha a ser preenchidos.')
-        }
+        if (obj.cnpj == '')
+            throw new Error('Falta CPNPJ a ser preenchidos.')
+        else if (obj.nome_fantasia == '')
+            throw new Error('Falta Nome Fantasia a ser preenchidos.')
+        else if (obj.cep == '')
+            throw new Error('Falta o Cep a ser preenchidos.')
+        else if (obj.logradouro == '')
+            throw new Error('Falta o Logradouro a ser preenchidos.')
+        else if (obj.numero == '')
+            throw new Error('Falta o Numero a ser preenchidos.')
+        else if (obj.bairro == '')
+            throw new Error('Falta o Bairro a ser preenchidos.')
+        else if (obj.municipio == '')
+            throw new Error('Falta o Municipio a ser preenchidos.')
+        else if (obj.uf == '')
+            throw new Error('Falta o uf a ser preenchidos.')
+        else if (obj.celular == '')
+            throw new Error('Falta o Celular a ser preenchidos.')
+        else if (obj.email == '')
+            throw new Error('Falta o Email a ser preenchidos.')
+        else if (obj.codigo_banco == '')
+            throw new Error('Falta o Banco a ser preenchidos.')
+        else if (obj.id_tipo_cadastro_conta == '')
+            throw new Error('Falta o tipo de cadastro a ser preenchidos.')
+        else if (obj.id_tipo_conta == '')
+            throw new Error('Falta o Tipo de cona a ser preenchidos.')
+        else if (obj.agencia == '')
+            throw new Error('Falta a Agencia a ser preenchidos.')
+        else if (obj.conta == '')
+            throw new Error('Falta a Conta a ser preenchidos.')
+        else if (obj.digito == '')
+            throw new Error('Falta o Digito a ser preenchidos.')
+        else if (obj.cpf_administrador == '')
+            throw new Error('Falta o Cpf do Administrador a ser preenchidos.')
+        else if (obj.nome_administrador == '')
+            throw new Error('Falta o Nome do Administrador a ser preenchidos.')
+        else if (obj.login == '')
+            throw new Error('Falta o Login a ser preenchidos.')
+        else if (obj.senha == '')
+            throw new Error('Falta a Senha a ser preenchidos.')
 
 
+        obj.cnpj = obj.cnpj.replace(/\D/g, '');
+        obj.cep = obj.cep.replace(/\D/g, '');
+        obj.cpf_administrador = obj.cpf_administrador.replace(/\D/g, '')
+        obj.celular = obj.celular.replace(/\D/g, '')
 
-
-else{
-        obj.cnpj =  obj.cnpj.replace(/\D/g, '');
-        obj.cep =  obj.cep.replace(/\D/g, '');
-        obj.cpf_administrador =  obj.cpf_administrador.replace(/\D/g, '')
-        obj.celular =  obj.celular.replace(/\D/g, '')
-
-              console.log(obj);
+        console.log(obj);
         let query = `insert into tb_restaurante(
             cnpj,
             nome_fantasia,
@@ -114,8 +89,7 @@ else{
             senha)
             values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
 
-
-        database.query(query, [
+        await database.query(query, [
             obj.cnpj,
             obj.nome_fantasia,
             obj.cep,
@@ -138,10 +112,12 @@ else{
             obj.login,
             obj.senha,
         ]);
-    }
+
         res.json('OK');
+
     } catch (error) {
-        res.status(500).send(error.message);
+        console.log(error);
+        res.status(500).send({ msg: error.message });
     }
 }
 
