@@ -16,6 +16,7 @@ module.exports.insert = (req, res) => {
 
         let obj = req.body;
 
+        /* Validação dos campos vazios */
         if(obj.nome_Operador == ''){
             console.log('Falta o Nome do Operador a ser preenchidos.')
         }
@@ -55,7 +56,7 @@ module.exports.insert = (req, res) => {
 
 module.exports.update = (req, res) => {
     try {
-        let query = "insert into TB_RESTAURANTE() values (?)";
+        let query = "insert into tb_operador() values (?)";
         database.query(query, [req.body.id_restaurante]);
         res.json('OK');
     } catch (error) {
@@ -65,7 +66,7 @@ module.exports.update = (req, res) => {
 
 module.exports.delete = (req, res) => {
     try {
-        let query = "update TB_RESTAURANTE set ativo = 0, data_exclusao = now() where id_restaurante = ?";
+        let query = "update tb_operador set ativo = 0, data_exclusao = now() where id_restaurante = ?";
         database.query(query, [req.body.id_restaurante]);
         res.json('OK');
     } catch (error) {
