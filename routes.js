@@ -20,7 +20,7 @@ module.exports = (app) => {
 
     /* ROTAS PARA A PAGINA OPERADOR */
     const operador = require('./controllers/operador.controller');
-    app.get('/operador/selectall', operador.selectAll);
+    app.post('/operador/selectall', operador.selectAll);
     app.post('/operador/insert', operador.insert);
     app.post('/operador/update', operador.update);
     app.post('/operador/delete', operador.delete);
