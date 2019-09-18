@@ -1,11 +1,12 @@
 const database = require('../config/database.config')
 
-module.exports.selectAll = (req, res) => {
+module.exports.selectAll = async (req, res) => {
     try {
-        let data = database.query("select * from tb_cardapio");
+        let data = await database.query("select * from tb_cardapio");
         res.json(data);
     } catch (error) {
-        throw error;
+        console.log(error);
+        res.status(500).send({ msg: error.message });
     }
 }
 

@@ -36,14 +36,16 @@ module.exports.insert = (req, res) => {
               console.log(obj);
         let query = `insert into tb_operador(
             nome_Operador,
+            id_restaurante,
             perfil,
             login_Operador,
             senha_Operador)
-            values (?,?,?,?)`;
+            values (?,?,?,?,?)`;
 
 
         database.query(query, [
             obj.nome_Operador,
+            obj.id_restaurante,
             obj.perfil,
             obj.login_Operador,
             obj.senha_Operador,
