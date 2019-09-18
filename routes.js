@@ -9,6 +9,7 @@ module.exports = (app) => {
     app.post('/restaurante/insert', restaurante.insert);
     app.post('/restaurante/update', restaurante.update);
     app.post('/restaurante/delete', restaurante.delete);
+    app.post('/restaurante/checkIfLoginExists', restaurante.checkIfLoginExists);
 
     /* ROTAS PARA A PAGINA CARDÁPIO */
     const cardapio = require('./controllers/cardapio.controller');

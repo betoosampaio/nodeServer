@@ -3,11 +3,10 @@ const database = require('../config/database.config')
 module.exports.selectAll = async (req, res) => {
     try {
         let data = await database.query("select * from tb_restaurante");
-        console.log(data);
         res.json(data);
-
     } catch (error) {
-        throw error;
+        console.log(error);
+        res.status(500).send({ msg: error.message });
     }
 }
 
@@ -115,6 +114,17 @@ module.exports.insert = async (req, res) => {
 
         res.json('OK');
 
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ msg: error.message });
+    }
+}
+
+module.exports.checkIfLoginExists = async (req, res) => {
+    try {
+        let data = await database.query("select 1 from tb_restaurante where login = ?", [req.body.login]);
+        let exists = data.length > 0 ? true : false;
+        res.json({exists: exists});
     } catch (error) {
         console.log(error);
         res.status(500).send({ msg: error.message });
