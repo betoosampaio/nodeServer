@@ -23,6 +23,7 @@ module.exports.insert = (req, res) => {
 
 
         let query = `insert into tb_cardapio(
+            id_restaurante,
             nome_Produto,
             descricao,
             preco,
@@ -30,10 +31,11 @@ module.exports.insert = (req, res) => {
             visivel,
             promocao,
             imagem)
-            values (?,?,?,?,?,?,?)`;
+            values (?,?,?,?,?,?,?,?)`;
 
 
         database.query(query, [
+            obj.id_restaurante,
             obj.nome_Produto,
             obj.descricao,
             obj.preco,
@@ -62,8 +64,10 @@ module.exports.update = (req, res) => {
 
 module.exports.delete = (req, res) => {
     try {
-        let query = "update tb_operador set ativo = 0, data_exclusao = now() where id_restaurante = ?";
-        database.query(query, [req.body.id_restaurante]);
+        let query = "DELETE FROM tb_operador WHERE id_restaurante = ?";
+            database.query(query, [
+            obj.id_restaurante,
+        ]);
         res.json('OK');
     } catch (error) {
         throw error;
