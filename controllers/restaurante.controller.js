@@ -1,5 +1,30 @@
 const database = require('../config/database.config')
 
+
+module.exports.checkIfLoginOk = async (req, res) => {
+    try {
+        let obj = req.body;
+        console.log(obj);
+        let query = ("select login, senha from tb_restaurante where login = ? and senha = ?");
+     
+
+        let data = await database.query(query, [
+            obj.login,
+            obj.senha,
+        ]);
+
+ if(data.length == 0){
+   throw new Error('Login e/ou senha incorreto')
+}
+        res.json('OK');
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ msg: error.message });
+    }
+};
+
+
 module.exports.selectAll = async (req, res) => {
     try {
         let data = await database.query("select * from tb_restaurante");

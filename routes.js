@@ -6,6 +6,7 @@ module.exports = (app) => {
     /* ROTAS PARA A PAGINA RESTAURANTE */
     const restaurante = require('./controllers/restaurante.controller');
     app.post('/restaurante/selectall', restaurante.selectAll);
+    app.post('/restaurante/checkIfLoginOk', restaurante.checkIfLoginOk);    
     app.post('/restaurante/insert', restaurante.insert);
     app.post('/restaurante/update', restaurante.update);
     app.post('/restaurante/delete', restaurante.delete);
