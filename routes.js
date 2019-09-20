@@ -4,14 +4,13 @@ module.exports = (app) => {
 
 
     /* ROTAS PARA A PAGINA RESTAURANTE */
-    const restaurante = require('./controllers/restaurante.controller');
-    app.post('/restaurante/selectall', restaurante.selectAll);
-    app.post('/restaurante/checkIfLoginOk', restaurante.checkIfLoginOk);    
+    const restaurante = require('./controllers/restaurante.controller');  
+    app.post('/restaurante/checkIfLoginOk', restaurante.checkIfLoginOk);
+    app.post('/restaurante/checkIfLoginExists', restaurante.checkIfLoginExists); 
+    app.post('/restaurante/checkIfCNPJExists', restaurante.checkIfCNPJExists);   
+    app.post('/restaurante/selectall', restaurante.selectAll); 
     app.post('/restaurante/insert', restaurante.insert);
-    app.post('/restaurante/update', restaurante.update);
-    app.post('/restaurante/delete', restaurante.delete);
-    app.post('/restaurante/checkIfLoginExists', restaurante.checkIfLoginExists);
-
+    
     /* ROTAS PARA A PAGINA CARDÁPIO */
     const cardapio = require('./controllers/cardapio.controller');
     app.post('/cardapio/selectall', cardapio.selectAll);
