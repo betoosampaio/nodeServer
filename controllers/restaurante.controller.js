@@ -54,18 +54,18 @@ module.exports.insert = async (req, res) => {
 
         let obj = req.body;
 
-        //console.log(obj);
+        console.log(obj);
         // campos numéricos
-        obj.cnpj = obj.cnpj.replace(/\D/g, '');
-        obj.cep = obj.cep.replace(/\D/g, '');
-        obj.numero = obj.numero.replace(/\D/g, '');
-        obj.celular = obj.celular.replace(/\D/g, '');
-        obj.codigo_banco = obj.codigo_banco.replace(/\D/g, '');
-        obj.id_tipo_cadastro_conta = obj.id_tipo_cadastro_conta.replace(/\D/g, '');
-        obj.id_tipo_conta = obj.id_tipo_conta.replace(/\D/g, '');
-        obj.agencia = obj.agencia.replace(/\D/g, '');
-        obj.conta = obj.conta.replace(/\D/g, '');
-        obj.cpf_administrador = obj.cpf_administrador.replace(/\D/g, '');
+        obj.cnpj = Number.isInteger(obj.cnpj) ? obj.cnpj : obj.cnpj.replace(/\D/g, '');
+        obj.cep = Number.isInteger(obj.cep) ? obj.cep : obj.cep.replace(/\D/g, '');
+        obj.numero = Number.isInteger(obj.numero) ? obj.numero : obj.numero.replace(/\D/g, '');
+        obj.celular = Number.isInteger(obj.celular) ? obj.celular : obj.celular.replace(/\D/g, '');
+        obj.codigo_banco = Number.isInteger(obj.codigo_banco) ? obj.codigo_banco : obj.codigo_banco.replace(/\D/g, '');
+        obj.id_tipo_cadastro_conta = Number.isInteger(obj.id_tipo_cadastro_conta) ? obj.id_tipo_cadastro_conta : obj.id_tipo_cadastro_conta.replace(/\D/g, '');
+        obj.id_tipo_conta = Number.isInteger(obj.id_tipo_conta) ? obj.id_tipo_conta : obj.id_tipo_conta.replace(/\D/g, '');
+        obj.agencia = Number.isInteger(obj.agencia) ? obj.agencia : obj.agencia.replace(/\D/g, '');
+        obj.conta = Number.isInteger(obj.conta) ? obj.conta : obj.conta.replace(/\D/g, '');
+        obj.cpf_administrador = Number.isInteger(obj.cpf_administrador) ? obj.cpf_administrador : obj.cpf_administrador.replace(/\D/g, '');
 
         // ## Validações de campos não preenchidos ##
         if (!obj.cnpj)
@@ -173,9 +173,13 @@ module.exports.insert = async (req, res) => {
             nome_administrador,
             login,
             senha)
-            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
-        await database.query(query, [
+            insert into tb_operador(nome_operador,id_restaurante,perfil,login_operador,senha_operador)
+            select login,id_restaurante, 1, login, senha from tb_restaurante where id_restaurante = LAST_INSERT_ID();
+            `;
+
+        await database.mquery(query, [
             obj.cnpj,
             obj.nome_fantasia,
             obj.cep,

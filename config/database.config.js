@@ -14,3 +14,19 @@ module.exports.query = async (query, params) => {
     return data;
 
 };
+
+module.exports.mquery = async (query, params) => {
+
+    let conn = await mariadb.createConnection({
+        host: 'localhost',
+        port: 3306,
+        user: 'root',
+        password: 'root',
+        database: 'db_creed',
+        multipleStatements: true,
+    });
+
+    let data = await conn.query(query, params);
+    return data;
+
+};
