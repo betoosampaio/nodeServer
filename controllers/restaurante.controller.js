@@ -25,9 +25,8 @@ WHERE
 
         let token = data[0];
         token.expire = (new Date()).setHours((new Date()).getHours()+4);
-        console.log(crypto.encrypt(JSON.stringify(token)));
-
-        res.json(data);
+        let tokenCript = crypto.encrypt(JSON.stringify(token));
+        res.json(tokenCript);
     } catch (error) {
         console.log(error);
         res.status(500).send({ msg: error.message });
