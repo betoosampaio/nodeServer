@@ -71,15 +71,33 @@ module.exports.insert = (req, res) => {
 }
 
 
+
+
 module.exports.update = (req, res) => {
     try {
-        let query = "insert into tb_operador() values (?)";
-        database.query(query, [req.body.id_restaurante]);
+
+        let obj = req.body;
+
+       console.log(obj);
+
+        let query = ("UPDATE tb_operador SET nome_Operador = ?",[req.body.nome_Operador]);
+
+
+        database.query(query, [
+            obj.nome_Operador,      
+          ]);
+    
         res.json('OK');
     } catch (error) {
-        throw error;
+        res.status(500).send(error.message);
     }
 }
+
+
+
+
+
+
 
 module.exports.delete = (req, res) => {
     try {
