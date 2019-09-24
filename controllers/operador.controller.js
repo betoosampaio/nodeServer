@@ -11,6 +11,17 @@ module.exports.selectAll = async (req, res) => {
     }
 }
 
+module.exports.selectWhere = async (req, res) => {
+    try {
+        let data = await database.query("select * from tb_operador where id_restaurante = ?",[req.body.id_restaurante]);
+        console.log(data)
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ msg: error.message });
+    }
+}
+
 
 
 
