@@ -1,41 +1,8 @@
 const database = require('../config/database.config')
-const crypto = require('../config/crypto.config')
 
-module.exports.login = async (req, res) => {
+module.exports.checarSeCodigoExiste = async (req, res) => {
     try {
-        let obj = req.body;
-        let query = (`
-SELECT
-	 r.id_restaurante
-	,o.id_operador
-FROM
-	tb_restaurante r
-	INNER JOIN tb_operador o
-		ON o.id_restaurante = r.id_restaurante
-WHERE
-	r.login = ?
-	AND o.login_operador = ?
-	AND o.senha_operador = ?
-        `);
-
-        let data = await database.query(query, [obj.login, obj.login_operador, obj.senha_operador]);
-
-        if (data.length == 0)
-            throw new Error('Login e/ou senha incorreto');
-
-        let token = data[0];
-        token.expire = (new Date()).setHours((new Date()).getHours()+4);
-        let tokenCript = crypto.encrypt(JSON.stringify(token));
-        res.json(tokenCript);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({ msg: error.message });
-    }
-}
-
-module.exports.checkIfLoginExists = async (req, res) => {
-    try {
-        let exists = await _checkIfLoginExists(req.body.login)
+        let exists = await _checarSeCodigoExiste(req.body.codigo_restaurante)
         res.json({ exists: exists });
     } catch (error) {
         console.log(error);
@@ -43,9 +10,9 @@ module.exports.checkIfLoginExists = async (req, res) => {
     }
 }
 
-module.exports.checkIfCNPJExists = async (req, res) => {
+module.exports.checarSeCNPJExiste = async (req, res) => {
     try {
-        let exists = await _checkIfCNPJExists(req.body.cnpj)
+        let exists = await _checarSeCNPJExiste(req.body.cnpj)
         res.json({ exists: exists });
     } catch (error) {
         console.log(error);
@@ -53,22 +20,10 @@ module.exports.checkIfCNPJExists = async (req, res) => {
     }
 }
 
-module.exports.selectAll = async (req, res) => {
+module.exports.cadastrar = async (req, res) => {
     try {
-        let data = await database.query("select * from tb_restaurante");
-        res.json(data);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({ msg: error.message });
-    }
-}
-
-module.exports.insert = async (req, res) => {
-    try {
-
         let obj = req.body;
 
-        console.log(obj);
         // campos numéricos
         obj.cnpj = Number.isInteger(obj.cnpj) ? obj.cnpj : obj.cnpj.replace(/\D/g, '');
         obj.cep = Number.isInteger(obj.cep) ? obj.cep : obj.cep.replace(/\D/g, '');
@@ -118,6 +73,8 @@ module.exports.insert = async (req, res) => {
             throw new Error('Campo CPF do administrador não preenchido')
         else if (!obj.nome_administrador)
             throw new Error('Campo nome do administrador não preenchido')
+        else if (!obj.codigo_restaurante)
+            throw new Error('Campo código do restaurante não preenchido')
         else if (!obj.login)
             throw new Error('Campo login não preenchido')
         else if (!obj.senha)
@@ -127,7 +84,7 @@ module.exports.insert = async (req, res) => {
         if (!_validarCNPJ(obj.cnpj))
             throw new Error('CNPJ inválido');
 
-        let cnpjExists = await _checkIfCNPJExists(obj.cnpj);
+        let cnpjExists = await _checarSeCNPJExiste(obj.cnpj);
         if (cnpjExists) {
             throw new Error('CNPJ já cadastrado');
         }
@@ -140,13 +97,13 @@ module.exports.insert = async (req, res) => {
             throw new Error('E-mail inválido');
         }
 
-        if (obj.login.length < 6) {
-            throw new Error('Login deve ter no mínimo 6 caracteres');
+        if (obj.codigo_restaurante.length < 6) {
+            throw new Error('Codigo do restaurante deve ter no mínimo 6 caracteres');
         }
 
-        let loginExists = await _checkIfLoginExists(obj.login);
+        let loginExists = await _checarSeCodigoExiste(obj.codigo_restaurante);
         if (loginExists) {
-            throw new Error('Login já está sendo utilizado');
+            throw new Error('Codigo de restaurante já está sendo utilizado');
         }
 
         if (!_validarCPF(obj.cpf_administrador))
@@ -154,6 +111,10 @@ module.exports.insert = async (req, res) => {
 
         if (obj.celular.replace(/\D/g, '').length != 11) {
             throw new Error('Celular inválido');
+        }
+
+        if (obj.login.length < 4) {
+            throw new Error('Login deve ter no mínimo 4 caracteres');
         }
 
         if (obj.senha.length < 8) {
@@ -164,7 +125,7 @@ module.exports.insert = async (req, res) => {
             throw new Error('Senha deve conter ao menos 1 letra e 1 número');
         }
 
-        // ## QUERY ##
+        // ## INSERE RESTAURANTE ##
         let query = `insert into tb_restaurante(
             cnpj,
             nome_fantasia,
@@ -185,15 +146,13 @@ module.exports.insert = async (req, res) => {
             digito,
             cpf_administrador,
             nome_administrador,
-            login,
-            senha)
-            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            codigo_restaurante)
+            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
-            insert into tb_operador(nome_operador,id_restaurante,perfil,login_operador,senha_operador)
-            select login,id_restaurante, 1, login, senha from tb_restaurante where id_restaurante = LAST_INSERT_ID();
+            select * from tb_restaurante where id_restaurante = LAST_INSERT_ID();
             `;
 
-        await database.mquery(query, [
+        let data = await database.mquery(query, [
             obj.cnpj,
             obj.nome_fantasia,
             obj.cep,
@@ -213,9 +172,14 @@ module.exports.insert = async (req, res) => {
             obj.digito,
             obj.cpf_administrador,
             obj.nome_administrador,
-            obj.login,
-            obj.senha,
+            obj.codigo_restaurante
         ]);
+
+        let id_restaurante = data[1][0].id_restaurante;
+
+        // ## INSERE LOGIN ADM ##
+        query = 'insert into tb_operador(nome_operador,id_restaurante,perfil,login_operador,senha_operador) values (?,?,1,?,?)';
+        await database.mquery(query, [obj.nome_administrador, id_restaurante, obj.login, obj.senha]);
 
         res.json('OK');
 
@@ -225,12 +189,12 @@ module.exports.insert = async (req, res) => {
     }
 }
 
-_checkIfLoginExists = async (login) => {
-    let data = await database.query("select 1 from tb_restaurante where login = ?", login);
+_checarSeCodigoExiste = async (codigo_restaurante) => {
+    let data = await database.query("select 1 from tb_restaurante where codigo_restaurante = ?", codigo_restaurante);
     return data.length > 0 ? true : false;
 }
 
-_checkIfCNPJExists = async (cnpj) => {
+_checarSeCNPJExiste = async (cnpj) => {
     let data = await database.query("select 1 from tb_restaurante where cnpj = ?", cnpj);
     return data.length > 0 ? true : false;
 }
