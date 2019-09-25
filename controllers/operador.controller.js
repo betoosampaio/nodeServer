@@ -1,111 +1,109 @@
 const database = require('../config/database.config')
 
 
-module.exports.selectAll = async (req, res) => {
+module.exports.listar = async (req, res) => {
     try {
-        let data = await database.query("select * from tb_operador");
+        let query = `
+        select 
+             o.id_operador
+            ,o.nome_operador
+            ,o.id_perfil
+            ,p.tipo_perfil
+            ,o.login_operador
+        from 
+            tb_operador o
+            inner join tb_perfil p
+                on p.id_perfil = o.id_perfil
+        where 
+            id_restaurante = ?
+            and ativo = 1`
+
+        let data = await database.query(query, [req.token.id_restaurante]);
         res.json(data);
     } catch (error) {
         console.log(error);
-        res.status(500).send({ msg: error.message });
+        res.status(400).send({ msg: error.message });
     }
 }
 
-module.exports.selectWhere = async (req, res) => {
+module.exports.cadastrar = async (req, res) => {
     try {
-        let data = await database.query("select * from tb_operador where id_restaurante = ?",[req.body.id_restaurante]);
-        console.log(data)
-        res.json(data);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({ msg: error.message });
-    }
-}
-
-
-
-
-
-module.exports.insert = (req, res) => {
-    try {
-
         let obj = req.body;
+        let query = `
+        insert into tb_operador(
+             nome_operador
+            ,id_restaurante
+            ,id_perfil
+            ,login_operador
+            ,senha_operador
+            )
+        values(?,?,?,?,?)`
 
-        /* Validação dos campos vazios */
-        if(obj.nome_Operador == ''){
-            console.log('Falta o Nome do Operador a ser preenchidos.')
-        }
-       else if(obj.perfil == ''){
-            console.log('Falta o perfil a ser preenchidos.')
-        }
-        else if(obj.login_Operador == ''){
-            console.log('Falta o Login Operador a ser preenchidos.')
-        }
-        else if(obj.senha_Operador == ''){
-            console.log('Falta o Senha Operador a ser preenchidos.')
-        }
-
-        else{
-              console.log(obj);
-        let query = `insert into tb_operador(
-            nome_Operador,
-            id_restaurante,
-            perfil,
-            login_Operador,
-            senha_Operador)
-            values (?,?,?,?,?)`;
-
-
-        database.query(query, [
-            obj.nome_Operador,
-            obj.id_restaurante,
-            obj.perfil,
-            obj.login_Operador,
-            obj.senha_Operador,
+        let data = await database.query(query, [
+             obj.nome_operador
+            ,req.token.id_restaurante
+            ,obj.id_perfil
+            ,obj.login_operador
+            ,obj.senha_operador
         ]);
-    }
-        res.json('OK');
+
+        res.json("OK");
     } catch (error) {
-        res.status(500).send(error.message);
+        console.log(error);
+        res.status(400).send({ msg: error.message });
     }
 }
 
-
-
-
-module.exports.update = (req, res) => {
+module.exports.editar = async (req, res) => {
     try {
-
         let obj = req.body;
+        let query = `
+        update tb_operador
+        set
+               nome_operador = ?
+              ,id_perfil = ?
+              ,login_operador = ?
+              ,senha_operador = ?
+        where
+            id_operador = ?
+            and id_restaurante = ?`
 
-       console.log(obj);
+        let data = await database.query(query, [
+             obj.nome_operador            
+            ,obj.id_perfil
+            ,obj.login_operador
+            ,obj.senha_operador
+            ,obj.id_operador
+            ,req.token.id_restaurante
+        ]);
 
-        let query = ("UPDATE tb_operador SET nome_Operador = ?",[req.body.nome_Operador]);
-
-
-        database.query(query, [
-            obj.nome_Operador,      
-          ]);
-    
-        res.json('OK');
+        res.json("OK");
     } catch (error) {
-        res.status(500).send(error.message);
+        console.log(error);
+        res.status(400).send({ msg: error.message });
     }
 }
 
-
-
-
-
-
-
-module.exports.delete = (req, res) => {
+module.exports.remover = async (req, res) => {
     try {
-        let query = "update tb_operador set ativo = 0, data_exclusao = now() where id_restaurante = ?";
-        database.query(query, [req.body.id_restaurante]);
-        res.json('OK');
+        let obj = req.body;
+        let query = `
+        update tb_operador
+        set
+            ativo = 0
+        where
+            id_operador = ?
+            and id_restaurante = ?`
+
+        let data = await database.query(query, [
+             obj.id_operador
+            ,req.token.id_restaurante
+        ]);
+
+        res.json("OK");
     } catch (error) {
-        throw error;
+        console.log(error);
+        res.status(400).send({ msg: error.message });
     }
 }
-    
+

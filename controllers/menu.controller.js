@@ -1,40 +1,91 @@
 const database = require('../config/database.config')
 
-module.exports.selectAll = (req,res) => {
+module.exports.listar = async (req, res) => {
     try {
-        let data = database.query("select * from TB_MENU");
+        let query = `
+        select 
+             id_menu
+            ,ds_menu
+        from 
+            tb_menu
+        where 
+            id_restaurante = ?
+            and ativo = 1`
+
+        let data = await database.query(query, [req.token.id_restaurante]);
         res.json(data);
     } catch (error) {
-        throw error;
+        console.log(error);
+        res.status(400).send({ msg: error.message });
     }
 }
 
-module.exports.insert = (req,res) => {
+module.exports.cadastrar = async (req, res) => {
     try {
-        let query = "insert into TB_MENU() values (?)";
-     database.query(query, []);
-        res.json('OK');
+        let obj = req.body;
+        let query = `
+        insert into tb_menu(
+              ds_menu
+             ,id_restaurante
+            )
+        values(?,?)`
+
+        let data = await database.query(query, [
+             obj.ds_menu
+            ,req.token.id_restaurante
+        ]);
+
+        res.json("OK");
     } catch (error) {
-        throw error;
+        console.log(error);
+        res.status(400).send({ msg: error.message });
     }
 }
 
-module.exports.update =  (req,res) => {
+module.exports.editar = async (req, res) => {
     try {
-        let query = "insert into TB_MENU() values (?)";
-         database.query(query, [req.body.id_menu]);
-        res.json('OK');
+        let obj = req.body;
+        let query = `
+        update tb_menu
+        set
+               ds_menu = ?
+        where
+            id_menu = ?
+            and id_restaurante = ?`
+
+        let data = await database.query(query, [
+             obj.ds_menu            
+            ,obj.id_menu
+            ,req.token.id_restaurante
+        ]);
+
+        res.json("OK");
     } catch (error) {
-        throw error;
+        console.log(error);
+        res.status(400).send({ msg: error.message });
     }
 }
 
-module.exports.delete =  (req,res) => {
+module.exports.remover = async (req, res) => {
     try {
-        let query = "update TB_MENU set ativo = 0, data_exclusao = now() where id_menu = ?";
-         database.query(query, [req.body.id_menu]);
-        res.json('OK');
+        let obj = req.body;
+        let query = `
+        update tb_menu
+        set
+            ativo = 0
+        where
+            id_menu = ?
+            and id_restaurante = ?`
+
+        let data = await database.query(query, [
+             obj.id_menu
+            ,req.token.id_restaurante
+        ]);
+
+        res.json("OK");
     } catch (error) {
-        throw error;
+        console.log(error);
+        res.status(400).send({ msg: error.message });
     }
 }
+

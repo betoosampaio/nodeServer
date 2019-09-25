@@ -178,16 +178,136 @@ module.exports.cadastrar = async (req, res) => {
         let id_restaurante = data[1][0].id_restaurante;
 
         // ## INSERE LOGIN ADM ##
-        query = 'insert into tb_operador(nome_operador,id_restaurante,perfil,login_operador,senha_operador) values (?,?,1,?,?)';
+        query = 'insert into tb_operador(nome_operador,id_restaurante,id_perfil,login_operador,senha_operador) values (?,?,1,?,?)';
         await database.mquery(query, [obj.nome_administrador, id_restaurante, obj.login, obj.senha]);
 
         res.json('OK');
 
     } catch (error) {
         console.log(error);
-        res.status(500).send({ msg: error.message });
+        res.status(400).send({ msg: error.message });
     }
 }
+
+module.exports.obter = async (req, res) => {
+    try {
+        let query = `select * from tb_restaurante where id_restaurante = ?`;
+        let data = await database.query(query, [req.token.id_restaurante]);
+        res.json(data);
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({ msg: error.message });
+    }
+}
+
+module.exports.editar = async (req, res) => {
+    try {
+        let obj = req.body;
+      
+        // ## ATUALIZA RESTAURANTE ##
+        let query = `
+        update tb_restaurante
+        set
+             cnpj = ?
+            ,nome_fantasia = ?
+            ,cep = ?
+            ,logradouro = ?
+            ,numero = ?
+            ,bairro = ?
+            ,municipio = ?
+            ,uf = ?
+            ,complemento = ?
+            ,celular = ?
+            ,email = ?
+            ,codigo_banco = ?
+            ,id_tipo_cadastro_conta = ?
+            ,id_tipo_conta = ?
+            ,agencia = ?
+            ,conta = ?
+            ,digito = ?
+            ,cpf_administrador = ?
+            ,nome_administrador = ?
+            ,codigo_restaurante = ?
+        where
+            id_restaurante = ?;`;
+
+        await database.query(query, [
+            obj.cnpj,
+            obj.nome_fantasia,
+            obj.cep,
+            obj.logradouro,
+            obj.numero,
+            obj.bairro,
+            obj.municipio,
+            obj.uf,
+            obj.complemento,
+            obj.celular,
+            obj.email,
+            obj.codigo_banco,
+            obj.id_tipo_cadastro_conta,
+            obj.id_tipo_conta,
+            obj.agencia,
+            obj.conta,
+            obj.digito,
+            obj.cpf_administrador,
+            obj.nome_administrador,
+            obj.codigo_restaurante,
+            req.token.id_restaurante
+        ]);
+
+        res.json('OK');
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({ msg: error.message });
+    }
+}
+
+module.exports.inativar = async (req, res) => {
+    try {
+        let obj = req.body;
+      
+        // ## ATUALIZA RESTAURANTE ##
+        let query = `
+        update tb_restaurante
+        set
+            ativo = 0
+        where
+            id_restaurante = ?;`;
+
+        await database.query(query, [req.token.id_restaurante]);
+
+        res.json('OK');
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({ msg: error.message });
+    }
+}
+
+module.exports.reativar = async (req, res) => {
+    try {
+        let obj = req.body;
+      
+        // ## ATUALIZA RESTAURANTE ##
+        let query = `
+        update tb_restaurante
+        set
+            ativo = 1
+        where
+            id_restaurante = ?;`;
+
+        await database.query(query, [req.token.id_restaurante]);
+
+        res.json('OK');
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({ msg: error.message });
+    }
+}
+
 
 _checarSeCodigoExiste = async (codigo_restaurante) => {
     let data = await database.query("select 1 from tb_restaurante where codigo_restaurante = ?", codigo_restaurante);
