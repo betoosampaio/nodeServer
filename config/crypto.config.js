@@ -1,4 +1,3 @@
-require('dotenv/config');
 const crypto = require('crypto');
 
 const _algorithm = 'aes-256-ctr';

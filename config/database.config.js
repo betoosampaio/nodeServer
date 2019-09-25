@@ -3,11 +3,11 @@ const mariadb = require('mariadb');
 module.exports.query = async (query, params) => {
 
     let conn = await mariadb.createConnection({
-        host: 'localhost',
-        port: 3306,
-        user: 'root',
-        password: 'root',
-        database: 'db_creed',
+        host: process.env.MARIADB_HOST,
+        port: process.env.MARIADB_PORT,
+        user: process.env.MARIADB_USER,
+        password: process.env.MARIADB_PASSWORD,
+        database: process.env.MARIADB_DATABASE,
     });
 
     let data = await conn.query(query, params);
@@ -18,11 +18,11 @@ module.exports.query = async (query, params) => {
 module.exports.mquery = async (query, params) => {
 
     let conn = await mariadb.createConnection({
-        host: 'localhost',
-        port: 3306,
-        user: 'root',
-        password: 'root',
-        database: 'db_creed',
+        host: process.env.MARIADB_HOST,
+        port: process.env.MARIADB_PORT,
+        user: process.env.MARIADB_USER,
+        password: process.env.MARIADB_PASSWORD,
+        database: process.env.MARIADB_DATABASE,
         multipleStatements: true,
     });
 
