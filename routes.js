@@ -36,8 +36,8 @@ module.exports = (app) => {
     app.post('/menu/remover', [authMW], menu.remover);
 
     /* CARDAPIO */
-    app.post('/cardapio/selectall', cardapio.selectAll);
-    app.post('/cardapio/insert', cardapio.insert);
-    app.post('/cardapio/update', cardapio.update);
-    app.post('/cardapio/delete', cardapio.delete);
+    app.post('/cardapio/listar', [authMW], cardapio.listar);
+    app.post('/cardapio/cadastrar', [authMW], cardapio.cadastrar);
+    app.post('/cardapio/editar', [authMW], cardapio.editar);
+    app.post('/cardapio/remover', [authMW], cardapio.remover);
 }

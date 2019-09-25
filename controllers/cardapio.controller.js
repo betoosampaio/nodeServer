@@ -1,75 +1,124 @@
 const database = require('../config/database.config')
 
-module.exports.selectAll = async (req, res) => {
+module.exports.listar = async (req, res) => {
     try {
-        let data = await database.query("select * from tb_cardapio");
+        let query = `
+        select 
+             c.id_cardapio
+            ,c.id_restaurante
+            ,c.nome_produto
+            ,c.descricao
+            ,c.preco
+            ,c.id_menu
+            ,m.ds_menu
+            ,c.visivel
+            ,c.promocao
+            ,c.imagem
+        from 
+            tb_cardapio c
+            inner join tb_menu m
+                on m.id_menu = c.id_menu
+        where 
+            c.id_restaurante = ?
+            and c.ativo = 1`
+
+        let data = await database.query(query, [req.token.id_restaurante]);
         res.json(data);
     } catch (error) {
         console.log(error);
-        res.status(500).send({ msg: error.message });
+        res.status(400).send({ msg: error.message });
     }
 }
 
-
-
-module.exports.insert = (req, res) => {
+module.exports.cadastrar = async (req, res) => {
     try {
-
         let obj = req.body;
-              console.log(obj);
+        let query = `
+        insert into tb_cardapio(
+             id_restaurante
+            ,nome_produto
+            ,descricao
+            ,preco
+            ,id_menu
+            ,visivel
+            ,promocao
+            ,imagem
+            )
+        values(?,?,?,?,?,?,?,?)`
 
-
-              
-
-
-        let query = `insert into tb_cardapio(
-            id_restaurante,
-            nome_Produto,
-            descricao,
-            preco,
-            menu,
-            visivel,
-            promocao,
-            imagem)
-            values (?,?,?,?,?,?,?,?)`;
-
-
-        database.query(query, [
-            obj.id_restaurante,
-            obj.nome_Produto,
-            obj.descricao,
-            obj.preco,
-            obj.menu,
-            obj.visivel,
-            obj.promocao,
-            obj.imagem
+        let data = await database.query(query, [
+             req.token.id_restaurante
+            ,obj.nome_produto
+            ,obj.descricao
+            ,obj.preco
+            ,obj.id_menu
+            ,obj.visivel
+            ,obj.promocao
+            ,obj.imagem
         ]);
-    
-        res.json('OK');
+
+        res.json("OK");
     } catch (error) {
-        res.status(500).send(error.message);
+        console.log(error);
+        res.status(400).send({ msg: error.message });
     }
 }
 
-
-module.exports.update = (req, res) => {
+module.exports.editar = async (req, res) => {
     try {
-        let query = "insert into tb_operador() values (?)";
-        database.query(query, [req.body.id_restaurante]);
-        res.json('OK');
+        let obj = req.body;
+        let query = `
+        update tb_cardapio
+        set
+             nome_produto = ?
+            ,descricao = ?
+            ,preco = ?
+            ,id_menu = ?
+            ,visivel = ?
+            ,promocao = ?
+            ,imagem = ?
+        where
+            id_cardapio = ?
+            and id_restaurante = ?`
+
+        let data = await database.query(query, [
+             obj.nome_produto
+            ,obj.descricao
+            ,obj.preco
+            ,obj.id_menu
+            ,obj.visivel
+            ,obj.promocao
+            ,obj.imagem        
+            ,obj.id_cardapio
+            ,req.token.id_restaurante
+        ]);
+
+        res.json("OK");
     } catch (error) {
-        throw error;
+        console.log(error);
+        res.status(400).send({ msg: error.message });
     }
 }
 
-module.exports.delete = (req, res) => {
+module.exports.remover = async (req, res) => {
     try {
-        let query = "DELETE FROM tb_operador WHERE id_restaurante = ?";
-            database.query(query, [
-            obj.id_restaurante,
+        let obj = req.body;
+        let query = `
+        update tb_cardapio
+        set
+            ativo = 0
+        where
+            id_cardapio = ?
+            and id_restaurante = ?`
+
+        let data = await database.query(query, [
+             obj.id_cardapio
+            ,req.token.id_restaurante
         ]);
-        res.json('OK');
+
+        res.json("OK");
     } catch (error) {
-        throw error;
+        console.log(error);
+        res.status(400).send({ msg: error.message });
     }
 }
