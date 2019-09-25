@@ -308,6 +308,24 @@ module.exports.reativar = async (req, res) => {
     }
 }
 
+module.exports.obterVariaveisCadastro = async (req, res) => {
+    try {
+        let query = `
+        select * from tb_banco;
+        select * from tb_municipio;
+        select * from tb_estado;
+        select * from tb_tipo_conta;
+        select * from tb_tipo_cadastro_conta;
+        `;
+        let data = await database.mquery(query);
+        res.json(data);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ msg: error.message });
+    }
+}
+
 
 _checarSeCodigoExiste = async (codigo_restaurante) => {
     let data = await database.query("select 1 from tb_restaurante where codigo_restaurante = ?", codigo_restaurante);

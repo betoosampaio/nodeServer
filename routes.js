@@ -9,12 +9,12 @@ module.exports = (app) => {
     const cardapio = require('./controllers/cardapio.controller');
     const operador = require('./controllers/operador.controller');
     const menu = require('./controllers/menu.controller');
-    const tabelasVariaveis = require('./controllers/tabelasVariaveis.controller');
 
     app.get('/', (req, res) => { res.json("Server Online") });
     app.post('/login', auth.login);
 
     /* RESTAURANTE */
+    app.post('/restaurante/obterVariaveisCadastro', restaurante.obterVariaveisCadastro);
     app.post('/restaurante/checarSeCodigoExiste', restaurante.checarSeCodigoExiste);
     app.post('/restaurante/checarSeCNPJExiste', restaurante.checarSeCNPJExiste);
     app.post('/restaurante/cadastrar', restaurante.cadastrar);
@@ -35,20 +35,9 @@ module.exports = (app) => {
     app.post('/menu/editar', [authMW], menu.editar);
     app.post('/menu/remover', [authMW], menu.remover);
 
-
-
-
-
-    /* ROTAS PARA A PAGINA CARDÁPIO */
+    /* CARDAPIO */
     app.post('/cardapio/selectall', cardapio.selectAll);
     app.post('/cardapio/insert', cardapio.insert);
     app.post('/cardapio/update', cardapio.update);
     app.post('/cardapio/delete', cardapio.delete);
-
-    app.post('/tabelasVariaveis/banco/selectAll', tabelasVariaveis.banco_selectAll);
-    app.post('/tabelasVariaveis/municipio/selectAll', tabelasVariaveis.municipio_selectAll);
-    app.post('/tabelasVariaveis/estado/selectAll', tabelasVariaveis.estado_selectAll);
-    app.post('/tabelasVariaveis/tipoConta/selectAll', tabelasVariaveis.tipoConta_selectAll);
-    app.post('/tabelasVariaveis/tipoCadastroConta/selectAll', tabelasVariaveis.tipoCadastroConta_selectAll);
-
 }
