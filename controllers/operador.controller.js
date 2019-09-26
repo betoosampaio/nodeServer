@@ -6,6 +6,7 @@ module.exports.listar = async (req, res) => {
         let query = `
         select 
              o.id_operador
+            ,o.id_restaurante
             ,o.nome_operador
             ,o.id_perfil
             ,p.tipo_perfil
@@ -23,40 +24,46 @@ module.exports.listar = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(400).send({ msg: error.message });
+
     }
 }
 
-module.exports.cadastrar = async (req, res) => {
+
+module.exports.cadastrar = (req, res) => {
     try {
         let obj = req.body;
-        let query = `
-        insert into tb_operador(
-             nome_operador
-            ,id_restaurante
-            ,id_perfil
-            ,login_operador
-            ,senha_operador
-            )
-        values(?,?,?,?,?)`
 
-        let data = await database.query(query, [
-             obj.nome_operador
-            ,req.token.id_restaurante
-            ,obj.id_perfil
-            ,obj.login_operador
-            ,obj.senha_operador
+        console.log(obj);
+    
+        let query = `insert into tb_operador(
+            nome_operador,
+            id_restaurante,
+            id_perfil,
+            login_operador,
+            senha_operador)
+            values (?,?,?,?,?)`;
+
+
+        database.query(query, [
+            obj.nome_operador,
+            req.token.id_restaurante,
+            obj.id_perfil,
+            obj.login_operador,
+            obj.senha_operador,
         ]);
-
-        res.json("OK");
+    
+        res.json('OK');
     } catch (error) {
-        console.log(error);
-        res.status(400).send({ msg: error.message });
+        res.status(500).send(error.message);
     }
 }
+
+
 
 module.exports.editar = async (req, res) => {
     try {
         let obj = req.body;
+        console.log(obj)
         let query = `
         update tb_operador
         set
@@ -106,4 +113,3 @@ module.exports.remover = async (req, res) => {
         res.status(400).send({ msg: error.message });
     }
 }
-

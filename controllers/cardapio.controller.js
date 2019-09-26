@@ -2,6 +2,9 @@ const database = require('../config/database.config')
 
 module.exports.listar = async (req, res) => {
     try {
+    
+       
+
         let query = `
         select 
              c.id_cardapio
@@ -10,7 +13,6 @@ module.exports.listar = async (req, res) => {
             ,c.descricao
             ,c.preco
             ,c.id_menu
-            ,m.ds_menu
             ,c.visivel
             ,c.promocao
             ,c.imagem
@@ -31,8 +33,14 @@ module.exports.listar = async (req, res) => {
 }
 
 module.exports.cadastrar = async (req, res) => {
+
+
     try {
         let obj = req.body;
+       
+        obj.preco = Number.isInteger(obj.preco) ? obj.preco : obj.preco.replace(',', '.');
+     
+        console.log(obj);
         let query = `
         insert into tb_cardapio(
              id_restaurante
@@ -57,7 +65,7 @@ module.exports.cadastrar = async (req, res) => {
             ,obj.imagem
         ]);
 
-        res.json("OK");
+        res.json('OK');
     } catch (error) {
         console.log(error);
         res.status(400).send({ msg: error.message });
