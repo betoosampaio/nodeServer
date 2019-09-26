@@ -136,3 +136,14 @@ module.exports.remover = async (req, res) => {
         res.status(400).send({ msg: error.message });
     }
 }
+
+module.exports.listarPerfis = async (req, res) => {
+    try {
+        let query = 'select * from tb_perfil'
+        let data = await database.query(query);
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({ msg: error.message });
+    }
+}
