@@ -13,6 +13,7 @@ module.exports.listar = async (req, res) => {
             ,c.descricao
             ,c.preco
             ,c.id_menu
+            ,m.ds_menu
             ,c.visivel
             ,c.promocao
             ,c.imagem
