@@ -25,18 +25,21 @@ module.exports = (app) => {
 
     /* OPERADOR */
     app.post('/operador/listar', [authMW], operador.listar);
+    app.post('/operador/obter', [authMW], operador.obter);
     app.post('/operador/cadastrar', [authMW], operador.cadastrar);
     app.post('/operador/editar', [authMW], operador.editar);
     app.post('/operador/remover', [authMW], operador.remover);
 
     /* MENU */
     app.post('/menu/listar', [authMW], menu.listar);
+    app.post('/menu/obter', [authMW], menu.obter);
     app.post('/menu/cadastrar', [authMW], menu.cadastrar);
     app.post('/menu/editar', [authMW], menu.editar);
     app.post('/menu/remover', [authMW], menu.remover);
 
     /* CARDAPIO */
     app.post('/cardapio/listar', [authMW], cardapio.listar);
+    app.post('/cardapio/obter', [authMW], cardapio.obter);
     app.post('/cardapio/cadastrar', [authMW], cardapio.cadastrar);
     app.post('/cardapio/editar', [authMW], cardapio.editar);
     app.post('/cardapio/remover', [authMW], cardapio.remover);

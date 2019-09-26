@@ -2,9 +2,6 @@ const database = require('../config/database.config')
 
 module.exports.listar = async (req, res) => {
     try {
-    
-       
-
         let query = `
         select 
              c.id_cardapio
@@ -26,6 +23,36 @@ module.exports.listar = async (req, res) => {
             and c.ativo = 1`
 
         let data = await database.query(query, [req.token.id_restaurante]);
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({ msg: error.message });
+    }
+}
+
+module.exports.obter = async (req, res) => {
+    try {
+        let query = `
+        select 
+             c.id_cardapio
+            ,c.id_restaurante
+            ,c.nome_produto
+            ,c.descricao
+            ,c.preco
+            ,c.id_menu
+            ,m.ds_menu
+            ,c.visivel
+            ,c.promocao
+            ,c.imagem
+        from 
+            tb_cardapio c
+            inner join tb_menu m
+                on m.id_menu = c.id_menu
+        where 
+            c.id_restaurante = ?
+            and c.id_cardapio = ?`
+
+        let data = await database.query(query, [req.token.id_restaurante, req.body.id_cardapio]);
         res.json(data);
     } catch (error) {
         console.log(error);

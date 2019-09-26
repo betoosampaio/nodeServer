@@ -28,6 +28,31 @@ module.exports.listar = async (req, res) => {
     }
 }
 
+module.exports.obter = async (req, res) => {
+    try {
+        let query = `
+        select 
+             o.id_operador
+            ,o.id_restaurante
+            ,o.nome_operador
+            ,o.id_perfil
+            ,p.tipo_perfil
+            ,o.login_operador
+        from 
+            tb_operador o
+            inner join tb_perfil p
+                on p.id_perfil = o.id_perfil
+        where 
+            id_restaurante = ?
+            and id_operador = ?`
+
+        let data = await database.query(query, [req.token.id_restaurante, req.body.id_operador]);
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({ msg: error.message });
+    }
+}
 
 module.exports.cadastrar = (req, res) => {
     try {
@@ -57,8 +82,6 @@ module.exports.cadastrar = (req, res) => {
         res.status(500).send(error.message);
     }
 }
-
-
 
 module.exports.editar = async (req, res) => {
     try {

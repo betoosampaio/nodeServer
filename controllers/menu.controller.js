@@ -20,6 +20,26 @@ module.exports.listar = async (req, res) => {
     }
 }
 
+module.exports.obter = async (req, res) => {
+    try {
+        let query = `
+        select 
+             id_menu
+            ,ds_menu
+        from 
+            tb_menu
+        where 
+            id_restaurante = ?
+            and id_menu = ?`
+
+        let data = await database.query(query, [req.token.id_restaurante, req.body.id_menu]);
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({ msg: error.message });
+    }
+}
+
 module.exports.cadastrar = async (req, res) => {
     try {
         let obj = req.body;
