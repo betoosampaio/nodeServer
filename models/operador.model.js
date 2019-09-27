@@ -1,16 +1,16 @@
 const validatejs = require('validate.js');
 
-let constraints = {
+let constraints_cadastrar = {
     nome_operador: {
         type: "string",
         presence: true,
         length: {
             minimum: 4,
-            maximum: 150,
+            maximum: 255,
         },
     },
     id_perfil: {
-        type: "integer",
+        type: 'integer',
         presence: true
     },
     login_operador: {
@@ -35,10 +35,54 @@ let constraints = {
     },
 }
 
+let constraints_editar = {
+    nome_operador: {
+        type: "string",
+        presence: true,
+        length: {
+            minimum: 4,
+            maximum: 255,
+        },
+    },
+    id_perfil: {
+        type: 'integer',
+        presence: true
+    },
+    login_operador: {
+        type: "string",
+        presence: true,
+        length: {
+            minimum: 4,
+            maximum: 100,
+        },
+    },
+    senha_operador: {
+        type: "string",
+        presence: true,
+        length: {
+            minimum: 8,
+            maximum: 100,
+        },
+        regex: {
+            pattern: /^(?=.*[a-zA-Z])(?=.*[0-9])/,
+            message: "deve conter letras e números"
+        },
+    },
+    ativo:{
+        type: 'integer',
+        presence: true,
+        numericality:{
+            greaterThanOrEqualTo: 0,
+            lessThanOrEqualTo: 1
+        }
+    }
+}
+
 validatejs.validators.regex = function (value, options, key, attributes) {
     if (!(options.pattern).test(value))
         return options.message;
 };
 
-module.exports.validar = obj => validatejs.validate(obj, constraints, { format: "flat" });
+module.exports.validarCadastrar = obj => validatejs.validate(obj, constraints_cadastrar, { format: "flat" });
+module.exports.validarEditar = obj => validatejs.validate(obj, constraints_editar, { format: "flat" });
 

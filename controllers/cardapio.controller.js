@@ -1,5 +1,5 @@
 const database = require('../config/database.config');
-const Cardapio = require('../models/cardapio.model');
+const model = require('../models/cardapio.model');
 
 module.exports.listar = async (req, res) => {
     try {
@@ -15,13 +15,14 @@ module.exports.listar = async (req, res) => {
             ,c.visivel
             ,c.promocao
             ,c.imagem
+            ,c.ativo
         from 
             tb_cardapio c
             inner join tb_menu m
                 on m.id_menu = c.id_menu
         where 
             c.id_restaurante = ?
-            and c.ativo = 1`
+            and c.removido = 0`
 
         let data = await database.query(query, [req.token.id_restaurante]);
         res.json(data);
@@ -45,6 +46,7 @@ module.exports.obter = async (req, res) => {
             ,c.visivel
             ,c.promocao
             ,c.imagem
+            ,c.ativo
         from 
             tb_cardapio c
             inner join tb_menu m
@@ -65,7 +67,7 @@ module.exports.cadastrar = async (req, res) => {
     try {
         let obj = req.body;
        
-        let errors = Cardapio.validar(obj);
+        let errors = model.validarCadastrar(obj);
         if (errors)
             throw new Error(errors[0]);
      
@@ -104,7 +106,7 @@ module.exports.editar = async (req, res) => {
     try {
         let obj = req.body;
 
-        let errors = Cardapio.validar(obj);
+        let errors = model.validarEditar(obj);
         if (errors)
             throw new Error(errors[0]);
 
@@ -118,6 +120,7 @@ module.exports.editar = async (req, res) => {
             ,visivel = ?
             ,promocao = ?
             ,imagem = ?
+            ,ativo = ?
         where
             id_cardapio = ?
             and id_restaurante = ?`
@@ -129,7 +132,8 @@ module.exports.editar = async (req, res) => {
             ,obj.id_menu
             ,obj.visivel
             ,obj.promocao
-            ,obj.imagem        
+            ,obj.imagem
+            ,obj.ativo        
             ,obj.id_cardapio
             ,req.token.id_restaurante
         ]);
@@ -147,7 +151,7 @@ module.exports.remover = async (req, res) => {
         let query = `
         update tb_cardapio
         set
-            ativo = 0
+            removido = 1
         where
             id_cardapio = ?
             and id_restaurante = ?`

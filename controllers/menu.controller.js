@@ -7,11 +7,12 @@ module.exports.listar = async (req, res) => {
         select 
              id_menu
             ,ds_menu
+            ,ativo
         from 
             tb_menu
         where 
             id_restaurante = ?
-            and ativo = 1`
+            and removido = 0`
 
         let data = await database.query(query, [req.token.id_restaurante]);
         res.json(data);
@@ -27,6 +28,7 @@ module.exports.obter = async (req, res) => {
         select 
              id_menu
             ,ds_menu
+            ,ativo
         from 
             tb_menu
         where 
@@ -45,7 +47,7 @@ module.exports.cadastrar = async (req, res) => {
     try {
         let obj = req.body;
 
-        let errors = model.validar(obj);
+        let errors = model.validarCadastrar(obj);
         if (errors)
             throw new Error(errors[0]);
 
@@ -57,8 +59,8 @@ module.exports.cadastrar = async (req, res) => {
         values(?,?)`
 
         let data = await database.query(query, [
-             obj.ds_menu
-            ,req.token.id_restaurante
+            obj.ds_menu
+            , req.token.id_restaurante
         ]);
 
         res.json("OK");
@@ -72,22 +74,24 @@ module.exports.editar = async (req, res) => {
     try {
         let obj = req.body;
 
-        let errors = model.validar(obj);
+        let errors = model.validarEditar(obj);
         if (errors)
             throw new Error(errors[0]);
 
         let query = `
         update tb_menu
         set
-               ds_menu = ?
+            ds_menu = ?,
+            ativo = ?
         where
             id_menu = ?
             and id_restaurante = ?`
 
         let data = await database.query(query, [
-             obj.ds_menu            
-            ,obj.id_menu
-            ,req.token.id_restaurante
+            obj.ds_menu,
+            obj.ativo,
+            obj.id_menu,
+            req.token.id_restaurante
         ]);
 
         res.json("OK");
@@ -103,14 +107,14 @@ module.exports.remover = async (req, res) => {
         let query = `
         update tb_menu
         set
-            ativo = 0
+            removido = 1
         where
             id_menu = ?
             and id_restaurante = ?`
 
         let data = await database.query(query, [
-             obj.id_menu
-            ,req.token.id_restaurante
+            obj.id_menu
+            , req.token.id_restaurante
         ]);
 
         res.json("OK");

@@ -1,5 +1,5 @@
 const database = require('../config/database.config');
-const Operador = require('../models/operador.model');
+const model = require('../models/operador.model');
 
 
 module.exports.listar = async (req, res) => {
@@ -12,13 +12,14 @@ module.exports.listar = async (req, res) => {
             ,o.id_perfil
             ,p.tipo_perfil
             ,o.login_operador
+            ,o.ativo
         from 
             tb_operador o
             inner join tb_perfil p
                 on p.id_perfil = o.id_perfil
         where 
             id_restaurante = ?
-            and ativo = 1`
+            and removido = 0`
 
         let data = await database.query(query, [req.token.id_restaurante]);
         res.json(data);
@@ -39,6 +40,7 @@ module.exports.obter = async (req, res) => {
             ,o.id_perfil
             ,p.tipo_perfil
             ,o.login_operador
+            ,o.ativo
         from 
             tb_operador o
             inner join tb_perfil p
@@ -59,10 +61,10 @@ module.exports.cadastrar = async (req, res) => {
     try {
         let obj = req.body;
 
-        let errors = Operador.validar(obj);
+        let errors = model.validarCadastrar(obj);
         if (errors)
             throw new Error(errors[0]);
-       
+
         let query = `insert into tb_operador(
             nome_operador,
             id_restaurante,
@@ -88,8 +90,8 @@ module.exports.cadastrar = async (req, res) => {
 module.exports.editar = async (req, res) => {
     try {
         let obj = req.body;
-        
-        let errors = Operador.validar(obj);
+
+        let errors = model.validarEditar(obj);
         if (errors)
             throw new Error(errors[0]);
 
@@ -100,17 +102,19 @@ module.exports.editar = async (req, res) => {
               ,id_perfil = ?
               ,login_operador = ?
               ,senha_operador = ?
+              ,ativo = ?
         where
             id_operador = ?
             and id_restaurante = ?`
 
         await database.query(query, [
-            obj.nome_operador
-            , obj.id_perfil
-            , obj.login_operador
-            , obj.senha_operador
-            , obj.id_operador
-            , req.token.id_restaurante
+            obj.nome_operador,
+            obj.id_perfil,
+            obj.login_operador,
+            obj.senha_operador,
+            obj.ativo,
+            obj.id_operador,      
+            req.token.id_restaurante
         ]);
 
         res.json("OK");
@@ -126,7 +130,7 @@ module.exports.remover = async (req, res) => {
         let query = `
         update tb_operador
         set
-            ativo = 0
+            removido = 1
         where
             id_operador = ?
             and id_restaurante = ?`

@@ -1,6 +1,6 @@
 const validatejs = require('validate.js');
 
-let constraints = {
+let constraints_cadastrar = {
     ds_menu: {
         type: "string",
         presence: true,
@@ -11,5 +11,26 @@ let constraints = {
     },
 }
 
-module.exports.validar = obj => validatejs.validate(obj, constraints, { format: "flat" });
+let constraints_editar = {
+    ds_menu: {
+        type: "string",
+        presence: true,
+        length: {
+            minimum: 3,
+            maximum: 150,
+        },
+    },
+    ativo:{
+        type: 'integer',
+        presence: true,
+        numericality:{
+            greaterThanOrEqualTo: 0,
+            lessThanOrEqualTo: 1
+        }
+    }
+}
+
+module.exports.validarCadastrar = obj => validatejs.validate(obj, constraints_cadastrar, { format: "flat" });
+module.exports.validarEditar = obj => validatejs.validate(obj, constraints_editar, { format: "flat" });
+
 
