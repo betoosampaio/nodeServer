@@ -24,7 +24,7 @@ WHERE
             throw new Error('Login e/ou senha incorreto');
 
         let token = data[0];
-        token.expire = (new Date()).setHours((new Date()).getHours()+4);
+        token.expire = (new Date()).setHours((new Date()).getHours()+6);
         let tokenCript = crypto.encrypt(JSON.stringify(token));
         res.json(tokenCript);
     } catch (error) {
