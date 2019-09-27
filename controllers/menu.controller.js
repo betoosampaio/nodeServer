@@ -1,4 +1,5 @@
 const database = require('../config/database.config')
+const model = require('../models/menu.model');
 
 module.exports.listar = async (req, res) => {
     try {
@@ -43,6 +44,11 @@ module.exports.obter = async (req, res) => {
 module.exports.cadastrar = async (req, res) => {
     try {
         let obj = req.body;
+
+        let errors = model.validar(obj);
+        if (errors)
+            throw new Error(errors[0]);
+
         let query = `
         insert into tb_menu(
               ds_menu
@@ -65,6 +71,11 @@ module.exports.cadastrar = async (req, res) => {
 module.exports.editar = async (req, res) => {
     try {
         let obj = req.body;
+
+        let errors = model.validar(obj);
+        if (errors)
+            throw new Error(errors[0]);
+
         let query = `
         update tb_menu
         set

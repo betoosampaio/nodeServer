@@ -1,4 +1,5 @@
-const database = require('../config/database.config')
+const database = require('../config/database.config');
+const Cardapio = require('../models/cardapio.model');
 
 module.exports.listar = async (req, res) => {
     try {
@@ -61,14 +62,13 @@ module.exports.obter = async (req, res) => {
 }
 
 module.exports.cadastrar = async (req, res) => {
-
-
     try {
         let obj = req.body;
        
-        obj.preco = Number.isInteger(obj.preco) ? obj.preco : obj.preco.replace(',', '.');
+        let errors = Cardapio.validar(obj);
+        if (errors)
+            throw new Error(errors[0]);
      
-        console.log(obj);
         let query = `
         insert into tb_cardapio(
              id_restaurante
@@ -103,6 +103,11 @@ module.exports.cadastrar = async (req, res) => {
 module.exports.editar = async (req, res) => {
     try {
         let obj = req.body;
+
+        let errors = Cardapio.validar(obj);
+        if (errors)
+            throw new Error(errors[0]);
+
         let query = `
         update tb_cardapio
         set
