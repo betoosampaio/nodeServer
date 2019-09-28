@@ -15,7 +15,10 @@ module.exports = (req, res, next) => {
         let log = {
             start: start,
             responseTime: responseTime,
-            url: this.req.url,
+            ip: this.req.ip,
+            hostname: this.req.hostname,
+            originalUrl: this.req.originalUrl,
+            path: this.req.path,
             method: this.req.method,
             httpVersion: this.req.httpVersion,
             query: this.req.query,
