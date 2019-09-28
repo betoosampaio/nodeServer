@@ -165,6 +165,14 @@ let constraints_cadastrar = {
 }
 
 let constraints_editar = {
+    codigo_restaurante: {
+        presence: true,
+        type: 'string',   
+        length: {
+            minimum: 4,
+            maximum: 50
+        }
+    },
     nome_fantasia: {
         type: 'string',
         presence: true,

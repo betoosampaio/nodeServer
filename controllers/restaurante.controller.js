@@ -29,17 +29,17 @@ module.exports.cadastrar = async (req, res) => {
         if (errors)
             throw new Error(errors[0]);
 
-            
+
         let cnpjExists = await _checarSeCNPJExiste(obj.cnpj);
         if (cnpjExists) {
             throw new Error('CNPJ já cadastrado');
         }
-       
+
         let loginExists = await _checarSeCodigoExiste(obj.codigo_restaurante);
         if (loginExists) {
             throw new Error('Codigo de restaurante já está sendo utilizado');
         }
-  
+
         // ## INSERE RESTAURANTE ##
         let query = `insert into tb_restaurante(
             cnpj,
@@ -124,15 +124,21 @@ module.exports.obter = async (req, res) => {
 module.exports.editar = async (req, res) => {
     try {
         let obj = req.body;
-      
+
         let errors = model.validarEditar(obj);
         if (errors)
             throw new Error(errors[0]);
 
+        let loginExists = await _checarSeCodigoExisteExclusive(obj.codigo_restaurante, req.token.id_restaurante);
+        if (loginExists) {
+            throw new Error('Codigo de restaurante já está sendo utilizado');
+        }
+
         let query = `
         update tb_restaurante
         set
-             nome_fantasia = ?
+             codigo_restaurante = ?
+            ,nome_fantasia = ?
             ,cep = ?
             ,logradouro = ?
             ,numero = ?
@@ -154,6 +160,7 @@ module.exports.editar = async (req, res) => {
             id_restaurante = ?;`;
 
         await database.query(query, [
+            obj.codigo_restaurante,
             obj.nome_fantasia,
             obj.cep,
             obj.logradouro,
@@ -186,7 +193,7 @@ module.exports.editar = async (req, res) => {
 module.exports.inativar = async (req, res) => {
     try {
         let obj = req.body;
-      
+
         let query = `
         update tb_restaurante
         set
@@ -246,6 +253,12 @@ module.exports.obterVariaveisCadastro = async (req, res) => {
 
 _checarSeCodigoExiste = async (codigo_restaurante) => {
     let data = await database.query("select 1 from tb_restaurante where codigo_restaurante = ?", codigo_restaurante);
+    return data.length > 0 ? true : false;
+}
+
+_checarSeCodigoExisteExclusive = async (codigo_restaurante, id_restaurante) => {
+    let query = `select 1 from tb_restaurante where codigo_restaurante = ? and id_restaurante != ?`;
+    let data = await database.query(query, [codigo_restaurante, id_restaurante]);
     return data.length > 0 ? true : false;
 }
 

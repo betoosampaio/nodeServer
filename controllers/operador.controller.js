@@ -65,6 +65,11 @@ module.exports.cadastrar = async (req, res) => {
         if (errors)
             throw new Error(errors[0]);
 
+        let loginExists = await _checarSeLoginExiste(obj.login_operador, req.token.id_restaurante);
+        if (loginExists) {
+            throw new Error('Este login já está sendo utilizado');
+        }
+
         let query = `insert into tb_operador(
             nome_operador,
             id_restaurante,
@@ -95,6 +100,11 @@ module.exports.editar = async (req, res) => {
         if (errors)
             throw new Error(errors[0]);
 
+        let loginExists = await _checarSeLoginExisteExclusive(obj.login_operador, req.token.id_restaurante, obj.id_operador);
+        if (loginExists) {
+            throw new Error('Este login já está sendo utilizado');
+        }
+
         let query = `
         update tb_operador
         set
@@ -113,7 +123,7 @@ module.exports.editar = async (req, res) => {
             obj.login_operador,
             obj.senha_operador,
             obj.ativo,
-            obj.id_operador,      
+            obj.id_operador,
             req.token.id_restaurante
         ]);
 
@@ -156,4 +166,15 @@ module.exports.listarPerfis = async (req, res) => {
         console.log(error);
         res.status(400).send({ msg: error.message });
     }
+}
+
+_checarSeLoginExiste = async (login_operador, id_restaurante) => {
+    let data = await database.query("select 1 from tb_operador where login_operador = ? and id_restaurante = ?", [login_operador, id_restaurante]);
+    return data.length > 0 ? true : false;
+}
+
+_checarSeLoginExisteExclusive = async (login_operador, id_restaurante, id_operador) => {
+    let query = `select 1 from tb_operador where login_operador = ? and id_restaurante = ? and id_operador != ?`;
+    let data = await database.query(query, [login_operador, id_restaurante, id_operador]);
+    return data.length > 0 ? true : false;
 }
