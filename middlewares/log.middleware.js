@@ -1,4 +1,6 @@
 
+const MongoClient = require('mongodb').MongoClient;
+
 module.exports = (req, res, next) => {
     let start = new Date();
     let originalSend = res.end;
@@ -10,7 +12,6 @@ module.exports = (req, res, next) => {
 
     res.on("finish", function () {
         let responseTime = new Date() - start;
-
         let log = {
             start: start,
             responseTime: responseTime,
@@ -22,14 +23,27 @@ module.exports = (req, res, next) => {
             body: this.req.body,
             statusMessage: this.statusMessage,
             statusCode: this.statusCode,
-            responseBody: this.responseBody.toString()
+            responseBody: this.responseBody.toString(),
+            token: this.req.token
         };
 
-        try {
-            console.log(log);
-        }
-        catch{ }
-               
+
+        console.log(log);
+
+        let opt = {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        };
+
+        MongoClient.connect(process.env.MONGODB_LOG, opt, function (err, client) {
+            if (err) return;
+            let collection = client.db('logdb').collection('logs');
+            collection.insertOne(log, function (err, dbs) {
+                client.close();
+            });
+        });
+
+
     });
 
     next();
