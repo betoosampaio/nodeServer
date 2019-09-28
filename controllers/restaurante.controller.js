@@ -6,7 +6,6 @@ module.exports.checarSeCodigoExiste = async (req, res) => {
         let exists = await _checarSeCodigoExiste(req.body.codigo_restaurante)
         res.json({ exists: exists });
     } catch (error) {
-        console.log(error);
         res.status(500).send({ msg: error.message });
     }
 }
@@ -16,7 +15,6 @@ module.exports.checarSeCNPJExiste = async (req, res) => {
         let exists = await _checarSeCNPJExiste(req.body.cnpj)
         res.json({ exists: exists });
     } catch (error) {
-        console.log(error);
         res.status(500).send({ msg: error.message });
     }
 }
@@ -104,7 +102,6 @@ module.exports.cadastrar = async (req, res) => {
         res.json('OK');
 
     } catch (error) {
-        console.log(error);
         res.status(400).send({ msg: error.message });
     }
 }
@@ -116,7 +113,6 @@ module.exports.obter = async (req, res) => {
         res.json(data);
 
     } catch (error) {
-        console.log(error);
         res.status(400).send({ msg: error.message });
     }
 }
@@ -185,7 +181,6 @@ module.exports.editar = async (req, res) => {
         res.json('OK');
 
     } catch (error) {
-        console.log(error);
         res.status(400).send({ msg: error.message });
     }
 }
@@ -206,15 +201,12 @@ module.exports.inativar = async (req, res) => {
         res.json('OK');
 
     } catch (error) {
-        console.log(error);
         res.status(400).send({ msg: error.message });
     }
 }
 
 module.exports.reativar = async (req, res) => {
     try {
-        let obj = req.body;
-
         let query = `
         update tb_restaurante
         set
@@ -227,7 +219,6 @@ module.exports.reativar = async (req, res) => {
         res.json('OK');
 
     } catch (error) {
-        console.log(error);
         res.status(400).send({ msg: error.message });
     }
 }
@@ -245,7 +236,6 @@ module.exports.obterVariaveisCadastro = async (req, res) => {
         res.json(data);
 
     } catch (error) {
-        console.log(error);
         res.status(500).send({ msg: error.message });
     }
 }

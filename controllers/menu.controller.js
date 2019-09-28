@@ -17,7 +17,6 @@ module.exports.listar = async (req, res) => {
         let data = await database.query(query, [req.token.id_restaurante]);
         res.json(data);
     } catch (error) {
-        console.log(error);
         res.status(400).send({ msg: error.message });
     }
 }
@@ -38,7 +37,6 @@ module.exports.obter = async (req, res) => {
         let data = await database.query(query, [req.token.id_restaurante, req.body.id_menu]);
         res.json(data);
     } catch (error) {
-        console.log(error);
         res.status(400).send({ msg: error.message });
     }
 }
@@ -65,7 +63,6 @@ module.exports.cadastrar = async (req, res) => {
 
         res.json("OK");
     } catch (error) {
-        console.log(error);
         res.status(400).send({ msg: error.message });
     }
 }
@@ -96,7 +93,6 @@ module.exports.editar = async (req, res) => {
 
         res.json("OK");
     } catch (error) {
-        console.log(error);
         res.status(400).send({ msg: error.message });
     }
 }
@@ -119,7 +115,6 @@ module.exports.remover = async (req, res) => {
 
         res.json("OK");
     } catch (error) {
-        console.log(error);
         res.status(400).send({ msg: error.message });
     }
 }

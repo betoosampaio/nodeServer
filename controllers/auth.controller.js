@@ -28,7 +28,6 @@ WHERE
         let tokenCript = crypto.encrypt(JSON.stringify(token));
         res.json(tokenCript);
     } catch (error) {
-        console.log(error);
         res.status(500).send({ msg: error.message });
     }
 }

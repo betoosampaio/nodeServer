@@ -2,6 +2,9 @@
 
 module.exports = (app) => {
 
+    const logMW = require('./middlewares/log.middleware');
+    app.use(logMW);
+
     const authMW = require('./middlewares/auth.middleware');
 
     const restaurante = require('./controllers/restaurante.controller');
