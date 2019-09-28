@@ -1,28 +1,28 @@
 const database = require('../config/database.config');
-const model = require('../models/cardapio.model');
+const model = require('../models/produto.model');
 
 module.exports.listar = async (req, res) => {
     try {
         let query = `
         select 
-             c.id_cardapio
-            ,c.id_restaurante
-            ,c.nome_produto
-            ,c.descricao
-            ,c.preco
-            ,c.id_menu
+             p.id_produto
+            ,p.id_restaurante
+            ,p.nome_produto
+            ,p.descricao
+            ,p.preco
+            ,p.id_menu
             ,m.ds_menu
-            ,c.visivel
-            ,c.promocao
-            ,c.imagem
-            ,c.ativo
+            ,p.visivel
+            ,p.promocao
+            ,p.imagem
+            ,p.ativo
         from 
-            tb_cardapio c
+            tb_produto p
             inner join tb_menu m
-                on m.id_menu = c.id_menu
+                on m.id_menu = p.id_menu
         where 
-            c.id_restaurante = ?
-            and c.removido = 0`
+            p.id_restaurante = ?
+            and p.removido = 0`
 
         let data = await database.query(query, [req.token.id_restaurante]);
         res.json(data);
@@ -36,26 +36,26 @@ module.exports.obter = async (req, res) => {
     try {
         let query = `
         select 
-             c.id_cardapio
-            ,c.id_restaurante
-            ,c.nome_produto
-            ,c.descricao
-            ,c.preco
-            ,c.id_menu
+             p.id_produto
+            ,p.id_restaurante
+            ,p.nome_produto
+            ,p.descricao
+            ,p.preco
+            ,p.id_menu
             ,m.ds_menu
-            ,c.visivel
-            ,c.promocao
-            ,c.imagem
-            ,c.ativo
+            ,p.visivel
+            ,p.promocao
+            ,p.imagem
+            ,p.ativo
         from 
-            tb_cardapio c
+            tb_produto p
             inner join tb_menu m
-                on m.id_menu = c.id_menu
+                on m.id_menu = p.id_menu
         where 
-            c.id_restaurante = ?
-            and c.id_cardapio = ?`
+            p.id_restaurante = ?
+            and p.id_produto = ?`
 
-        let data = await database.query(query, [req.token.id_restaurante, req.body.id_cardapio]);
+        let data = await database.query(query, [req.token.id_restaurante, req.body.id_produto]);
         res.json(data);
     } catch (error) {
         console.log(error);
@@ -72,7 +72,7 @@ module.exports.cadastrar = async (req, res) => {
             throw new Error(errors[0]);
      
         let query = `
-        insert into tb_cardapio(
+        insert into tb_produto(
              id_restaurante
             ,nome_produto
             ,descricao
@@ -111,7 +111,7 @@ module.exports.editar = async (req, res) => {
             throw new Error(errors[0]);
 
         let query = `
-        update tb_cardapio
+        update tb_produto
         set
              nome_produto = ?
             ,descricao = ?
@@ -122,7 +122,7 @@ module.exports.editar = async (req, res) => {
             ,imagem = ?
             ,ativo = ?
         where
-            id_cardapio = ?
+            id_produto = ?
             and id_restaurante = ?`
 
         let data = await database.query(query, [
@@ -134,7 +134,7 @@ module.exports.editar = async (req, res) => {
             ,obj.promocao
             ,obj.imagem
             ,obj.ativo        
-            ,obj.id_cardapio
+            ,obj.id_produto
             ,req.token.id_restaurante
         ]);
 
@@ -149,15 +149,15 @@ module.exports.remover = async (req, res) => {
     try {
         let obj = req.body;
         let query = `
-        update tb_cardapio
+        update tb_produto
         set
             removido = 1
         where
-            id_cardapio = ?
+            id_produto = ?
             and id_restaurante = ?`
 
         let data = await database.query(query, [
-             obj.id_cardapio
+             obj.id_produto
             ,req.token.id_restaurante
         ]);
 

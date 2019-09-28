@@ -6,7 +6,7 @@ module.exports = (app) => {
 
     const restaurante = require('./controllers/restaurante.controller');
     const auth = require('./controllers/auth.controller');
-    const cardapio = require('./controllers/cardapio.controller');
+    const produto = require('./controllers/produto.controller');
     const operador = require('./controllers/operador.controller');
     const menu = require('./controllers/menu.controller');
 
@@ -38,10 +38,10 @@ module.exports = (app) => {
     app.post('/menu/editar', [authMW], menu.editar);
     app.post('/menu/remover', [authMW], menu.remover);
 
-    /* CARDAPIO */
-    app.post('/cardapio/listar', [authMW], cardapio.listar);
-    app.post('/cardapio/obter', [authMW], cardapio.obter);
-    app.post('/cardapio/cadastrar', [authMW], cardapio.cadastrar);
-    app.post('/cardapio/editar', [authMW], cardapio.editar);
-    app.post('/cardapio/remover', [authMW], cardapio.remover);
+    /* PRODUTO */
+    app.post('/produto/listar', [authMW], produto.listar);
+    app.post('/produto/obter', [authMW], produto.obter);
+    app.post('/produto/cadastrar', [authMW], produto.cadastrar);
+    app.post('/produto/editar', [authMW], produto.editar);
+    app.post('/produto/remover', [authMW], produto.remover);
 }
