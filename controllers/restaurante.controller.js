@@ -1,4 +1,4 @@
-const database = require('../config/database.config');
+const mariadb = require('../utils/mariadb.util');
 const model = require('../models/restaurante.model');
 
 module.exports.checarSeCodigoExiste = async (req, res) => {
@@ -63,7 +63,7 @@ module.exports.cadastrar = async (req, res) => {
             values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
             `;
 
-        let data = await database.query(query, [
+        let data = await mariadb.query(query, [
             obj.cnpj,
             obj.nome_fantasia,
             obj.cep,
@@ -90,14 +90,14 @@ module.exports.cadastrar = async (req, res) => {
 
         // ## INSERE LOGIN ADM ##
         query = `insert into tb_operador(nome_operador,id_restaurante,id_perfil,login_operador,senha_operador) values (?,?,1,?,?)`;
-        await database.query(query, [obj.nome_administrador, id_restaurante, obj.login, obj.senha]);
+        await mariadb.query(query, [obj.nome_administrador, id_restaurante, obj.login, obj.senha]);
 
         // ## INSERE OS MENUS PADRÕES ##
         query = `
         insert into tb_menu(ds_menu, id_restaurante, ativo)
         select ds_menu,?,1 from tb_menu_padrao
         `
-        await database.query(query, [id_restaurante]);
+        await mariadb.query(query, [id_restaurante]);
 
         res.json('OK');
 
@@ -109,7 +109,7 @@ module.exports.cadastrar = async (req, res) => {
 module.exports.obter = async (req, res) => {
     try {
         let query = `select * from tb_restaurante where id_restaurante = ?`;
-        let data = await database.query(query, [req.token.id_restaurante]);
+        let data = await mariadb.query(query, [req.token.id_restaurante]);
         res.json(data);
 
     } catch (error) {
@@ -155,7 +155,7 @@ module.exports.editar = async (req, res) => {
         where
             id_restaurante = ?;`;
 
-        await database.query(query, [
+        await mariadb.query(query, [
             obj.codigo_restaurante,
             obj.nome_fantasia,
             obj.cep,
@@ -196,7 +196,7 @@ module.exports.inativar = async (req, res) => {
         where
             id_restaurante = ?;`;
 
-        await database.query(query, [req.token.id_restaurante]);
+        await mariadb.query(query, [req.token.id_restaurante]);
 
         res.json('OK');
 
@@ -214,7 +214,7 @@ module.exports.reativar = async (req, res) => {
         where
             id_restaurante = ?;`;
 
-        await database.query(query, [req.token.id_restaurante]);
+        await mariadb.query(query, [req.token.id_restaurante]);
 
         res.json('OK');
 
@@ -232,7 +232,7 @@ module.exports.obterVariaveisCadastro = async (req, res) => {
         select * from tb_tipo_conta;
         select * from tb_tipo_cadastro_conta;
         `;
-        let data = await database.mquery(query);
+        let data = await mariadb.mquery(query);
         res.json(data);
 
     } catch (error) {
@@ -242,17 +242,17 @@ module.exports.obterVariaveisCadastro = async (req, res) => {
 
 
 _checarSeCodigoExiste = async (codigo_restaurante) => {
-    let data = await database.query("select 1 from tb_restaurante where codigo_restaurante = ?", codigo_restaurante);
+    let data = await mariadb.query("select 1 from tb_restaurante where codigo_restaurante = ?", codigo_restaurante);
     return data.length > 0 ? true : false;
 }
 
 _checarSeCodigoExisteExclusive = async (codigo_restaurante, id_restaurante) => {
     let query = `select 1 from tb_restaurante where codigo_restaurante = ? and id_restaurante != ?`;
-    let data = await database.query(query, [codigo_restaurante, id_restaurante]);
+    let data = await mariadb.query(query, [codigo_restaurante, id_restaurante]);
     return data.length > 0 ? true : false;
 }
 
 _checarSeCNPJExiste = async (cnpj) => {
-    let data = await database.query("select 1 from tb_restaurante where cnpj = ?", cnpj);
+    let data = await mariadb.query("select 1 from tb_restaurante where cnpj = ?", cnpj);
     return data.length > 0 ? true : false;
 }

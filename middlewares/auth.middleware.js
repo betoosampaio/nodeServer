@@ -1,5 +1,5 @@
 
-const crypto = require('../config/crypto.config')
+const crypto = require('../utils/crypto.util')
 
 module.exports = (req, res, next) => {
     try {

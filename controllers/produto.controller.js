@@ -1,4 +1,4 @@
-const database = require('../config/database.config');
+const mariadb = require('../utils/mariadb.util');
 const model = require('../models/produto.model');
 
 module.exports.listar = async (req, res) => {
@@ -24,7 +24,7 @@ module.exports.listar = async (req, res) => {
             p.id_restaurante = ?
             and p.removido = 0`
 
-        let data = await database.query(query, [req.token.id_restaurante]);
+        let data = await mariadb.query(query, [req.token.id_restaurante]);
         res.json(data);
     } catch (error) {
         res.status(400).send({ msg: error.message });
@@ -54,7 +54,7 @@ module.exports.obter = async (req, res) => {
             p.id_restaurante = ?
             and p.id_produto = ?`
 
-        let data = await database.query(query, [req.token.id_restaurante, req.body.id_produto]);
+        let data = await mariadb.query(query, [req.token.id_restaurante, req.body.id_produto]);
         res.json(data);
     } catch (error) {
         res.status(400).send({ msg: error.message });
@@ -82,7 +82,7 @@ module.exports.cadastrar = async (req, res) => {
             )
         values(?,?,?,?,?,?,?,?)`
 
-        let data = await database.query(query, [
+        let data = await mariadb.query(query, [
              req.token.id_restaurante
             ,obj.nome_produto
             ,obj.descricao
@@ -122,7 +122,7 @@ module.exports.editar = async (req, res) => {
             id_produto = ?
             and id_restaurante = ?`
 
-        let data = await database.query(query, [
+        let data = await mariadb.query(query, [
              obj.nome_produto
             ,obj.descricao
             ,obj.preco
@@ -152,7 +152,7 @@ module.exports.remover = async (req, res) => {
             id_produto = ?
             and id_restaurante = ?`
 
-        let data = await database.query(query, [
+        let data = await mariadb.query(query, [
              obj.id_produto
             ,req.token.id_restaurante
         ]);

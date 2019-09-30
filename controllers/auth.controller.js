@@ -1,5 +1,5 @@
-const crypto = require('../config/crypto.config');
-const database = require('../config/database.config');
+const crypto = require('../utils/crypto.util');
+const mariadb = require('../utils/mariadb.util');
 const model = require('../models/credenciais.model');
 const MongoClient = require('mongodb').MongoClient;
 
@@ -34,7 +34,7 @@ WHERE
 	AND o.senha_operador = ?
         `);
 
-        let data = await database.query(query, [obj.codigo_restaurante, obj.login_operador, obj.senha_operador]);
+        let data = await mariadb.query(query, [obj.codigo_restaurante, obj.login_operador, obj.senha_operador]);
 
         if (data.length == 0)
             throw new Error('Login e/ou senha incorreto');

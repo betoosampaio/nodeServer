@@ -2,11 +2,12 @@
 
 module.exports = (app) => {
 
+    /* MIDDLEWARES */
     const logMW = require('./middlewares/log.middleware');
+    const authMW = require('./middlewares/auth.middleware');
     app.use(logMW);
 
-    const authMW = require('./middlewares/auth.middleware');
-
+    /* CONTROLLERS */
     const restaurante = require('./controllers/restaurante.controller');
     const auth = require('./controllers/auth.controller');
     const produto = require('./controllers/produto.controller');

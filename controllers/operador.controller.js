@@ -1,4 +1,4 @@
-const database = require('../config/database.config');
+const mariadb = require('../utils/mariadb.util');
 const model = require('../models/operador.model');
 
 
@@ -21,7 +21,7 @@ module.exports.listar = async (req, res) => {
             id_restaurante = ?
             and removido = 0`
 
-        let data = await database.query(query, [req.token.id_restaurante]);
+        let data = await mariadb.query(query, [req.token.id_restaurante]);
         res.json(data);
     } catch (error) {
         res.status(400).send({ msg: error.message });
@@ -48,7 +48,7 @@ module.exports.obter = async (req, res) => {
             id_restaurante = ?
             and id_operador = ?`
 
-        let data = await database.query(query, [req.token.id_restaurante, req.body.id_operador]);
+        let data = await mariadb.query(query, [req.token.id_restaurante, req.body.id_operador]);
         res.json(data);
     } catch (error) {
         res.status(400).send({ msg: error.message });
@@ -76,7 +76,7 @@ module.exports.cadastrar = async (req, res) => {
             senha_operador)
             values (?,?,?,?,?)`;
 
-        await database.query(query, [
+        await mariadb.query(query, [
             obj.nome_operador,
             req.token.id_restaurante,
             obj.id_perfil,
@@ -115,7 +115,7 @@ module.exports.editar = async (req, res) => {
             id_operador = ?
             and id_restaurante = ?`
 
-        await database.query(query, [
+        await mariadb.query(query, [
             obj.nome_operador,
             obj.id_perfil,
             obj.login_operador,
@@ -142,7 +142,7 @@ module.exports.remover = async (req, res) => {
             id_operador = ?
             and id_restaurante = ?`
 
-        let data = await database.query(query, [
+        let data = await mariadb.query(query, [
             obj.id_operador
             , req.token.id_restaurante
         ]);
@@ -156,7 +156,7 @@ module.exports.remover = async (req, res) => {
 module.exports.listarPerfis = async (req, res) => {
     try {
         let query = 'select * from tb_perfil'
-        let data = await database.query(query);
+        let data = await mariadb.query(query);
         res.json(data);
     } catch (error) {
         res.status(400).send({ msg: error.message });
@@ -164,12 +164,12 @@ module.exports.listarPerfis = async (req, res) => {
 }
 
 _checarSeLoginExiste = async (login_operador, id_restaurante) => {
-    let data = await database.query("select 1 from tb_operador where login_operador = ? and id_restaurante = ?", [login_operador, id_restaurante]);
+    let data = await mariadb.query("select 1 from tb_operador where login_operador = ? and id_restaurante = ?", [login_operador, id_restaurante]);
     return data.length > 0 ? true : false;
 }
 
 _checarSeLoginExisteExclusive = async (login_operador, id_restaurante, id_operador) => {
     let query = `select 1 from tb_operador where login_operador = ? and id_restaurante = ? and id_operador != ?`;
-    let data = await database.query(query, [login_operador, id_restaurante, id_operador]);
+    let data = await mariadb.query(query, [login_operador, id_restaurante, id_operador]);
     return data.length > 0 ? true : false;
 }
