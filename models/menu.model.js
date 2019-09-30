@@ -21,9 +21,9 @@ let constraints_editar = {
         },
     },
     ativo:{
-        type: 'integer',
         presence: true,
         numericality:{
+            onlyInteger: true,
             greaterThanOrEqualTo: 0,
             lessThanOrEqualTo: 1
         }

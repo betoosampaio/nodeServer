@@ -14,25 +14,27 @@ let constraints_cadastrar = {
         presence: true,
     },
     preco: {
-        type: "number",
+        numericality: true,
         presence: true,
     },
     id_menu: {
-        type: 'integer',
+        numericality:{
+            onlyInteger: true,
+        },
         presence: true,
     },
     visivel: {
-        type: 'integer',
         presence: true,
         numericality:{
+            onlyInteger: true,
             greaterThanOrEqualTo: 0,
             lessThanOrEqualTo: 1
         }
     },
     promocao: {
-        type: 'integer',
         presence: true,
         numericality:{
+            onlyInteger: true,
             greaterThanOrEqualTo: 0,
             lessThanOrEqualTo: 1
         }
@@ -57,25 +59,27 @@ let constraints_editar = {
         presence: true,
     },
     preco: {
-        type: "number",
+        numericality: true,
         presence: true,
     },
     id_menu: {
-        type: 'integer',
+        numericality: {
+            onlyInteger: true,
+        },
         presence: true,
     },
     visivel: {
-        type: 'integer',
         presence: true,
         numericality:{
+            onlyInteger: true,
             greaterThanOrEqualTo: 0,
             lessThanOrEqualTo: 1
         }
     },
     promocao: {
-        type: 'integer',
         presence: true,
         numericality:{
+            onlyInteger: true,
             greaterThanOrEqualTo: 0,
             lessThanOrEqualTo: 1
         }
@@ -85,9 +89,9 @@ let constraints_editar = {
         presence: true,
     },
     ativo:{
-        type: 'integer',
         presence: true,
         numericality:{
+            onlyInteger: true,
             greaterThanOrEqualTo: 0,
             lessThanOrEqualTo: 1
         }

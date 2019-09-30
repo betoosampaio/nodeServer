@@ -10,7 +10,9 @@ let constraints_cadastrar = {
         },
     },
     id_perfil: {
-        type: 'integer',
+        numericality: {
+            onlyInteger: true,
+        }, 
         presence: true
     },
     login_operador: {
@@ -45,7 +47,9 @@ let constraints_editar = {
         },
     },
     id_perfil: {
-        type: 'integer',
+        numericality: {
+            onlyInteger: true,
+        }, 
         presence: true
     },
     login_operador: {
@@ -69,9 +73,9 @@ let constraints_editar = {
         },
     },
     ativo:{
-        type: 'integer',
         presence: true,
         numericality:{
+            onlyInteger: true,
             greaterThanOrEqualTo: 0,
             lessThanOrEqualTo: 1
         }

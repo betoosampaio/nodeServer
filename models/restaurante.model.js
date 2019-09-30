@@ -45,7 +45,9 @@ let constraints_cadastrar = {
         }
     },
     numero: {
-        type: 'integer',
+        numericality: {
+            onlyInteger: true,
+        },
         presence: true
     },
     complemento: {
@@ -89,11 +91,15 @@ let constraints_cadastrar = {
         presence: true
     },
     id_tipo_cadastro_conta: {
-        type: 'integer',
+        numericality: {
+            onlyInteger: true,
+        },
         presence: true
     },
     id_tipo_conta: {
-        type: 'integer',
+        numericality: {
+            onlyInteger: true,
+        },
         presence: true
     },
     codigo_banco: {
@@ -199,7 +205,9 @@ let constraints_editar = {
         }
     },
     numero: {
-        type: 'integer',
+        numericality: {
+            onlyInteger: true,
+        },
         presence: true
     },
     complemento: {
@@ -243,11 +251,15 @@ let constraints_editar = {
         presence: true
     },
     id_tipo_cadastro_conta: {
-        type: 'integer',
+        numericality: {
+            onlyInteger: true,
+        },
         presence: true
     },
     id_tipo_conta: {
-        type: 'integer',
+        numericality: {
+            onlyInteger: true,
+        },
         presence: true
     },
     codigo_banco: {
