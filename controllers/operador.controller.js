@@ -39,6 +39,7 @@ module.exports.obter = async (req, res) => {
             ,o.id_perfil
             ,p.tipo_perfil
             ,o.login_operador
+            ,o.senha_operador
             ,o.ativo
         from 
             tb_operador o
