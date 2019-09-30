@@ -1,5 +1,5 @@
 
-const MongoClient = require('mongodb').MongoClient;
+const mongodb = require('../utils/mongodb.util');
 
 module.exports = (req, res, next) => {
     let start = new Date();
@@ -30,23 +30,9 @@ module.exports = (req, res, next) => {
             token: this.req.token
         };
 
-
         console.log(log);
-
-        let opt = {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        };
-
-        MongoClient.connect(process.env.MONGODB_LOG, opt, function (err, client) {
-            if (err) return;
-            let collection = client.db('logdb').collection('logs');
-            collection.insertOne(log, function (err, dbs) {
-                client.close();
-            });
-        });
-
-
+        mongodb.insertOne('logdb','logs',log);
+        
     });
 
     next();
