@@ -108,7 +108,33 @@ module.exports.cadastrar = async (req, res) => {
 
 module.exports.obter = async (req, res) => {
     try {
-        let query = `select * from tb_restaurante where id_restaurante = ?`;
+        let query = `
+        select
+           codigo_restaurante,
+           cnpj,
+           nome_fantasia,
+           cep,
+           logradouro,
+           numero,
+           complemento,
+           bairro,
+           municipio,
+           uf,
+           celular,
+           email,
+           id_tipo_cadastro_conta,
+           id_tipo_conta,
+           codigo_banco,
+           agencia,
+           conta,
+           digito,
+           nome_administrador,
+           cpf_administrador,
+           ativo  
+        from 
+            tb_restaurante 
+        where 
+            id_restaurante = ?`;
         let data = await mariadb.query(query, [req.token.id_restaurante]);
         res.json(data);
 

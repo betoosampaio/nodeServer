@@ -7,7 +7,6 @@ module.exports.listar = async (req, res) => {
         let query = `
         select 
              o.id_operador
-            ,o.id_restaurante
             ,o.nome_operador
             ,o.id_perfil
             ,p.tipo_perfil
@@ -34,7 +33,6 @@ module.exports.obter = async (req, res) => {
         let query = `
         select 
              o.id_operador
-            ,o.id_restaurante
             ,o.nome_operador
             ,o.id_perfil
             ,p.tipo_perfil
@@ -156,7 +154,7 @@ module.exports.remover = async (req, res) => {
 
 module.exports.listarPerfis = async (req, res) => {
     try {
-        let query = 'select * from tb_perfil'
+        let query = 'select id_perfil,tipo_perfil from tb_perfil'
         let data = await mariadb.query(query);
         res.json(data);
     } catch (error) {

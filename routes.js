@@ -28,7 +28,7 @@ module.exports = (app) => {
     app.post('/restaurante/reativar', [authMW], restaurante.reativar);
 
     /* OPERADOR */
-    app.post('/perfil/listar', operador.listarPerfis);
+    app.post('/perfil/listar', [authMW], operador.listarPerfis);
     app.post('/operador/listar', [authMW], operador.listar);
     app.post('/operador/obter', [authMW], operador.obter);
     app.post('/operador/cadastrar', [authMW], operador.cadastrar);

@@ -6,7 +6,6 @@ module.exports.listar = async (req, res) => {
         let query = `
         select 
              p.id_produto
-            ,p.id_restaurante
             ,p.nome_produto
             ,p.descricao
             ,p.preco
@@ -36,7 +35,6 @@ module.exports.obter = async (req, res) => {
         let query = `
         select 
              p.id_produto
-            ,p.id_restaurante
             ,p.nome_produto
             ,p.descricao
             ,p.preco
