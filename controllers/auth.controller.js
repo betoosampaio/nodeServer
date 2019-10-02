@@ -28,7 +28,9 @@ FROM
 WHERE
 	r.codigo_restaurante = ?
 	AND o.login_operador = ?
-	AND o.senha_operador = ?
+    AND o.senha_operador = ?
+    AND o.ativo = 1
+    AND o.removido = 0
         `);
 
         let data = await mariadb.query(query, [obj.codigo_restaurante, obj.login_operador, obj.senha_operador]);
