@@ -21,10 +21,9 @@ module.exports.listar = async (req, res) => {
             and removido = 0`
 
         let data = await mariadb.query(query, [req.token.id_restaurante]);
-        res.json(data);
+        return res.json(data);
     } catch (error) {
-        res.status(400).send({ msg: error.message });
-
+        return res.status(500).send(error.message);
     }
 }
 
@@ -48,9 +47,9 @@ module.exports.obter = async (req, res) => {
             and id_operador = ?`
 
         let data = await mariadb.query(query, [req.token.id_restaurante, req.body.id_operador]);
-        res.json(data);
+        return res.json(data);
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -60,12 +59,11 @@ module.exports.cadastrar = async (req, res) => {
 
         let errors = model.validarCadastrar(obj);
         if (errors)
-            throw new Error(errors[0]);
+            return res.status(400).send(errors[0]);
 
         let loginExists = await _checarSeLoginExiste(obj.login_operador, req.token.id_restaurante);
-        if (loginExists) {
-            throw new Error('Este login já está sendo utilizado');
-        }
+        if (loginExists)
+            return res.status(400).send('Este login já está sendo utilizado');
 
         let query = `insert into tb_operador(
             nome_operador,
@@ -83,9 +81,9 @@ module.exports.cadastrar = async (req, res) => {
             obj.senha_operador,
         ]);
 
-        res.json('OK');
+        return res.json('OK');
     } catch (error) {
-        res.status(400).send(error.message);
+        return res.status(500).send(error.message);
     }
 }
 
@@ -95,12 +93,11 @@ module.exports.editar = async (req, res) => {
 
         let errors = model.validarEditar(obj);
         if (errors)
-            throw new Error(errors[0]);
+            return res.status(400).send(errors[0]);
 
         let loginExists = await _checarSeLoginExisteExclusive(obj.login_operador, req.token.id_restaurante, obj.id_operador);
-        if (loginExists) {
-            throw new Error('Este login já está sendo utilizado');
-        }
+        if (loginExists)
+            return res.status(400).send('Este login já está sendo utilizado');
 
         let query = `
         update tb_operador
@@ -124,9 +121,9 @@ module.exports.editar = async (req, res) => {
             req.token.id_restaurante
         ]);
 
-        res.json("OK");
+        return res.json("OK");
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -141,14 +138,14 @@ module.exports.remover = async (req, res) => {
             id_operador = ?
             and id_restaurante = ?`
 
-        let data = await mariadb.query(query, [
+        await mariadb.query(query, [
             obj.id_operador
             , req.token.id_restaurante
         ]);
 
-        res.json("OK");
+        return res.json("OK");
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -156,9 +153,9 @@ module.exports.listarPerfis = async (req, res) => {
     try {
         let query = 'select id_perfil,tipo_perfil from tb_perfil'
         let data = await mariadb.query(query);
-        res.json(data);
+        return res.json(data);
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 

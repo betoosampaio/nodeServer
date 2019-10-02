@@ -19,14 +19,15 @@ module.exports.listar = async (req, res) => {
             tb_produto p
             inner join tb_menu m
                 on m.id_menu = p.id_menu
+                and m.id_restaurante = p.id_restaurante
         where 
             p.id_restaurante = ?
             and p.removido = 0`
 
         let data = await mariadb.query(query, [req.token.id_restaurante]);
-        res.json(data);
+        return res.json(data);
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -48,14 +49,15 @@ module.exports.obter = async (req, res) => {
             tb_produto p
             inner join tb_menu m
                 on m.id_menu = p.id_menu
+                and m.id_restaurante = p.id_restaurante
         where 
             p.id_restaurante = ?
             and p.id_produto = ?`
 
         let data = await mariadb.query(query, [req.token.id_restaurante, req.body.id_produto]);
-        res.json(data);
+        return res.json(data);
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -65,7 +67,7 @@ module.exports.cadastrar = async (req, res) => {
        
         let errors = model.validarCadastrar(obj);
         if (errors)
-            throw new Error(errors[0]);
+            return res.status(400).send(errors[0]);
      
         let query = `
         insert into tb_produto(
@@ -80,7 +82,7 @@ module.exports.cadastrar = async (req, res) => {
             )
         values(?,?,?,?,?,?,?,?)`
 
-        let data = await mariadb.query(query, [
+        await mariadb.query(query, [
              req.token.id_restaurante
             ,obj.nome_produto
             ,obj.descricao
@@ -91,9 +93,9 @@ module.exports.cadastrar = async (req, res) => {
             ,obj.imagem
         ]);
 
-        res.json('OK');
+        return res.json('OK');
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -103,7 +105,7 @@ module.exports.editar = async (req, res) => {
 
         let errors = model.validarEditar(obj);
         if (errors)
-            throw new Error(errors[0]);
+            return res.status(400).send(errors[0]);
 
         let query = `
         update tb_produto
@@ -120,7 +122,7 @@ module.exports.editar = async (req, res) => {
             id_produto = ?
             and id_restaurante = ?`
 
-        let data = await mariadb.query(query, [
+        await mariadb.query(query, [
              obj.nome_produto
             ,obj.descricao
             ,obj.preco
@@ -133,9 +135,9 @@ module.exports.editar = async (req, res) => {
             ,req.token.id_restaurante
         ]);
 
-        res.json("OK");
+        return res.json("OK");
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -150,13 +152,13 @@ module.exports.remover = async (req, res) => {
             id_produto = ?
             and id_restaurante = ?`
 
-        let data = await mariadb.query(query, [
+        await mariadb.query(query, [
              obj.id_produto
             ,req.token.id_restaurante
         ]);
 
-        res.json("OK");
+        return res.json("OK");
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }

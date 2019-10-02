@@ -15,9 +15,9 @@ module.exports.listar = async (req, res) => {
             and removido = 0`
 
         let data = await mariadb.query(query, [req.token.id_restaurante]);
-        res.json(data);
+        return res.json(data);
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -35,9 +35,9 @@ module.exports.obter = async (req, res) => {
             and id_menu = ?`
 
         let data = await mariadb.query(query, [req.token.id_restaurante, req.body.id_menu]);
-        res.json(data);
+        return res.json(data);
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -47,7 +47,7 @@ module.exports.cadastrar = async (req, res) => {
 
         let errors = model.validarCadastrar(obj);
         if (errors)
-            throw new Error(errors[0]);
+            return res.status(400).send(errors[0]);
 
         let query = `
         insert into tb_menu(
@@ -56,14 +56,14 @@ module.exports.cadastrar = async (req, res) => {
             )
         values(?,?)`
 
-        let data = await mariadb.query(query, [
+        await mariadb.query(query, [
             obj.ds_menu
             , req.token.id_restaurante
         ]);
 
-        res.json("OK");
+        return res.json("OK");
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -73,7 +73,7 @@ module.exports.editar = async (req, res) => {
 
         let errors = model.validarEditar(obj);
         if (errors)
-            throw new Error(errors[0]);
+            return res.status(400).send(errors[0]);
 
         let query = `
         update tb_menu
@@ -84,16 +84,16 @@ module.exports.editar = async (req, res) => {
             id_menu = ?
             and id_restaurante = ?`
 
-        let data = await mariadb.query(query, [
+        await mariadb.query(query, [
             obj.ds_menu,
             obj.ativo,
             obj.id_menu,
             req.token.id_restaurante
         ]);
 
-        res.json("OK");
+        return res.json("OK");
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -108,14 +108,11 @@ module.exports.remover = async (req, res) => {
             id_menu = ?
             and id_restaurante = ?`
 
-        let data = await mariadb.query(query, [
-            obj.id_menu
-            , req.token.id_restaurante
-        ]);
+        await mariadb.query(query, [obj.id_menu,req.token.id_restaurante]);
 
-        res.json("OK");
+        return res.json("OK");
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 

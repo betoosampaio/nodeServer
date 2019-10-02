@@ -4,7 +4,7 @@ const crypto = require('../utils/crypto.util')
 module.exports = (req, res, next) => {
     try {
         if (!req.headers.token)
-            throw new Error('token não fornecido');
+            return res.status(401).send('token não fornecido');
 
         let token;
 
@@ -12,19 +12,18 @@ module.exports = (req, res, next) => {
             let decrypted = crypto.decrypt(req.headers.token);
             token = JSON.parse(decrypted);
         } catch (error) {
-            throw new Error('token inválido');
+            return res.status(401).send('token inválido');
         }
 
         if (token.expire < new Date().getTime())
-            throw new Error('token expirado');
+            return res.status(401).send('token expirado');
 
         req.token = token;
 
         next();
     }
     catch (error) {
-        console.log(error);
-        res.status(401).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 
 }

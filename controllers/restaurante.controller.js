@@ -4,18 +4,18 @@ const model = require('../models/restaurante.model');
 module.exports.checarSeCodigoExiste = async (req, res) => {
     try {
         let exists = await _checarSeCodigoExiste(req.body.codigo_restaurante)
-        res.json({ exists: exists });
+        return res.json({ exists: exists });
     } catch (error) {
-        res.status(500).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
 module.exports.checarSeCNPJExiste = async (req, res) => {
     try {
         let exists = await _checarSeCNPJExiste(req.body.cnpj)
-        res.json({ exists: exists });
+        return res.json({ exists: exists });
     } catch (error) {
-        res.status(500).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -25,18 +25,16 @@ module.exports.cadastrar = async (req, res) => {
 
         let errors = model.validarCadastrar(obj);
         if (errors)
-            throw new Error(errors[0]);
+            return res.status(400).send(errors[0]);
 
 
         let cnpjExists = await _checarSeCNPJExiste(obj.cnpj);
-        if (cnpjExists) {
-            throw new Error('CNPJ já cadastrado');
-        }
+        if (cnpjExists)
+            return res.status(400).send('CNPJ já cadastrado');
 
         let loginExists = await _checarSeCodigoExiste(obj.codigo_restaurante);
-        if (loginExists) {
-            throw new Error('Codigo de restaurante já está sendo utilizado');
-        }
+        if (loginExists)
+            return res.status(400).send('Codigo de restaurante já está sendo utilizado');
 
         // ## INSERE RESTAURANTE ##
         let query = `insert into tb_restaurante(
@@ -99,10 +97,10 @@ module.exports.cadastrar = async (req, res) => {
         `
         await mariadb.query(query, [id_restaurante]);
 
-        res.json('OK');
+        return res.json('OK');
 
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -136,10 +134,10 @@ module.exports.obter = async (req, res) => {
         where 
             id_restaurante = ?`;
         let data = await mariadb.query(query, [req.token.id_restaurante]);
-        res.json(data);
+        return res.json(data);
 
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -149,12 +147,11 @@ module.exports.editar = async (req, res) => {
 
         let errors = model.validarEditar(obj);
         if (errors)
-            throw new Error(errors[0]);
+            return res.status(400).send(errors[0]);
 
         let loginExists = await _checarSeCodigoExisteExclusive(obj.codigo_restaurante, req.token.id_restaurante);
-        if (loginExists) {
-            throw new Error('Codigo de restaurante já está sendo utilizado');
-        }
+        if (loginExists)
+            return res.status(400).send('Codigo de restaurante já está sendo utilizado');
 
         let query = `
         update tb_restaurante
@@ -204,10 +201,10 @@ module.exports.editar = async (req, res) => {
             req.token.id_restaurante
         ]);
 
-        res.json('OK');
+        return res.json('OK');
 
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -224,10 +221,10 @@ module.exports.inativar = async (req, res) => {
 
         await mariadb.query(query, [req.token.id_restaurante]);
 
-        res.json('OK');
+        return res.json('OK');
 
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -242,10 +239,10 @@ module.exports.reativar = async (req, res) => {
 
         await mariadb.query(query, [req.token.id_restaurante]);
 
-        res.json('OK');
+        return res.json('OK');
 
     } catch (error) {
-        res.status(400).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
@@ -259,10 +256,10 @@ module.exports.obterVariaveisCadastro = async (req, res) => {
         select * from tb_tipo_cadastro_conta;
         `;
         let data = await mariadb.mquery(query);
-        res.json(data);
+        return res.json(data);
 
     } catch (error) {
-        res.status(500).send({ msg: error.message });
+        return res.status(500).send(error.message);
     }
 }
 
