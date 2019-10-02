@@ -26,7 +26,7 @@ module.exports = (req, res, next) => {
             body: this.req.body,
             statusMessage: this.statusMessage,
             statusCode: this.statusCode,
-            responseBody: this.responseBody.toString(),
+            responseBody: this.responseBody ? this.responseBody.toString() : this.responseBody,
             token: this.req.token
         };
 

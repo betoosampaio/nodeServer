@@ -5,6 +5,7 @@ module.exports = (app) => {
     /* MIDDLEWARES */
     const logMW = require('./middlewares/log.middleware');
     const authMW = require('./middlewares/auth.middleware');
+    const multerMW = require("./middlewares/multer.middleware");
     app.use(logMW);
 
     /* CONTROLLERS */
@@ -48,4 +49,6 @@ module.exports = (app) => {
     app.post('/produto/cadastrar', [authMW], produto.cadastrar);
     app.post('/produto/editar', [authMW], produto.editar);
     app.post('/produto/remover', [authMW], produto.remover);
+    app.post('/produto/uploadimg', [authMW, multerMW.uploadimg], produto.uploadimg)
+
 }

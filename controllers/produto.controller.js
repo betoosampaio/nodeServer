@@ -162,3 +162,12 @@ module.exports.remover = async (req, res) => {
         return res.status(500).send(error.message);
     }
 }
+
+module.exports.uploadimg = async (req, res) => {
+    try { 
+        console.log(req.file);
+        return res.json(req.file.filename);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
