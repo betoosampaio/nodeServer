@@ -1,12 +1,15 @@
 const multer = require('multer');
 const path = require('path');
+const uuidv1 = require('uuid/v1');
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/uploadimg/')
     },
     filename: function (req, file, cb) {
-        cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+        file._id = uuidv1();
+        file.uploadDate = new Date();
+        cb(null, `${file._id}${path.extname(file.originalname)}`);
     }
 });
 
@@ -22,14 +25,17 @@ let fileFilter = function (req, file, cb) {
         cb(new Error("Invalid file type"));
 }
 
-let upload = multer({ storage: storage, limits: limits, fileFilter: fileFilter }).single('imagem');
+let upload = multer({
+    storage: storage,
+    limits: limits,
+    fileFilter: fileFilter
+}).single('imagem');
 
-
-module.exports.uploadimg = (req, res, next) =>{
+module.exports.upload = (req, res, next) => {
     upload(req, res, function (err) {
         if (err) {
-          return res.status(400).send(err.message);
-        }     
-        next();  
-      })
+            return res.status(400).send(err.message);
+        }
+        next();
+    })
 };

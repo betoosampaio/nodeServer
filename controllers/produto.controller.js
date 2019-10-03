@@ -1,4 +1,5 @@
 const mariadb = require('../utils/mariadb.util');
+const mongodb = require('../utils/mongodb.util');
 const model = require('../models/produto.model');
 
 module.exports.listar = async (req, res) => {
@@ -165,7 +166,7 @@ module.exports.remover = async (req, res) => {
 
 module.exports.uploadimg = async (req, res) => {
     try { 
-        console.log(req.file);
+        await mongodb.insertOne('logdb','uploadimg',req.file);
         return res.json(req.file.filename);
     } catch (error) {
         return res.status(500).send(error.message);
