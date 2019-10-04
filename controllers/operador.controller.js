@@ -133,7 +133,8 @@ module.exports.remover = async (req, res) => {
         let query = `
         update tb_operador
         set
-            removido = 1
+             removido = 1
+            ,login_operador = uuid()
         where
             id_operador = ?
             and id_restaurante = ?`
