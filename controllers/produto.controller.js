@@ -1,6 +1,8 @@
 const mariadb = require('../utils/mariadb.util');
 const mongodb = require('../utils/mongodb.util');
 const model = require('../models/produto.model');
+const sharp = require('sharp');
+const fs = require('fs');
 
 module.exports.listar = async (req, res) => {
     try {
@@ -65,11 +67,11 @@ module.exports.obter = async (req, res) => {
 module.exports.cadastrar = async (req, res) => {
     try {
         let obj = req.body;
-       
+
         let errors = model.validarCadastrar(obj);
         if (errors)
             return res.status(400).send(errors[0]);
-     
+
         let query = `
         insert into tb_produto(
              id_restaurante
@@ -84,14 +86,14 @@ module.exports.cadastrar = async (req, res) => {
         values(?,?,?,?,?,?,?,?)`
 
         await mariadb.query(query, [
-             req.token.id_restaurante
-            ,obj.nome_produto
-            ,obj.descricao
-            ,obj.preco
-            ,obj.id_menu
-            ,obj.visivel
-            ,obj.promocao
-            ,obj.imagem
+            req.token.id_restaurante
+            , obj.nome_produto
+            , obj.descricao
+            , obj.preco
+            , obj.id_menu
+            , obj.visivel
+            , obj.promocao
+            , obj.imagem
         ]);
 
         return res.json('OK');
@@ -124,16 +126,16 @@ module.exports.editar = async (req, res) => {
             and id_restaurante = ?`
 
         await mariadb.query(query, [
-             obj.nome_produto
-            ,obj.descricao
-            ,obj.preco
-            ,obj.id_menu
-            ,obj.visivel
-            ,obj.promocao
-            ,obj.imagem
-            ,obj.ativo        
-            ,obj.id_produto
-            ,req.token.id_restaurante
+            obj.nome_produto
+            , obj.descricao
+            , obj.preco
+            , obj.id_menu
+            , obj.visivel
+            , obj.promocao
+            , obj.imagem
+            , obj.ativo
+            , obj.id_produto
+            , req.token.id_restaurante
         ]);
 
         return res.json("OK");
@@ -154,8 +156,8 @@ module.exports.remover = async (req, res) => {
             and id_restaurante = ?`
 
         await mariadb.query(query, [
-             obj.id_produto
-            ,req.token.id_restaurante
+            obj.id_produto
+            , req.token.id_restaurante
         ]);
 
         return res.json("OK");
@@ -165,9 +167,16 @@ module.exports.remover = async (req, res) => {
 }
 
 module.exports.uploadimg = async (req, res) => {
-    try { 
-        await mongodb.insertOne('logdb','uploadimg',req.file);
-        return res.json(req.file.filename);
+    try {
+
+        sharp.cache(false);
+        let resized = await sharp(req.file.path).resize(200, 200)
+        let buffer = await resized.toBuffer();
+        req.file.sizeResized = buffer.byteLength;
+        fs.writeFile(req.file.path, buffer, (err) => {if (err) throw err;});
+
+        await mongodb.insertOne('logdb', 'uploadimg', req.file);
+        return res.json(req.file.filename);       
     } catch (error) {
         return res.status(500).send(error.message);
     }
