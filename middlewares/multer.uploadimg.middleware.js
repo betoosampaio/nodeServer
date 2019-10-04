@@ -1,10 +1,12 @@
 const multer = require('multer');
 const path = require('path');
 const uuidv1 = require('uuid/v1');
+const sharp = require('sharp');
+const fs = require('fs');
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'public/uploadimg/')
+        cb(null, 'tmp/')
     },
     filename: function (req, file, cb) {
         file._id = uuidv1();
@@ -31,11 +33,23 @@ let upload = multer({
     fileFilter: fileFilter
 }).single('imagem');
 
-module.exports.upload = (req, res, next) => {
-    upload(req, res, function (err) {
+
+module.exports.upload = async (req, res, next) => {
+    upload(req, res, async function (err) {
         if (err) {
             return res.status(400).send(err.message);
         }
+        await redimensionar(req.file);
         next();
-    })
+    });
 };
+
+redimensionar = async (file) =>{
+    sharp.cache(false);
+    let img = await sharp(file.path).resize(200, 200).png().toBuffer();
+    fs.unlink(file.path, () => { });
+    file.sizeResized = img.byteLength;
+    file.filename = `${file._id}.png`
+    file.path = `public\\uploadimg\\${file.filename}`
+    fs.writeFile(file.path, img, (err) => { if (err) throw err; });
+}

@@ -1,8 +1,6 @@
 const mariadb = require('../utils/mariadb.util');
 const mongodb = require('../utils/mongodb.util');
 const model = require('../models/produto.model');
-const sharp = require('sharp');
-const fs = require('fs');
 
 module.exports.listar = async (req, res) => {
     try {
@@ -168,15 +166,8 @@ module.exports.remover = async (req, res) => {
 
 module.exports.uploadimg = async (req, res) => {
     try {
-
-        sharp.cache(false);
-        let resized = await sharp(req.file.path).resize(200, 200)
-        let buffer = await resized.toBuffer();
-        req.file.sizeResized = buffer.byteLength;
-        fs.writeFile(req.file.path, buffer, (err) => {if (err) throw err;});
-
         await mongodb.insertOne('logdb', 'uploadimg', req.file);
-        return res.json(req.file.filename);       
+        return res.json(req.file.path);       
     } catch (error) {
         return res.status(500).send(error.message);
     }
