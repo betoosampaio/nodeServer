@@ -312,7 +312,7 @@ let constraints_editar = {
 
 validatejs.validators.cpf = function (value, options, key, attributes) {
     let message = 'invalido';
-    let strCPF = value;
+    let strCPF = value.toString();
 
     if(!strCPF) return message;
 
@@ -338,7 +338,7 @@ validatejs.validators.cpf = function (value, options, key, attributes) {
 
 validatejs.validators.cnpj = function (value, options, key, attributes) {
     let message = 'invalido';
-    let cnpj = value;
+    let cnpj = value.toString();
 
     if (!cnpj) return message;
 
