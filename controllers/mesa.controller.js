@@ -1,10 +1,10 @@
 const mongodb = require('../utils/mongodb.util');
 const ObjectId = require('../utils/mongodb.util').ObjectId;
-const socketEmit = require('../socket').socketsEmit;
+const emitTo = require('../socket').emitTo;
 
 module.exports.listar = async (req, res) => {
     try {
-        let data = await mongodb.find('freeddb', 'mesa', {});
+        let data = await mongodb.find('freeddb', 'mesa', {id_restaurante: req.token.id_restaurante});
         return res.json(data);
     } catch (error) {
         return res.status(500).send(error.message);
@@ -24,6 +24,8 @@ module.exports.cadastrar = async (req, res) => {
 
         await mongodb.insertOne('freeddb', 'mesa', mesa);
 
+        enviarDadosSockets(req.token.id_restaurante);
+
         return res.json('OK');
     } catch (error) {
         return res.status(500).send(error.message);
@@ -36,9 +38,12 @@ module.exports.incluirProduto = async (req, res) => {
         let id_mesa = req.body.id_mesa;
         let produto = req.body.produto;
 
-        await mongodb.updateOne('freeddb', 'mesa', { _id: new ObjectId(id_mesa) }, { $push: { produtos: produto } });
+        let data = await mongodb.findOneAndUpdate('freeddb', 'mesa',
+            { _id: new ObjectId(id_mesa) },
+            { $push: { produtos: produto } }
+        );
 
-        enviarDados();
+        enviarDadosSockets(data.value.id_restaurante);
 
         return res.json('OK');
     } catch (error) {
@@ -46,7 +51,7 @@ module.exports.incluirProduto = async (req, res) => {
     }
 }
 
-enviarDados = async () => {
-    let data = await mongodb.find('freeddb', 'mesa', {});
-    socketEmit("testando", data);
+enviarDadosSockets = async (id_restaurante) => {
+    let data = await mongodb.find('freeddb', 'mesa', { id_restaurante: id_restaurante });
+    emitTo("atualizacao", data, id_restaurante);
 }

@@ -35,3 +35,10 @@ module.exports.updateOne = async (database, collection, filter, obj, options) =>
     return res;
 }
 
+module.exports.findOneAndUpdate = async (database, collection, filter, obj, options) => {
+    let cli = await MongoClient.connect(url, options);
+    let col = cli.db(database).collection(collection);
+    let res = await col.findOneAndUpdate(filter, obj, options);
+    cli.close();
+    return res;
+}

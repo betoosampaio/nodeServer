@@ -9,7 +9,9 @@ module.exports = (_io) => {
     io.use(auth);
 
     io.on('connection', function (client) {
-        console.log(client.token);
+        // entra na room do restaurante;
+        client.join(client.token.id_restaurante);
+
         client.emit('conectado', 'conectado');
         
         client.on('teste', function (dados) {
@@ -21,4 +23,8 @@ module.exports = (_io) => {
 
 module.exports.socketsEmit = (event, obj) => {
     io.sockets.emit(event, obj);
+}
+
+module.exports.emitTo = (event, obj, to) => {
+    io.to(to).emit(event, obj);
 }
