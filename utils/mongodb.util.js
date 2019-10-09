@@ -19,6 +19,14 @@ module.exports.find = async (database, collection, obj) => {
     return res;
 }
 
+module.exports.findOne = async (database, collection, obj) => {
+    let cli = await MongoClient.connect(url, options);
+    let col = cli.db(database).collection(collection);
+    let res = await col.findOne(obj);
+    cli.close();
+    return res;
+}
+
 module.exports.insertOne = async (database, collection, obj) => {
     let cli = await MongoClient.connect(url, options);
     let col = cli.db(database).collection(collection);

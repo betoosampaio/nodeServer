@@ -167,8 +167,34 @@ module.exports.remover = async (req, res) => {
 module.exports.uploadimg = async (req, res) => {
     try {
         await mongodb.insertOne('logdb', 'uploadimg', req.file);
-        return res.json(req.file.path);       
+        return res.json(req.file.path);
     } catch (error) {
         return res.status(500).send(error.message);
     }
+}
+
+module.exports._obter = async (id_restaurante, id_produto) => {
+    let query = `
+        select 
+             p.id_produto
+            ,p.nome_produto
+            ,p.descricao
+            ,p.preco
+            ,p.id_menu
+            ,m.ds_menu
+            ,p.visivel
+            ,p.promocao
+            ,p.imagem
+            ,p.ativo
+        from 
+            tb_produto p
+            inner join tb_menu m
+                on m.id_menu = p.id_menu
+                and m.id_restaurante = p.id_restaurante
+        where 
+            p.id_restaurante = ?
+            and p.id_produto = ?`
+
+    let data = await mariadb.query(query, [id_restaurante, id_produto]);
+    return data[0];
 }
