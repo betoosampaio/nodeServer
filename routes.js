@@ -14,6 +14,7 @@ module.exports = (app) => {
     const produto = require('./controllers/produto.controller');
     const operador = require('./controllers/operador.controller');
     const menu = require('./controllers/menu.controller');
+    const mesa = require('./controllers/mesa.controller');
 
     app.get('/', (req, res) => { res.json("Server Online") });
     app.post('/login', auth.login);
@@ -50,5 +51,10 @@ module.exports = (app) => {
     app.post('/produto/editar', [authMW], produto.editar);
     app.post('/produto/remover', [authMW], produto.remover);
     app.post('/produto/uploadimg', [authMW, uploadimgMW], produto.uploadimg)
+
+    /* MESA */
+    app.post('/mesa/listar', [authMW], mesa.listar);
+    app.post('/mesa/cadastrar', [authMW], mesa.cadastrar);
+    app.post('/mesa/incluirProduto', [authMW], mesa.incluirProduto);
 
 }

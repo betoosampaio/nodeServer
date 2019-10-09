@@ -15,33 +15,8 @@ app.listen(3001, () => {
   console.log("Server UP");
 });
 
-
-
-
-
-
+// socket server
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+require('./socket.js')(io);
 server.listen(3002);
-
-let restaurante = {
-  conexoes: 0,
-  mesas: [],
-};
-
-io.on('connection', function (client) {
-  console.log(client.handshake);
-  restaurante.conexoes++;
-  io.sockets.emit('atualizacao', restaurante);
-
-  client.on('disconnect', function () {
-    restaurante.conexoes--;
-    io.sockets.emit('atualizacao', restaurante);
-  })
-
-  client.on('mesa/cadastrar', function (dados) {
-    restaurante.mesas.push({ numero: dados.n })
-    io.sockets.emit('atualizacao', restaurante);
-  });
-});
-

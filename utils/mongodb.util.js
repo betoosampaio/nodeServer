@@ -1,24 +1,37 @@
 
 const MongoClient = require('mongodb').MongoClient;
+const ObjectId = require('mongodb').ObjectId;
 const url = process.env.MONGODB;
+
 
 let options = {
     useNewUrlParser: true,
     useUnifiedTopology: true
 };
 
-module.exports.find = async (database, collection, obj) =>{
+module.exports.ObjectId = ObjectId;
+
+module.exports.find = async (database, collection, obj) => {
     let cli = await MongoClient.connect(url, options);
     let col = cli.db(database).collection(collection);
     let res = await col.find(obj).toArray();
-    cli.close(); 
+    cli.close();
     return res;
 }
 
-module.exports.insertOne = async (database, collection, obj) =>{
+module.exports.insertOne = async (database, collection, obj) => {
     let cli = await MongoClient.connect(url, options);
     let col = cli.db(database).collection(collection);
     let res = await col.insertOne(obj);
-    cli.close(); 
+    cli.close();
     return res;
 }
+
+module.exports.updateOne = async (database, collection, filter, obj, options) => {
+    let cli = await MongoClient.connect(url, options);
+    let col = cli.db(database).collection(collection);
+    let res = await col.updateOne(filter, obj, options);
+    cli.close();
+    return res;
+}
+
