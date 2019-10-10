@@ -52,17 +52,22 @@ module.exports.incluirProduto = async (req, res) => {
             return res.status(400).send(errors[0]);
 
         // obtendo o id do restaurante dessa mesa
-        let data = await mongodb.findOne('freeddb', 'mesa',
+        let mesa = await mongodb.findOne('freeddb', 'mesa',
             { _id: new ObjectId(obj.id_mesa) }
         );
-        let id_restaurante = data.id_restaurante;
+        if(!mesa)
+            res.status(400).send("mesa inválida");
+        let id_restaurante = mesa.id_restaurante;
 
         // obtendo os dados do produto
         let produto = await produtoCtrl._obter(id_restaurante,obj.id_produto);
+        if(!produto)
+            res.status(400).send("produto inválido");
+        
+        // inclui a quantidade e atribui um id
         produto.quantidade = obj.quantidade;
-
-        console.log(produto);
-
+        produto._id = new ObjectId();
+        
         // incluindo o produto na mesa
         await mongodb.updateOne('freeddb', 'mesa',
             { _id: new ObjectId(obj.id_mesa) },

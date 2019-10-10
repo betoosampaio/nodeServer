@@ -4,6 +4,10 @@ let constraintsCadastrar = {
     numero: {
         type: "string",
         presence: true,
+        length: {
+            minimum: 1,
+            maximum: 10
+        }
     },
 }
 
