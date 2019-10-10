@@ -19,7 +19,15 @@ let constraints_cadastrar = {
         },
         cnpj: true
     },
-    nome_fantasia: {
+    razao_social: {
+        type: 'string',
+        presence: true,
+        length: {
+            minimum: 4,
+            maximum: 255
+        }
+    },
+    nome_restaurante: {
         type: 'string',
         presence: true,
         length: {
@@ -179,7 +187,15 @@ let constraints_editar = {
             maximum: 50
         }
     },
-    nome_fantasia: {
+    razao_social: {
+        type: 'string',
+        presence: true,
+        length: {
+            minimum: 4,
+            maximum: 255
+        }
+    },
+    nome_restaurante: {
         type: 'string',
         presence: true,
         length: {

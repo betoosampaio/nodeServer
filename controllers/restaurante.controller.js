@@ -39,7 +39,8 @@ module.exports.cadastrar = async (req, res) => {
         // ## INSERE RESTAURANTE ##
         let query = `insert into tb_restaurante(
             cnpj,
-            nome_fantasia,
+            razao_social,
+            nome_restaurante,
             cep,
             logradouro,
             numero,
@@ -58,12 +59,13 @@ module.exports.cadastrar = async (req, res) => {
             cpf_administrador,
             nome_administrador,
             codigo_restaurante)
-            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
             `;
 
         let data = await mariadb.query(query, [
             obj.cnpj,
-            obj.nome_fantasia,
+            obj.razao_social,
+            obj.nome_restaurante,
             obj.cep,
             obj.logradouro,
             obj.numero,
@@ -110,7 +112,8 @@ module.exports.obter = async (req, res) => {
         select
            codigo_restaurante,
            cnpj,
-           nome_fantasia,
+           razao_social,
+           nome_restaurante,
            cep,
            logradouro,
            numero,
@@ -157,7 +160,8 @@ module.exports.editar = async (req, res) => {
         update tb_restaurante
         set
              codigo_restaurante = ?
-            ,nome_fantasia = ?
+            ,razao_social = ?
+            ,nome_restaurante = ?
             ,cep = ?
             ,logradouro = ?
             ,numero = ?
@@ -180,7 +184,8 @@ module.exports.editar = async (req, res) => {
 
         await mariadb.query(query, [
             obj.codigo_restaurante,
-            obj.nome_fantasia,
+            obj.razao_social,
+            obj.nome_restaurante,
             obj.cep,
             obj.logradouro,
             obj.numero,
