@@ -6,7 +6,12 @@ const produtoCtrl = require('../controllers/produto.controller');
 
 module.exports.listar = async (req, res) => {
     try {
-        let data = await mongodb.find('freeddb', 'mesa', {id_restaurante: req.token.id_restaurante});
+
+        let data = await mongodb.find('freeddb', 'mesa', {
+            id_restaurante: req.token.id_restaurante,
+            aberta: true
+        });
+
         return res.json(data);
     } catch (error) {
         return res.status(500).send(error.message);
@@ -19,6 +24,7 @@ module.exports.cadastrar = async (req, res) => {
         let obj = {
             id_restaurante: req.token.id_restaurante,
             id_operador_abertura: req.token.id_operador,
+            aberta: true,
             data_abertura: new Date(),
             numero: req.body.numero,
         }
@@ -26,6 +32,15 @@ module.exports.cadastrar = async (req, res) => {
         let errors = model.validarCadastrar(obj);
         if (errors)
             return res.status(400).send(errors[0]);
+
+        // verifica se a mesa com mesmo número está ativa
+        let data = await mongodb.find('freeddb', 'mesa', {
+            id_restaurante: req.token.id_restaurante,
+            aberta: true,
+            numero: req.body.numero
+        });
+        if (data.length > 0)
+            return res.status(400).send('uma mesa com este número já está aberta');
 
         await mongodb.insertOne('freeddb', 'mesa', obj);
 
@@ -37,7 +52,72 @@ module.exports.cadastrar = async (req, res) => {
     }
 }
 
-module.exports.incluirProduto = async (req, res) => {
+module.exports.remover = async (req, res) => {
+    try {
+
+        let obj = {
+            id_mesa: req.body.id_mesa
+        }
+
+        let errors = model.validarRemover(obj);
+        if (errors)
+            return res.status(400).send(errors[0]);
+
+        await mongodb.updateOne('freeddb', 'mesa',
+            {
+                _id: new ObjectId(obj.id_mesa),
+                id_restaurante: req.token.id_restaurante
+            },
+            {
+                $set: { aberta: false }
+            }
+        );
+
+        enviarDadosSockets(req.token.id_restaurante);
+
+        return res.json('OK');
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+module.exports.fechar = async (req, res) => {
+    try {
+
+        let obj = {
+            id_mesa: req.body.id_mesa,
+            desconto: req.body.desconto,
+            taxa_servico: req.body.taxa_servico,
+        }
+
+        let errors = model.validarFechar(obj);
+        if (errors)
+            return res.status(400).send(errors[0]);
+
+        await mongodb.updateOne('freeddb', 'mesa',
+            {
+                _id: new ObjectId(obj.id_mesa),
+                id_restaurante: req.token.id_restaurante
+            },
+            {
+                $set: {
+                    aberta: false,
+                    fechada: true,
+                    desconto: obj.desconto,
+                    taxa_servico: obj.taxa_servico,
+                }
+            }
+        );
+
+        enviarDadosSockets(req.token.id_restaurante);
+
+        return res.json('OK');
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+module.exports.incluirItem = async (req, res) => {
     try {
         // recupera os dados da requisição
         let obj = {
@@ -47,35 +127,62 @@ module.exports.incluirProduto = async (req, res) => {
         }
 
         // validação dos dados da requisição
-        let errors = model.validarIncluirProduto(obj);
+        let errors = model.validarIncluirItem(obj);
         if (errors)
             return res.status(400).send(errors[0]);
 
-        // obtendo o id do restaurante dessa mesa
-        let mesa = await mongodb.findOne('freeddb', 'mesa',
-            { _id: new ObjectId(obj.id_mesa) }
-        );
-        if(!mesa)
-            res.status(400).send("mesa inválida");
-        let id_restaurante = mesa.id_restaurante;
-
         // obtendo os dados do produto
-        let produto = await produtoCtrl._obter(id_restaurante,obj.id_produto);
-        if(!produto)
+        let produto = await produtoCtrl._obter(req.token.id_restaurante, obj.id_produto);
+        if (!produto)
             res.status(400).send("produto inválido");
-        
+
         // inclui a quantidade e atribui um id
         produto.quantidade = obj.quantidade;
-        produto._id = new ObjectId();
-        
+        produto.id_item = new ObjectId();
+
         // incluindo o produto na mesa
         await mongodb.updateOne('freeddb', 'mesa',
-            { _id: new ObjectId(obj.id_mesa) },
+            { _id: new ObjectId(obj.id_mesa), id_restaurante: req.token.id_restaurante },
             { $push: { produtos: produto } }
         );
 
         // enviando dados aos sockets
-        enviarDadosSockets(id_restaurante);
+        enviarDadosSockets(req.token.id_restaurante);
+
+        return res.json('OK');
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+module.exports.removerItem = async (req, res) => {
+    try {
+
+        let obj = {
+            id_mesa: req.body.id_mesa,
+            id_item: req.body.id_item,
+        }
+
+        let errors = model.validarRemoverItem(obj);
+        if (errors)
+            return res.status(400).send(errors[0]);
+
+        await mongodb.updateOne('freeddb', 'mesa',
+            {
+                _id: new ObjectId(obj.id_mesa),
+                id_restaurante: req.token.id_restaurante
+            },
+            {
+                $set: {
+                    'produtos.$[item].removido': true
+                }
+            },
+            {
+                arrayFilters: [{ 'item.id_item': new ObjectId(obj.id_item) }]
+            }
+        );
+
+        enviarDadosSockets(req.token.id_restaurante);
 
         return res.json('OK');
     } catch (error) {
@@ -84,6 +191,9 @@ module.exports.incluirProduto = async (req, res) => {
 }
 
 enviarDadosSockets = async (id_restaurante) => {
-    let data = await mongodb.find('freeddb', 'mesa', { id_restaurante: id_restaurante });
+    let data = await mongodb.find('freeddb', 'mesa', {
+        id_restaurante: req.token.id_restaurante,
+        aberta: true
+    });
     emitTo("atualizacao", data, id_restaurante);
 }

@@ -55,6 +55,9 @@ module.exports = (app) => {
     /* MESA */
     app.post('/mesa/listar', [authMW], mesa.listar);
     app.post('/mesa/cadastrar', [authMW], mesa.cadastrar);
-    app.post('/mesa/incluirProduto', [authMW], mesa.incluirProduto);
+    app.post('/mesa/remover', [authMW], mesa.remover);
+    app.post('/mesa/fechar', [authMW], mesa.fechar);
+    app.post('/mesa/incluirItem', [authMW], mesa.incluirItem);
+    app.post('/mesa/removerItem', [authMW], mesa.removerItem);
 
 }
