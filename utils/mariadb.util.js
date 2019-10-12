@@ -10,8 +10,16 @@ module.exports.query = async (query, params) => {
         database: process.env.MARIADB_DATABASE,
     });
 
-    let data = await conn.query(query, params);
-    return data;
+    try {
+        let data = await conn.query(query, params);
+        return data;
+    }
+    catch (err) {
+        throw err;
+    }
+    finally {
+        conn.end();
+    }
 
 };
 
@@ -26,7 +34,15 @@ module.exports.mquery = async (query, params) => {
         multipleStatements: true,
     });
 
-    let data = await conn.query(query, params);
-    return data;
+    try {
+        let data = await conn.query(query, params);
+        return data;
+    }
+    catch (err) {
+        throw err;
+    }
+    finally {
+        conn.end();
+    }
 
 };
