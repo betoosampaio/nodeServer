@@ -123,9 +123,12 @@ module.exports.obter = async (req, res) => {
            uf,
            celular,
            email,
-           id_tipo_cadastro_conta,
-           id_tipo_conta,
+           r.id_tipo_cadastro_conta,
+           tipo_cadastro_conta,
+           r.id_tipo_conta,
+           tipo_conta,
            codigo_banco,
+           b.nome nome_banco,
            agencia,
            conta,
            digito,
@@ -133,7 +136,13 @@ module.exports.obter = async (req, res) => {
            cpf_administrador,
            ativo  
         from 
-            tb_restaurante 
+            tb_restaurante r
+            inner join tb_banco b
+                on r.codigo_banco = b.codigo
+            inner join tb_tipo_conta tc
+                on tc.id_tipo_conta = r.id_tipo_conta
+                inner join tb_tipo_cadastro_conta tcc
+                on tcc.id_tipo_cadastro_conta = r.id_tipo_cadastro_conta
         where 
             id_restaurante = ?`;
         let data = await mariadb.query(query, [req.token.id_restaurante]);
