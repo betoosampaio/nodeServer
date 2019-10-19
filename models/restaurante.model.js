@@ -118,18 +118,19 @@ let constraints_cadastrar = {
             onlyInteger: true,
         },
         length: {
-            is: 4
+            maximum: 4,
         }
     },
     conta: {
         numericality: {
             onlyInteger: true,
+            maximum: 9,
         },
     },
     digito: {
         type: 'string',
         length: {
-            is: 1
+            maximum: 2,
         }
     },
     nome_administrador: {
@@ -277,18 +278,21 @@ let constraints_editar = {
             onlyInteger: true,
         },
         length: {
-            is: 4
+            maximum: 4,
         }
     },
     conta: {
         numericality: {
             onlyInteger: true,
         },
+        length: {
+            maximum: 9,
+        }
     },
     digito: {
         type: 'string',
         length: {
-            is: 1
+            maximum: 2,
         }
     },
     nome_administrador: {

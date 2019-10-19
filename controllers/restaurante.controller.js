@@ -137,9 +137,9 @@ module.exports.obter = async (req, res) => {
            ativo  
         from 
             tb_restaurante r
-            inner join tb_banco b
+            left join tb_banco b
                 on r.codigo_banco = b.codigo
-            inner join tb_tipo_conta tc
+            left join tb_tipo_conta tc
                 on tc.id_tipo_conta = r.id_tipo_conta
                 inner join tb_tipo_cadastro_conta tcc
                 on tcc.id_tipo_cadastro_conta = r.id_tipo_cadastro_conta
