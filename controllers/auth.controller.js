@@ -54,7 +54,7 @@ WHERE
 module.exports.validarToken = async (req, res) => {
     try {
        authMW.validarToken(req.headers.token);
-       return res.send('OK');
+       return res.json('OK');
     } catch (error) {
         return res.status(401).send(error.message);
     }
