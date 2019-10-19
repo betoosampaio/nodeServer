@@ -1,7 +1,7 @@
 const mariadb = require('../utils/mariadb.util');
 const model = require('../models/restaurante.model');
 
-module.exports.checarSeCodigoExiste = async (req, res) => {
+module.exports.checarSeCodigoExiste = async(req, res) => {
     try {
         let exists = await _checarSeCodigoExiste(req.body.codigo_restaurante)
         return res.json({ exists: exists });
@@ -10,7 +10,7 @@ module.exports.checarSeCodigoExiste = async (req, res) => {
     }
 }
 
-module.exports.checarSeCNPJExiste = async (req, res) => {
+module.exports.checarSeCNPJExiste = async(req, res) => {
     try {
         let exists = await _checarSeCNPJExiste(req.body.cnpj)
         return res.json({ exists: exists });
@@ -19,7 +19,7 @@ module.exports.checarSeCNPJExiste = async (req, res) => {
     }
 }
 
-module.exports.cadastrar = async (req, res) => {
+module.exports.cadastrar = async(req, res) => {
     try {
         let obj = req.body;
 
@@ -106,7 +106,7 @@ module.exports.cadastrar = async (req, res) => {
     }
 }
 
-module.exports.obter = async (req, res) => {
+module.exports.obter = async(req, res) => {
     try {
         let query = `
         select
@@ -153,7 +153,7 @@ module.exports.obter = async (req, res) => {
     }
 }
 
-module.exports.editar = async (req, res) => {
+module.exports.editar = async(req, res) => {
     try {
         let obj = req.body;
 
@@ -222,7 +222,7 @@ module.exports.editar = async (req, res) => {
     }
 }
 
-module.exports.inativar = async (req, res) => {
+module.exports.inativar = async(req, res) => {
     try {
         let obj = req.body;
 
@@ -242,7 +242,7 @@ module.exports.inativar = async (req, res) => {
     }
 }
 
-module.exports.reativar = async (req, res) => {
+module.exports.reativar = async(req, res) => {
     try {
         let query = `
         update tb_restaurante
@@ -260,7 +260,7 @@ module.exports.reativar = async (req, res) => {
     }
 }
 
-module.exports.obterBancos = async (req, res) => {
+module.exports.obterBancos = async(req, res) => {
     try {
         let query = 'select * from tb_banco';
         let data = await mariadb.query(query);
@@ -271,19 +271,29 @@ module.exports.obterBancos = async (req, res) => {
     }
 }
 
+module.exports.obterMunicipios = async(req, res) => {
+    try {
+        let query = 'select * from tb_municipio';
+        let data = await mariadb.query(query);
+        return res.json(data);
 
-_checarSeCodigoExiste = async (codigo_restaurante) => {
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+_checarSeCodigoExiste = async(codigo_restaurante) => {
     let data = await mariadb.query("select 1 from tb_restaurante where codigo_restaurante = ?", codigo_restaurante);
     return data.length > 0 ? true : false;
 }
 
-_checarSeCodigoExisteExclusive = async (codigo_restaurante, id_restaurante) => {
+_checarSeCodigoExisteExclusive = async(codigo_restaurante, id_restaurante) => {
     let query = `select 1 from tb_restaurante where codigo_restaurante = ? and id_restaurante != ?`;
     let data = await mariadb.query(query, [codigo_restaurante, id_restaurante]);
     return data.length > 0 ? true : false;
 }
 
-_checarSeCNPJExiste = async (cnpj) => {
+_checarSeCNPJExiste = async(cnpj) => {
     let data = await mariadb.query("select 1 from tb_restaurante where cnpj = ?", cnpj);
     return data.length > 0 ? true : false;
 }

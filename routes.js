@@ -1,5 +1,3 @@
-
-
 module.exports = (app) => {
 
     /* MIDDLEWARES */
@@ -21,7 +19,6 @@ module.exports = (app) => {
     app.post('/validarToken', auth.validarToken);
 
     /* RESTAURANTE */
-    app.post('/restaurante/obterBancos', restaurante.obterBancos);
     app.post('/restaurante/checarSeCodigoExiste', restaurante.checarSeCodigoExiste);
     app.post('/restaurante/checarSeCNPJExiste', restaurante.checarSeCNPJExiste);
     app.post('/restaurante/cadastrar', restaurante.cadastrar);
@@ -29,6 +26,10 @@ module.exports = (app) => {
     app.post('/restaurante/editar', [authMW], restaurante.editar);
     app.post('/restaurante/inativar', [authMW], restaurante.inativar);
     app.post('/restaurante/reativar', [authMW], restaurante.reativar);
+
+    /* VARIAVEIS CADASTRO */
+    app.post('/obterBancos', restaurante.obterBancos);
+    app.post('/obterMunicipios', restaurante.obterMunicipios);
 
     /* OPERADOR */
     app.post('/perfil/listar', [authMW], operador.listarPerfis);
