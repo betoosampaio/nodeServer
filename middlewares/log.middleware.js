@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
         let log = {
             start: start,
             responseTime: responseTime,
-            ip: this.req.ip,
+            ip: (this.req.headers['x-forwarded-for'] || '').split(',').pop() || this.req.connection.remoteAddress,
             hostname: this.req.hostname,
             originalUrl: this.req.originalUrl,
             path: this.req.path,
@@ -29,7 +29,7 @@ module.exports = (req, res, next) => {
             responseBody: this.responseBody ? this.responseBody.toString() : this.responseBody,
             token: this.req.token
         };
-
+        
         console.log(log);
         mongodb.insertOne('logdb','logs',log);
         
