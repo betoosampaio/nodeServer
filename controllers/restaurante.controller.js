@@ -141,7 +141,7 @@ module.exports.obter = async (req, res) => {
                 on r.codigo_banco = b.codigo
             left join tb_tipo_conta tc
                 on tc.id_tipo_conta = r.id_tipo_conta
-                inner join tb_tipo_cadastro_conta tcc
+            left join tb_tipo_cadastro_conta tcc
                 on tcc.id_tipo_cadastro_conta = r.id_tipo_cadastro_conta
         where 
             id_restaurante = ?`;
