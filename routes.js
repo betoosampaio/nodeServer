@@ -18,9 +18,10 @@ module.exports = (app) => {
 
     app.get('/', (req, res) => { res.json("Server Online") });
     app.post('/login', auth.login);
+    app.post('/validarToken', auth.validarToken);
 
     /* RESTAURANTE */
-    app.post('/restaurante/obterVariaveisCadastro', restaurante.obterVariaveisCadastro);
+    app.post('/restaurante/obterBancos', restaurante.obterBancos);
     app.post('/restaurante/checarSeCodigoExiste', restaurante.checarSeCodigoExiste);
     app.post('/restaurante/checarSeCNPJExiste', restaurante.checarSeCNPJExiste);
     app.post('/restaurante/cadastrar', restaurante.cadastrar);

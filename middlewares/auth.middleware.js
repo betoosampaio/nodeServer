@@ -28,6 +28,10 @@ module.exports.socket = (socket, next) => {
     }
 }
 
+module.exports.validarToken = token =>{
+    return validarToken(token);
+}
+
 validarToken = (_token) => {
 
     if (!_token)
@@ -47,3 +51,4 @@ validarToken = (_token) => {
 
     return token;
 }
+

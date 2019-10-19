@@ -102,25 +102,21 @@ let constraints_cadastrar = {
         numericality: {
             onlyInteger: true,
         },
-        presence: true
     },
     id_tipo_conta: {
         numericality: {
             onlyInteger: true,
         },
-        presence: true
     },
     codigo_banco: {
         numericality: {
             onlyInteger: true,
         },
-        presence: true
     },
     agencia: {
         numericality: {
             onlyInteger: true,
         },
-        presence: true,
         length: {
             is: 4
         }
@@ -129,11 +125,9 @@ let constraints_cadastrar = {
         numericality: {
             onlyInteger: true,
         },
-        presence: true,
     },
     digito: {
         type: 'string',
-        presence: true,
         length: {
             is: 1
         }
@@ -267,25 +261,21 @@ let constraints_editar = {
         numericality: {
             onlyInteger: true,
         },
-        presence: true
     },
     id_tipo_conta: {
         numericality: {
             onlyInteger: true,
         },
-        presence: true
     },
     codigo_banco: {
         numericality: {
             onlyInteger: true,
         },
-        presence: true
     },
     agencia: {
         numericality: {
             onlyInteger: true,
         },
-        presence: true,
         length: {
             is: 4
         }
@@ -294,11 +284,9 @@ let constraints_editar = {
         numericality: {
             onlyInteger: true,
         },
-        presence: true,
     },
     digito: {
         type: 'string',
-        presence: true,
         length: {
             is: 1
         }
@@ -325,9 +313,8 @@ let constraints_editar = {
 
 validatejs.validators.cpf = function (value, options, key, attributes) {
     let message = 'invalido';
+    if(!value) return message;
     let strCPF = value.toString();
-
-    if(!strCPF) return message;
 
     var Soma;
     var Resto;
@@ -351,9 +338,8 @@ validatejs.validators.cpf = function (value, options, key, attributes) {
 
 validatejs.validators.cnpj = function (value, options, key, attributes) {
     let message = 'invalido';
+    if (!value) return message;
     let cnpj = value.toString();
-
-    if (!cnpj) return message;
 
     if (cnpj.length != 14)
         return message;

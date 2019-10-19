@@ -2,6 +2,7 @@ const crypto = require('../utils/crypto.util');
 const mariadb = require('../utils/mariadb.util');
 const model = require('../models/credenciais.model');
 const mongodb = require('../utils/mongodb.util');
+const authMW = require('../middlewares/auth.middleware');
 
 module.exports.login = async (req, res) => {
     try {
@@ -49,3 +50,13 @@ WHERE
         return res.status(500).send(error.message);
     }
 }
+
+module.exports.validarToken = async (req, res) => {
+    try {
+       authMW.validarToken(req.headers.token);
+       return res.send('OK');
+    } catch (error) {
+        return res.status(401).send(error.message);
+    }
+}
+

@@ -260,16 +260,10 @@ module.exports.reativar = async (req, res) => {
     }
 }
 
-module.exports.obterVariaveisCadastro = async (req, res) => {
+module.exports.obterBancos = async (req, res) => {
     try {
-        let query = `
-        select * from tb_banco;
-        select * from tb_municipio;
-        select * from tb_estado;
-        select * from tb_tipo_conta;
-        select * from tb_tipo_cadastro_conta;
-        `;
-        let data = await mariadb.mquery(query);
+        let query = 'select * from tb_banco';
+        let data = await mariadb.query(query);
         return res.json(data);
 
     } catch (error) {
