@@ -99,6 +99,9 @@ module.exports.editar = async (req, res) => {
         if (loginExists)
             return res.status(400).send('Este login já está sendo utilizado');
 
+        if (obj.id_operador == 1 && obj.ativo == 0)
+            return res.status(400).send('Este usuário não pode ser inativado');
+
         let query = `
         update tb_operador
         set
@@ -130,6 +133,10 @@ module.exports.editar = async (req, res) => {
 module.exports.remover = async (req, res) => {
     try {
         let obj = req.body;
+
+        if (obj.id_operador == 1)
+            return res.status(400).send('Este usuário não pode ser removido');
+
         let query = `
         update tb_operador
         set
