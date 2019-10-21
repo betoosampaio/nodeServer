@@ -167,6 +167,20 @@ module.exports.listarPerfis = async (req, res) => {
     }
 }
 
+module.exports.checarSeLoginExiste = async (req, res) => {
+    try {
+        let exists;
+        if (req.body.id_operador)
+            exists = await _checarSeLoginExisteExclusive(req.body.login_operador, req.token.id_restaurante, req.body.id_operador);
+        else
+            exists = await _checarSeLoginExiste(req.body.login_operador, req.token.id_restaurante);
+
+        return res.json({ exists: exists });
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
 _checarSeLoginExiste = async (login_operador, id_restaurante) => {
     let data = await mariadb.query("select 1 from tb_operador where login_operador = ? and id_restaurante = ?", [login_operador, id_restaurante]);
     return data.length > 0 ? true : false;

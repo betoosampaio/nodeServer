@@ -38,6 +38,7 @@ module.exports = (app) => {
     app.post('/operador/cadastrar', [authMW], operador.cadastrar);
     app.post('/operador/editar', [authMW], operador.editar);
     app.post('/operador/remover', [authMW], operador.remover);
+    app.post('/operador/checarSeLoginExiste', [authMW], operador.checarSeLoginExiste);
 
     /* MENU */
     app.post('/menu/listar', [authMW], menu.listar);
