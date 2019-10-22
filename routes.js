@@ -23,13 +23,16 @@ module.exports = (app) => {
     app.post('/restaurante/checarSeCNPJExiste', restaurante.checarSeCNPJExiste);
     app.post('/restaurante/cadastrar', restaurante.cadastrar);
     app.post('/restaurante/obter', [authMW], restaurante.obter);
-    app.post('/restaurante/editar', [authMW], restaurante.editar);
+    app.post('/restaurante/editar/dadosRestaurante', [authMW], restaurante.editarDadosRestaurante);
+    app.post('/restaurante/editar/dadosBancarios', [authMW], restaurante.editarDadosBancarios);
+    app.post('/restaurante/editar/dadosPessoais', [authMW], restaurante.editarDadosPessoais);
     app.post('/restaurante/inativar', [authMW], restaurante.inativar);
     app.post('/restaurante/reativar', [authMW], restaurante.reativar);
 
     /* VARIAVEIS CADASTRO */
     app.post('/obterBancos', restaurante.obterBancos);
     app.post('/obterMunicipios', restaurante.obterMunicipios);
+    app.post('/obterEspecialidades', restaurante.obterEspecialidades);
 
     /* OPERADOR */
     app.post('/perfil/listar', [authMW], operador.listarPerfis);

@@ -3,7 +3,7 @@ const validatejs = require('validate.js');
 let constraints_cadastrar = {
     codigo_restaurante: {
         presence: true,
-        type: 'string',   
+        type: 'string',
         length: {
             minimum: 4,
             maximum: 50
@@ -13,7 +13,7 @@ let constraints_cadastrar = {
         presence: true,
         numericality: {
             onlyInteger: true,
-        },     
+        },
         length: {
             is: 14
         },
@@ -35,6 +35,12 @@ let constraints_cadastrar = {
             maximum: 255
         }
     },
+    id_especialidade: {
+        numericality: {
+            onlyInteger: true,
+        },
+        presence: true,
+    },
     cep: {
         numericality: {
             onlyInteger: true,
@@ -98,6 +104,14 @@ let constraints_cadastrar = {
         email: true,
         presence: true
     },
+    pagamento_app: {
+        presence: true,
+        numericality: {
+            onlyInteger: true,
+            greaterThanOrEqualTo: 0,
+            lessThanOrEqualTo: 1
+        }
+    },
     id_tipo_cadastro_conta: {
         numericality: {
             onlyInteger: true,
@@ -107,6 +121,9 @@ let constraints_cadastrar = {
         numericality: {
             onlyInteger: true,
         },
+    },
+    cpfcnpj_conta: {      
+        cpfcnpj: true
     },
     codigo_banco: {
         numericality: {
@@ -151,7 +168,7 @@ let constraints_cadastrar = {
         },
         cpf: true
     },
-    login:{
+    login: {
         type: "string",
         presence: true,
         length: {
@@ -159,7 +176,7 @@ let constraints_cadastrar = {
             maximum: 100,
         },
     },
-    senha:{
+    senha: {
         type: "string",
         presence: true,
         length: {
@@ -170,10 +187,10 @@ let constraints_cadastrar = {
     }
 }
 
-let constraints_editar = {
+let constraints_editarDadosRestaurante = {
     codigo_restaurante: {
         presence: true,
-        type: 'string',   
+        type: 'string',
         length: {
             minimum: 4,
             maximum: 50
@@ -195,6 +212,12 @@ let constraints_editar = {
             maximum: 255
         }
     },
+    id_especialidade: {
+        numericality: {
+            onlyInteger: true,
+        },
+        presence: true,
+    },
     cep: {
         numericality: {
             onlyInteger: true,
@@ -244,19 +267,17 @@ let constraints_editar = {
         length: {
             is: 2
         }
-    },
-    celular: {
+    },  
+}
+
+let constraints_editarDadosBancarios = {
+    pagamento_app: {
+        presence: true,
         numericality: {
             onlyInteger: true,
-        },
-        presence: true,
-        length: {
-            is: 11
+            greaterThanOrEqualTo: 0,
+            lessThanOrEqualTo: 1
         }
-    },
-    email: {
-        email: true,
-        presence: true
     },
     id_tipo_cadastro_conta: {
         numericality: {
@@ -295,6 +316,25 @@ let constraints_editar = {
             maximum: 2,
         }
     },
+    cpfcnpj_conta: {
+        cpfcnpj: true
+    },
+}
+
+let constraints_editarDadosPessoais = {   
+    celular: {
+        numericality: {
+            onlyInteger: true,
+        },
+        presence: true,
+        length: {
+            is: 11
+        }
+    },
+    email: {
+        email: true,
+        presence: true
+    },   
     nome_administrador: {
         type: 'string',
         presence: true,
@@ -316,37 +356,80 @@ let constraints_editar = {
 }
 
 validatejs.validators.cpf = function (value, options, key, attributes) {
-    let message = 'invalido';
-    if(!value) return message;
-    let strCPF = value.toString();
+    if (!validarCPF(value))
+        return 'inválido';
+};
+
+validatejs.validators.cnpj = function (value, options, key, attributes) {
+    if (!validarCNPJ(value))
+        return 'inválido';
+};
+
+validatejs.validators.cpfcnpj = function (value, options, key, attributes) {
+    if(value){
+        if (value.length === 11) {
+            if (!validarCPF(value))
+                return 'inválido';
+        }
+        else if(value.length === 14){
+            if (!validarCNPJ(value))
+                return 'inválido';
+        }
+        else return 'inválido';
+    }   
+};
+
+validatejs.validators.letrasNumeros = function (value, options, key, attributes) {
+    var regexp = new RegExp(/[^A-Za-z0-9]+/);
+    if (regexp.test(value))
+        return "deve conter somente letras e números";
+};
+
+function validarCPF(_cpf) {
+    if (!_cpf) return false;
+    let strCPF = _cpf.toString();
+
+    // Elimina CNPJs invalidos conhecidos
+    if (strCPF == "00000000000" ||
+        strCPF == "11111111111" ||
+        strCPF == "22222222222" ||
+        strCPF == "33333333333" ||
+        strCPF == "44444444444" ||
+        strCPF == "55555555555" ||
+        strCPF == "66666666666" ||
+        strCPF == "77777777777" ||
+        strCPF == "88888888888" ||
+        strCPF == "99999999999")
+        return false;
 
     var Soma;
     var Resto;
     Soma = 0;
     if (strCPF)
-        if (strCPF == "00000000000") return message;
+        if (strCPF == "00000000000") return false;
 
     for (let i = 1; i <= 9; i++) Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
     Resto = (Soma * 10) % 11;
 
     if ((Resto == 10) || (Resto == 11)) Resto = 0;
-    if (Resto != parseInt(strCPF.substring(9, 10))) return message;
+    if (Resto != parseInt(strCPF.substring(9, 10))) return false;
 
     Soma = 0;
     for (let i = 1; i <= 10; i++) Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
     Resto = (Soma * 10) % 11;
 
     if ((Resto == 10) || (Resto == 11)) Resto = 0;
-    if (Resto != parseInt(strCPF.substring(10, 11))) return message;
-};
+    if (Resto != parseInt(strCPF.substring(10, 11))) return false;
 
-validatejs.validators.cnpj = function (value, options, key, attributes) {
-    let message = 'invalido';
-    if (!value) return message;
-    let cnpj = value.toString();
+    return true;
+}
+
+function validarCNPJ(_cnpj) {
+    if (!_cnpj) return false;
+    let cnpj = _cnpj.toString();
 
     if (cnpj.length != 14)
-        return message;
+        return false;
 
     // Elimina CNPJs invalidos conhecidos
     if (cnpj == "00000000000000" ||
@@ -359,7 +442,7 @@ validatejs.validators.cnpj = function (value, options, key, attributes) {
         cnpj == "77777777777777" ||
         cnpj == "88888888888888" ||
         cnpj == "99999999999999")
-        return message;
+        return false;
 
     // Valida DVs
     let tamanho = cnpj.length - 2
@@ -374,7 +457,7 @@ validatejs.validators.cnpj = function (value, options, key, attributes) {
     }
     let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
     if (resultado != digitos.charAt(0))
-        return message;
+        return false;
 
     tamanho = tamanho + 1;
     numeros = cnpj.substring(0, tamanho);
@@ -387,16 +470,13 @@ validatejs.validators.cnpj = function (value, options, key, attributes) {
     }
     resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
     if (resultado != digitos.charAt(1))
-        return message;
-};
+        return false;
 
-validatejs.validators.letrasNumeros = function (value, options, key, attributes) {
-    var regexp = new RegExp(/[^A-Za-z0-9]+/);
-    if (regexp.test(value))
-        return "deve conter somente letras e números"; 
-};
-
+    return true;    
+}
 
 module.exports.validarCadastrar = obj => validatejs.validate(obj, constraints_cadastrar, { format: "flat" });
-module.exports.validarEditar = obj => validatejs.validate(obj, constraints_editar, { format: "flat" });
+module.exports.validarEditarDadosRestaurante = obj => validatejs.validate(obj, constraints_editarDadosRestaurante, { format: "flat" });
+module.exports.validarEditarDadosBancarios = obj => validatejs.validate(obj, constraints_editarDadosBancarios, { format: "flat" });
+module.exports.validarEditarDadosPessoais = obj => validatejs.validate(obj, constraints_editarDadosPessoais, { format: "flat" });
 

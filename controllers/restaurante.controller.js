@@ -41,6 +41,7 @@ module.exports.cadastrar = async(req, res) => {
             cnpj,
             razao_social,
             nome_restaurante,
+            id_especialidade,
             cep,
             logradouro,
             numero,
@@ -50,22 +51,25 @@ module.exports.cadastrar = async(req, res) => {
             complemento,
             celular,
             email,
+            pagamento_app,
             codigo_banco,
             id_tipo_cadastro_conta,
             id_tipo_conta,
             agencia,
             conta,
             digito,
+            cpfcnpj_conta,
             cpf_administrador,
             nome_administrador,
             codigo_restaurante)
-            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
             `;
 
         let data = await mariadb.query(query, [
             obj.cnpj,
             obj.razao_social,
             obj.nome_restaurante,
+            obj.id_especialidade,
             obj.cep,
             obj.logradouro,
             obj.numero,
@@ -75,12 +79,14 @@ module.exports.cadastrar = async(req, res) => {
             obj.complemento,
             obj.celular,
             obj.email,
+            obj.pagamento_app,
             obj.codigo_banco,
             obj.id_tipo_cadastro_conta,
             obj.id_tipo_conta,
             obj.agencia,
             obj.conta,
             obj.digito,
+            obj.cpfcnpj_conta,
             obj.cpf_administrador,
             obj.nome_administrador,
             obj.codigo_restaurante
@@ -114,6 +120,8 @@ module.exports.obter = async(req, res) => {
            cnpj,
            razao_social,
            nome_restaurante,
+           r.id_especialidade,
+           ds_especialidade,
            cep,
            logradouro,
            numero,
@@ -123,6 +131,8 @@ module.exports.obter = async(req, res) => {
            uf,
            celular,
            email,
+           pagamento_app,
+           cpfcnpj_conta,
            r.id_tipo_cadastro_conta,
            tipo_cadastro_conta,
            r.id_tipo_conta,
@@ -143,6 +153,8 @@ module.exports.obter = async(req, res) => {
                 on tc.id_tipo_conta = r.id_tipo_conta
             left join tb_tipo_cadastro_conta tcc
                 on tcc.id_tipo_cadastro_conta = r.id_tipo_cadastro_conta
+            left join tb_especialidade e
+                on e.id_especialidade = r.id_especialidade
         where 
             id_restaurante = ?`;
         let data = await mariadb.query(query, [req.token.id_restaurante]);
@@ -153,11 +165,11 @@ module.exports.obter = async(req, res) => {
     }
 }
 
-module.exports.editar = async(req, res) => {
+module.exports.editarDadosRestaurante = async(req, res) => {
     try {
         let obj = req.body;
 
-        let errors = model.validarEditar(obj);
+        let errors = model.validarEditarDadosRestaurante(obj);
         if (errors)
             return res.status(400).send(errors[0]);
 
@@ -171,6 +183,7 @@ module.exports.editar = async(req, res) => {
              codigo_restaurante = ?
             ,razao_social = ?
             ,nome_restaurante = ?
+            ,id_especialidade = ?
             ,cep = ?
             ,logradouro = ?
             ,numero = ?
@@ -178,16 +191,6 @@ module.exports.editar = async(req, res) => {
             ,municipio = ?
             ,uf = ?
             ,complemento = ?
-            ,celular = ?
-            ,email = ?
-            ,codigo_banco = ?
-            ,id_tipo_cadastro_conta = ?
-            ,id_tipo_conta = ?
-            ,agencia = ?
-            ,conta = ?
-            ,digito = ?
-            ,cpf_administrador = ?
-            ,nome_administrador = ?
         where
             id_restaurante = ?;`;
 
@@ -195,23 +198,88 @@ module.exports.editar = async(req, res) => {
             obj.codigo_restaurante,
             obj.razao_social,
             obj.nome_restaurante,
+            obj.id_especialidade,
             obj.cep,
             obj.logradouro,
             obj.numero,
             obj.bairro,
             obj.municipio,
             obj.uf,
-            obj.complemento,
-            obj.celular,
-            obj.email,
-            obj.codigo_banco,
+            obj.complemento,          
+            req.token.id_restaurante
+        ]);
+
+        return res.json('OK');
+
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+module.exports.editarDadosBancarios = async(req, res) => {
+    try {
+        let obj = req.body;
+
+        let errors = model.validarEditarDadosBancarios(obj);
+        if (errors)
+            return res.status(400).send(errors[0]);
+
+        let query = `
+        update tb_restaurante
+        set
+             pagamento_app = ?
+            ,id_tipo_cadastro_conta = ?
+            ,id_tipo_conta = ?
+            ,codigo_banco = ?
+            ,agencia = ?
+            ,conta = ?
+            ,digito = ?
+            ,cpfcnpj_conta = ?
+        where
+            id_restaurante = ?;`;
+
+        await mariadb.query(query, [
+            obj.pagamento_app,
             obj.id_tipo_cadastro_conta,
             obj.id_tipo_conta,
+            obj.codigo_banco,
             obj.agencia,
             obj.conta,
             obj.digito,
+            obj.cpfcnpj_conta,          
+            req.token.id_restaurante
+        ]);
+
+        return res.json('OK');
+
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+module.exports.editarDadosPessoais = async(req, res) => {
+    try {
+        let obj = req.body;
+
+        let errors = model.validarEditarDadosPessoais(obj);
+        if (errors)
+            return res.status(400).send(errors[0]);
+
+        let query = `
+        update tb_restaurante
+        set
+             cpf_administrador = ?
+            ,nome_administrador = ?
+            ,email = ?
+            ,celular = ?
+        where
+            id_restaurante = ?;`;
+
+        await mariadb.query(query, [
             obj.cpf_administrador,
             obj.nome_administrador,
+            obj.email,
+            obj.celular,
             req.token.id_restaurante
         ]);
 
@@ -274,6 +342,17 @@ module.exports.obterBancos = async(req, res) => {
 module.exports.obterMunicipios = async(req, res) => {
     try {
         let query = 'select * from tb_municipio';
+        let data = await mariadb.query(query);
+        return res.json(data);
+
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+module.exports.obterEspecialidades = async(req, res) => {
+    try {
+        let query = 'select * from tb_especialidade';
         let data = await mariadb.query(query);
         return res.json(data);
 
