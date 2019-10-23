@@ -14,7 +14,9 @@ module.exports.login = async (req, res) => {
             return res.status(401).send('Credenciais invalidas');
         }
 
-        let tentativasFalhas = await mongodb.find('logdb', 'failed_login_attempts', { ip: req.ip });
+        let ip = (req.headers['x-forwarded-for'] || '').split(',').pop() || req.connection.remoteAddress;
+
+        let tentativasFalhas = await mongodb.find('logdb', 'failed_login_attempts', { ip: ip });
         if (tentativasFalhas.length >= 3)
             return res.status(429).send('Muitas tentativas inválidas, favor tentar novamente mais tarde');
 
