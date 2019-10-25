@@ -108,7 +108,7 @@ module.exports.remover = async (req, res) => {
             id_menu = ?
             and id_restaurante = ?`
 
-        await mariadb.query(query, [obj.id_menu,req.token.id_restaurante]);
+        await mariadb.query(query, [obj.id_menu, req.token.id_restaurante]);
 
         return res.json("OK");
     } catch (error) {
@@ -116,3 +116,17 @@ module.exports.remover = async (req, res) => {
     }
 }
 
+module.exports.checarSeMenuExiste = async (req, res) => {
+    try {
+        let exists = await _checarSeMenuExiste(req.body.ds_menu)
+        return res.json({ exists: exists });
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+
+_checarSeMenuExiste = async (ds_menu) => {
+    let data = await mariadb.query("select 1 from tb_menu where ds_menu = ?", ds_menu);
+    return data.length > 0 ? true : false;
+}
