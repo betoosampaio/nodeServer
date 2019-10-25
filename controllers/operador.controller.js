@@ -101,6 +101,9 @@ module.exports.editar = async (req, res) => {
 
         if (obj.id_operador == 1 && obj.ativo == 0)
             return res.status(400).send('Este usuário não pode ser inativado');
+        
+        if (obj.id_operador == 1 && obj.id_perfil > 1)
+            return res.status(400).send('Este usuário não pode ser de outro perfil, somente administrador');
 
         let query = `
         update tb_operador
