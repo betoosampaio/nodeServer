@@ -1,6 +1,14 @@
 const validatejs = require('validate.js');
 
 let constraints_cadastrar = {
+    codigo_produto: {
+        type: "string",
+        presence: true,
+        length: {
+            minimum: 1,
+            maximum: 50,
+        },
+    },
     nome_produto: {
         type: "string",
         presence: true,
@@ -46,6 +54,14 @@ let constraints_cadastrar = {
 }
 
 let constraints_editar = {
+    codigo_produto: {
+        type: "string",
+        presence: true,
+        length: {
+            minimum: 1,
+            maximum: 50,
+        },
+    },
     nome_produto: {
         type: "string",
         presence: true,

@@ -58,6 +58,8 @@ module.exports = (app) => {
     app.post('/produto/editar', [authMW], produto.editar);
     app.post('/produto/remover', [authMW], produto.remover);
     app.post('/produto/uploadimg', [authMW, uploadimgMW], produto.uploadimg)
+    app.post('/produto/checarSeCodigoProdutoExiste', [authMW], produto.checarSeCodigoProdutoExiste);
+    app.post('/produto/obterProximoCodigoProduto', [authMW], produto.obterProximoCodigoProduto);
 
     /* MESA */
     app.post('/mesa/listar', [authMW], mesa.listar);

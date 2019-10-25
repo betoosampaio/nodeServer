@@ -7,6 +7,7 @@ module.exports.listar = async (req, res) => {
         let query = `
         select 
              p.id_produto
+            ,p.codigo_produto
             ,p.nome_produto
             ,p.descricao
             ,p.preco
@@ -37,6 +38,7 @@ module.exports.obter = async (req, res) => {
         let query = `
         select 
              p.id_produto
+            ,codigo_produto
             ,p.nome_produto
             ,p.descricao
             ,p.preco
@@ -73,6 +75,7 @@ module.exports.cadastrar = async (req, res) => {
         let query = `
         insert into tb_produto(
              id_restaurante
+            ,codigo_produto
             ,nome_produto
             ,descricao
             ,preco
@@ -81,10 +84,11 @@ module.exports.cadastrar = async (req, res) => {
             ,promocao
             ,imagem
             )
-        values(?,?,?,?,?,?,?,?)`
+        values(?,?,?,?,?,?,?,?,?)`
 
         await mariadb.query(query, [
             req.token.id_restaurante
+            , obj.codigo_produto
             , obj.nome_produto
             , obj.descricao
             , obj.preco
@@ -111,7 +115,8 @@ module.exports.editar = async (req, res) => {
         let query = `
         update tb_produto
         set
-             nome_produto = ?
+             codigo_produto = ?
+            ,nome_produto = ?
             ,descricao = ?
             ,preco = ?
             ,id_menu = ?
@@ -124,7 +129,8 @@ module.exports.editar = async (req, res) => {
             and id_restaurante = ?`
 
         await mariadb.query(query, [
-            obj.nome_produto
+            obj.codigo_produto
+            , obj.nome_produto
             , obj.descricao
             , obj.preco
             , obj.id_menu
@@ -177,6 +183,7 @@ module.exports._obter = async (id_restaurante, id_produto) => {
     let query = `
         select 
              p.id_produto
+            ,p.codigo_produto
             ,p.nome_produto
             ,p.descricao
             ,p.preco
@@ -196,5 +203,39 @@ module.exports._obter = async (id_restaurante, id_produto) => {
             and p.id_produto = ?`
 
     let data = await mariadb.query(query, [id_restaurante, id_produto]);
-    return data[0];
+    return data;
+}
+
+module.exports.checarSeCodigoProdutoExiste = async (req, res) => {
+    try {
+        let exists = await _checarSeCodigoProdutoExiste(req.body.codigo_produto, req.token.id_restaurante);
+        return res.json({ exists: exists });
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+_checarSeCodigoProdutoExiste = async (codigo_produto, id_restaurante) => {
+    let data = await mariadb.query(`
+    select 1 from tb_produto 
+    where codigo_produto = ? and id_restaurante = ?`, [codigo_produto, id_restaurante]);
+    return data.length > 0 ? true : false;
+}
+
+module.exports.obterProximoCodigoProduto = async (req, res) => {
+    try {
+        let query = `
+        select 
+            MAX(codigo_produto)+1 codigo_produto
+        from 
+            tb_produto
+        where 
+            id_restaurante = ?
+            and codigo_produto REGEXP '^-?[0-9]+$';`
+
+        let data = await mariadb.query(query, [req.token.id_restaurante]);
+        return res.json(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
 }
