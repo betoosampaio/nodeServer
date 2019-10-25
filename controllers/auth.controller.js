@@ -8,15 +8,15 @@ module.exports.login = async (req, res) => {
     try {
         let obj = req.body;
 
-        let ip = (req.headers['x-forwarded-for'] || '').split(',').pop() || req.connection.remoteAddress;
-
         let errors = model.validar(obj);
         if (errors) {
-            mongodb.insertOne('logdb', 'failed_login_attempts', { ip: ip, createdAt: new Date() });
             return res.status(401).send('Credenciais invalidas');
         }
-    
-        let tentativasFalhas = await mongodb.find('logdb', 'failed_login_attempts', { ip: ip });
+
+        let tentativasFalhas = await mongodb.find('logdb', 'failed_login_attempts', {
+            codigo_restaurante: obj.codigo_restaurante,
+            login_operador: obj.login_operador
+        });
         if (tentativasFalhas.length >= 3)
             return res.status(429).send('Muitas tentativas inválidas, favor tentar novamente mais tarde');
 
@@ -39,7 +39,11 @@ WHERE
         let data = await mariadb.query(query, [obj.codigo_restaurante, obj.login_operador, obj.senha_operador]);
 
         if (data.length == 0) {
-            mongodb.insertOne('logdb', 'failed_login_attempts', { ip: ip, createdAt: new Date() });
+            mongodb.insertOne('logdb', 'failed_login_attempts', {
+                codigo_restaurante: obj.codigo_restaurante,
+                login_operador: obj.login_operador,
+                createdAt: new Date()
+            });
             return res.status(401).send('Login e/ou senha incorreto');
         }
 
@@ -54,8 +58,8 @@ WHERE
 
 module.exports.validarToken = async (req, res) => {
     try {
-       authMW.validarToken(req.headers.token);
-       return res.json('OK');
+        authMW.validarToken(req.headers.token);
+        return res.json('OK');
     } catch (error) {
         return res.status(401).send(error.message);
     }
