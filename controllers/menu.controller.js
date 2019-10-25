@@ -12,7 +12,9 @@ module.exports.listar = async (req, res) => {
             tb_menu
         where 
             id_restaurante = ?
-            and removido = 0`
+            and removido = 0
+        order by
+            ds_menu`
 
         let data = await mariadb.query(query, [req.token.id_restaurante]);
         return res.json(data);
