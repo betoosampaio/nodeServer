@@ -51,6 +51,10 @@ module.exports.cadastrar = async (req, res) => {
         if (errors)
             return res.status(400).send(errors[0]);
 
+        let exists = await _checarSeMenuExiste(obj.ds_menu, req.token.id_restaurante);
+        if (exists)
+            return res.status(400).send('Esta descrição de menu já está sendo utilizada');
+
         let query = `
         insert into tb_menu(
               ds_menu
@@ -76,6 +80,10 @@ module.exports.editar = async (req, res) => {
         let errors = model.validarEditar(obj);
         if (errors)
             return res.status(400).send(errors[0]);
+
+        let exists = await _checarSeMenuExisteExclusive(obj.ds_menu, obj.id_menu, req.token.id_restaurante);
+        if (exists)
+            return res.status(400).send('Esta descrição de menu já está sendo utilizada');
 
         let query = `
         update tb_menu
@@ -128,7 +136,24 @@ module.exports.checarSeMenuExiste = async (req, res) => {
 }
 
 
-_checarSeMenuExiste = async (ds_menu) => {
-    let data = await mariadb.query("select 1 from tb_menu where ds_menu = ?", ds_menu);
+_checarSeMenuExiste = async (ds_menu, id_restaurante) => {
+    let data = await mariadb.query(`
+    select 1 
+    from tb_menu 
+    where ds_menu = ? and id_restaurante = ?`,
+        [ds_menu, id_restaurante]);
+    return data.length > 0 ? true : false;
+}
+
+_checarSeMenuExisteExclusive = async (ds_menu, id_menu, id_restaurante) => {
+    let data = await mariadb.query(`
+    select 1 
+    from 
+        tb_menu 
+    where 
+        ds_menu = ? 
+        and id_menu != ? 
+        and id_restaurante = ?`,
+        [ds_menu, id_menu, id_restaurante]);
     return data.length > 0 ? true : false;
 }
