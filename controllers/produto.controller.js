@@ -72,6 +72,10 @@ module.exports.cadastrar = async (req, res) => {
         if (errors)
             return res.status(400).send(errors[0]);
 
+        let exists = await _checarSeCodigoProdutoExiste(obj.codigo_produto, req.token.id_restaurante);
+        if (exists)
+            return res.status(400).send('Este código de produto já está cadastrado');
+
         let query = `
         insert into tb_produto(
              id_restaurante
@@ -111,6 +115,10 @@ module.exports.editar = async (req, res) => {
         let errors = model.validarEditar(obj);
         if (errors)
             return res.status(400).send(errors[0]);
+
+        let exists = await _checarSeCodigoProdutoExisteExclusive(obj.codigo_produto, obj.id_produto, req.token.id_restaurante);
+        if (exists)
+            return res.status(400).send('Este código de produto já está cadastrado');
 
         let query = `
         update tb_produto
@@ -219,6 +227,14 @@ _checarSeCodigoProdutoExiste = async (codigo_produto, id_restaurante) => {
     let data = await mariadb.query(`
     select 1 from tb_produto 
     where codigo_produto = ? and id_restaurante = ?`, [codigo_produto, id_restaurante]);
+    return data.length > 0 ? true : false;
+}
+
+_checarSeCodigoProdutoExisteExclusive = async (codigo_produto, id_produto, id_restaurante) => {
+    let data = await mariadb.query(`
+    select 1 from tb_produto 
+    where codigo_produto = ? and id_produto != ? and id_restaurante = ?`,
+        [codigo_produto, id_produto, id_restaurante]);
     return data.length > 0 ? true : false;
 }
 
