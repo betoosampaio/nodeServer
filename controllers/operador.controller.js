@@ -144,7 +144,8 @@ module.exports.remover = async (req, res) => {
         update tb_operador
         set
              removido = 1
-            ,login_operador = uuid()
+             ,login_operador_removido = login_operador
+             ,login_operador = uuid()
         where
             id_operador = ?
             and id_restaurante = ?`

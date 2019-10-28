@@ -162,7 +162,9 @@ module.exports.remover = async (req, res) => {
         let query = `
         update tb_produto
         set
-            removido = 1
+             removido = 1
+            ,codigo_produto_removido = codigo_produto
+            ,codigo_produto = uuid()
         where
             id_produto = ?
             and id_restaurante = ?`
