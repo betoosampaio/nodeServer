@@ -44,7 +44,7 @@ module.exports.cadastrar = async (req, res) => {
 
         await mongodb.insertOne('freeddb', 'mesa', obj);
 
-        enviarDadosSockets(req.token.id_restaurante);
+        //enviarDadosSockets(req.token.id_restaurante);
 
         return res.json('OK');
     } catch (error) {
@@ -73,7 +73,7 @@ module.exports.remover = async (req, res) => {
             }
         );
 
-        enviarDadosSockets(req.token.id_restaurante);
+        //enviarDadosSockets(req.token.id_restaurante);
 
         return res.json('OK');
     } catch (error) {
@@ -109,7 +109,7 @@ module.exports.fechar = async (req, res) => {
             }
         );
 
-        enviarDadosSockets(req.token.id_restaurante);
+        //enviarDadosSockets(req.token.id_restaurante);
 
         return res.json('OK');
     } catch (error) {
@@ -147,7 +147,7 @@ module.exports.incluirItem = async (req, res) => {
         );
 
         // enviando dados aos sockets
-        enviarDadosSockets(req.token.id_restaurante);
+        //enviarDadosSockets(req.token.id_restaurante);
 
         return res.json('OK');
     } catch (error) {
@@ -182,7 +182,7 @@ module.exports.removerItem = async (req, res) => {
             }
         );
 
-        enviarDadosSockets(req.token.id_restaurante);
+        //enviarDadosSockets(req.token.id_restaurante);
 
         return res.json('OK');
     } catch (error) {
