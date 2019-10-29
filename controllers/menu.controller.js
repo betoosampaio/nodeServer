@@ -130,7 +130,7 @@ module.exports.remover = async (req, res) => {
 
 module.exports.checarSeMenuExiste = async (req, res) => {
     try {
-        let exists = await _checarSeMenuExiste(req.body.ds_menu)
+        let exists = await _checarSeMenuExiste(req.body.ds_menu, req.token.id_restaurante)
         return res.json({ exists: exists });
     } catch (error) {
         return res.status(500).send(error.message);
