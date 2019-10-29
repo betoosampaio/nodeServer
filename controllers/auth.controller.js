@@ -23,7 +23,8 @@ module.exports.login = async (req, res) => {
         let query = (`
 SELECT
 	 r.id_restaurante
-	,o.id_operador
+    ,o.id_operador
+    ,o.ativo
 FROM
 	tb_restaurante r
 	INNER JOIN tb_operador o
@@ -32,7 +33,6 @@ WHERE
 	r.codigo_restaurante = ?
 	AND o.login_operador = ?
     AND o.senha_operador = ?
-    AND o.ativo = 1
     AND o.removido = 0
         `);
 
@@ -46,8 +46,15 @@ WHERE
             });
             return res.status(401).send('Login e/ou senha incorreto');
         }
+        if(data[0].ativo == 0){
+            return res.status(401).send('Usuário desativado');
+        }
 
-        let token = data[0];
+        let token = { 
+            id_restaurante: data[0].id_restaurante,
+            id_operador: data[0].id_operador 
+        };
+
         token.expire = (new Date()).setHours((new Date()).getHours() + 6);
         let tokenCript = crypto.encrypt(JSON.stringify(token));
         return res.json(tokenCript);
