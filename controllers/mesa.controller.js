@@ -18,6 +18,19 @@ module.exports.listar = async (req, res) => {
     }
 }
 
+module.exports.obter = async (req, res) => {
+    try {
+        let data = await mongodb.find('freeddb', 'mesa', {
+            id_restaurante: req.token.id_restaurante,
+            _id: ObjectId(req.body._id)
+        });
+
+        return res.json(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
 module.exports.cadastrar = async (req, res) => {
     try {
 
