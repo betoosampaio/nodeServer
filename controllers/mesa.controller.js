@@ -22,7 +22,7 @@ module.exports.obter = async (req, res) => {
     try {
         let data = await mongodb.find('freeddb', 'mesa', {
             id_restaurante: req.token.id_restaurante,
-            _id: ObjectId(req.body._id)
+            _id: ObjectId(req.body.id_mesa)
         });
 
         return res.json(data);
