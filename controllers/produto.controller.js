@@ -244,7 +244,7 @@ module.exports.obterProximoCodigoProduto = async (req, res) => {
     try {
         let query = `
         select 
-            MAX(codigo_produto)+1 codigo_produto
+            ifnull(MAX(codigo_produto),0)+1 codigo_produto
         from 
             tb_produto
         where 
