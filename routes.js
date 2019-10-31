@@ -69,5 +69,7 @@ module.exports = (app) => {
     app.post('/mesa/fechar', [authMW], mesa.fechar);
     app.post('/mesa/incluirItem', [authMW], mesa.incluirItem);
     app.post('/mesa/removerItem', [authMW], mesa.removerItem);
+    app.post('/mesa/editarDesconto', [authMW], mesa.editarDesconto);
+    app.post('/mesa/editarTaxaServico', [authMW], mesa.editarTaxaServico);
 
 }

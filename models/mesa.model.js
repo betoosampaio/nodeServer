@@ -12,7 +12,7 @@ let constraintsCadastrar = {
     },
 }
 
-let constraintsRemover = {
+let constraintsIdMesa = {
     id_mesa: {
         type: "string",
         presence: true,
@@ -21,7 +21,7 @@ let constraintsRemover = {
     }
 }
 
-let constraintsFechar = {
+let constraintsDesconto = {
     id_mesa: {
         type: "string",
         presence: true,
@@ -31,6 +31,15 @@ let constraintsFechar = {
     desconto: {
         numericality: true,
         presence: true
+    },
+}
+
+let constraintsTaxaServico = {
+    id_mesa: {
+        type: "string",
+        presence: true,
+        length: { is: 24 },
+        letrasNumeros: true,
     },
     taxa_servico: {
         numericality: true,
@@ -82,7 +91,8 @@ validatejs.validators.letrasNumeros = function (value, options, key, attributes)
 };
 
 module.exports.validarCadastrar = obj => validatejs.validate(obj, constraintsCadastrar, { format: "flat" });
-module.exports.validarRemover = obj => validatejs.validate(obj, constraintsRemover, { format: "flat" });
-module.exports.validarFechar = obj => validatejs.validate(obj, constraintsFechar, { format: "flat" });
+module.exports.validarIdMesa = obj => validatejs.validate(obj, constraintsIdMesa, { format: "flat" });
+module.exports.validarDesconto = obj => validatejs.validate(obj, constraintsDesconto, { format: "flat" });
+module.exports.validarTaxaServico = obj => validatejs.validate(obj, constraintsTaxaServico, { format: "flat" });
 module.exports.validarIncluirItem = obj => validatejs.validate(obj, constraintsIncluirItem, { format: "flat" });
 module.exports.validarRemoverItem = obj => validatejs.validate(obj, constraintsRemoverItem, { format: "flat" });

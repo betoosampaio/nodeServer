@@ -72,7 +72,7 @@ module.exports.remover = async (req, res) => {
             id_mesa: req.body.id_mesa
         }
 
-        let errors = model.validarRemover(obj);
+        let errors = model.validarIdMesa(obj);
         if (errors)
             return res.status(400).send(errors[0]);
 
@@ -99,11 +99,9 @@ module.exports.fechar = async (req, res) => {
 
         let obj = {
             id_mesa: req.body.id_mesa,
-            desconto: req.body.desconto,
-            taxa_servico: req.body.taxa_servico,
         }
 
-        let errors = model.validarFechar(obj);
+        let errors = model.validarIdMesa(obj);
         if (errors)
             return res.status(400).send(errors[0]);
 
@@ -114,10 +112,9 @@ module.exports.fechar = async (req, res) => {
             },
             {
                 $set: {
-                    aberta: false,
+                    aberta: false,                   
                     fechada: true,
-                    desconto: obj.desconto,
-                    taxa_servico: obj.taxa_servico,
+                    data_fechamento: new Date()
                 }
             }
         );
@@ -192,6 +189,70 @@ module.exports.removerItem = async (req, res) => {
             },
             {
                 arrayFilters: [{ 'item.id_item': new ObjectId(obj.id_item) }]
+            }
+        );
+
+        //enviarDadosSockets(req.token.id_restaurante);
+
+        return res.json('OK');
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+module.exports.editarDesconto = async (req, res) => {
+    try {
+
+        let obj = {
+            id_mesa: req.body.id_mesa,
+            desconto: req.body.desconto,
+        }
+
+        let errors = model.validarDesconto(obj);
+        if (errors)
+            return res.status(400).send(errors[0]);
+
+        await mongodb.updateOne('freeddb', 'mesa',
+            {
+                _id: new ObjectId(obj.id_mesa),
+                id_restaurante: req.token.id_restaurante
+            },
+            {
+                $set: {
+                    desconto: obj.desconto,
+                }
+            }
+        );
+
+        //enviarDadosSockets(req.token.id_restaurante);
+
+        return res.json('OK');
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+module.exports.editarTaxaServico = async (req, res) => {
+    try {
+
+        let obj = {
+            id_mesa: req.body.id_mesa,
+            taxa_servico: req.body.taxa_servico,
+        }
+
+        let errors = model.validarTaxaServico(obj);
+        if (errors)
+            return res.status(400).send(errors[0]);
+
+        await mongodb.updateOne('freeddb', 'mesa',
+            {
+                _id: new ObjectId(obj.id_mesa),
+                id_restaurante: req.token.id_restaurante
+            },
+            {
+                $set: {
+                    taxa_servico: obj.taxa_servico,
+                }
             }
         );
 
