@@ -82,7 +82,11 @@ module.exports.remover = async (req, res) => {
                 id_restaurante: req.token.id_restaurante
             },
             {
-                $set: { aberta: false }
+                $set: {
+                    aberta: false,
+                    removida: true,
+                    data_removida: new Date()
+                }
             }
         );
 
@@ -112,7 +116,7 @@ module.exports.fechar = async (req, res) => {
             },
             {
                 $set: {
-                    aberta: false,                   
+                    aberta: false,
                     fechada: true,
                     data_fechamento: new Date()
                 }
@@ -143,23 +147,24 @@ module.exports.incluirItem = async (req, res) => {
 
         // obtendo os dados do produto
         let produto = await produtoCtrl._obter(req.token.id_restaurante, obj.id_produto);
-        if (!produto)
+        if (!produto || produto.length == 0)
             res.status(400).send("produto inválido");
+        else {
+            produto = produto[0];
+            // inclui a quantidade e atribui um id
+            produto.quantidade = obj.quantidade;
+            produto.id_item = new ObjectId();
+            // incluindo o produto na mesa
+            await mongodb.updateOne('freeddb', 'mesa',
+                { _id: new ObjectId(obj.id_mesa), id_restaurante: req.token.id_restaurante },
+                { $push: { produtos: produto } }
+            );
 
-        // inclui a quantidade e atribui um id
-        produto.quantidade = obj.quantidade;
-        produto.id_item = new ObjectId();
+            // enviando dados aos sockets
+            //enviarDadosSockets(req.token.id_restaurante);
 
-        // incluindo o produto na mesa
-        await mongodb.updateOne('freeddb', 'mesa',
-            { _id: new ObjectId(obj.id_mesa), id_restaurante: req.token.id_restaurante },
-            { $push: { produtos: produto } }
-        );
-
-        // enviando dados aos sockets
-        //enviarDadosSockets(req.token.id_restaurante);
-
-        return res.json('OK');
+            return res.json('OK');
+        }
     } catch (error) {
         return res.status(500).send(error.message);
     }
