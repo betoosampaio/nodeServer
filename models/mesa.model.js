@@ -61,10 +61,7 @@ let constraintsIncluirItem = {
         presence: true,
     },
     quantidade: {
-        numericality: {
-            onlyInteger: true,
-            greaterThanOrEqualTo: 1,
-        },
+        type: "integer",
         presence: true,
     }
 }
