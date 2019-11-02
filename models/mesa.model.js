@@ -29,7 +29,7 @@ let constraintsDesconto = {
         letrasNumeros: true,
     },
     desconto: {
-        numericality: true,
+        type: "number",
         presence: true
     },
 }
@@ -42,7 +42,7 @@ let constraintsTaxaServico = {
         letrasNumeros: true,
     },
     taxa_servico: {
-        numericality: true,
+        type: "number",
         presence: true
     },
 }
