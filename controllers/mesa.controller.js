@@ -154,6 +154,7 @@ module.exports.incluirItem = async (req, res) => {
             // inclui a quantidade e atribui um id
             produto.quantidade = obj.quantidade;
             produto.id_item = new ObjectId();
+            produto.data_inclusao = new Date();
             // incluindo o produto na mesa
             await mongodb.updateOne('freeddb', 'mesa',
                 { _id: new ObjectId(obj.id_mesa), id_restaurante: req.token.id_restaurante },
