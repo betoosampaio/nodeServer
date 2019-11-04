@@ -131,6 +131,39 @@ module.exports.fechar = async (req, res) => {
     }
 }
 
+module.exports.reabrir = async (req, res) => {
+    try {
+
+        let obj = {
+            id_mesa: req.body.id_mesa,
+        }
+
+        let errors = model.validarIdMesa(obj);
+        if (errors)
+            return res.status(400).send(errors[0]);
+
+        await mongodb.updateOne('freeddb', 'mesa',
+            {
+                _id: new ObjectId(obj.id_mesa),
+                id_restaurante: req.token.id_restaurante
+            },
+            {
+                $set: {
+                    aberta: true,
+                    fechada: false,
+                    data_fechamento: null
+                }
+            }
+        );
+
+        //enviarDadosSockets(req.token.id_restaurante);
+
+        return res.json('OK');
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
 module.exports.incluirItem = async (req, res) => {
     try {
         // recupera os dados da requisição
