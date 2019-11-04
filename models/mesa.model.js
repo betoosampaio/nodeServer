@@ -47,39 +47,6 @@ let constraintsTaxaServico = {
     },
 }
 
-let constraintsIncluirItem = {
-    id_mesa: {
-        type: "string",
-        presence: true,
-        length: { is: 24 },
-        letrasNumeros: true,
-    },
-    id_produto: {
-        numericality: {
-            onlyInteger: true,
-        },
-        presence: true,
-    },
-    quantidade: {
-        type: "integer",
-        presence: true,
-    }
-}
-
-let constraintsRemoverItem = {
-    id_mesa: {
-        type: "string",
-        presence: true,
-        length: { is: 24 },
-        letrasNumeros: true,
-    },
-    id_item: {
-        type: "string",
-        presence: true,
-        length: { is: 24 },
-        letrasNumeros: true,
-    },
-}
 
 validatejs.validators.letrasNumeros = function (value, options, key, attributes) {
     var regexp = new RegExp(/[^A-Za-z0-9]+/);
@@ -91,5 +58,3 @@ module.exports.validarCadastrar = obj => validatejs.validate(obj, constraintsCad
 module.exports.validarIdMesa = obj => validatejs.validate(obj, constraintsIdMesa, { format: "flat" });
 module.exports.validarDesconto = obj => validatejs.validate(obj, constraintsDesconto, { format: "flat" });
 module.exports.validarTaxaServico = obj => validatejs.validate(obj, constraintsTaxaServico, { format: "flat" });
-module.exports.validarIncluirItem = obj => validatejs.validate(obj, constraintsIncluirItem, { format: "flat" });
-module.exports.validarRemoverItem = obj => validatejs.validate(obj, constraintsRemoverItem, { format: "flat" });

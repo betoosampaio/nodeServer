@@ -13,6 +13,8 @@ module.exports = (app) => {
     const operador = require('./controllers/operador.controller');
     const menu = require('./controllers/menu.controller');
     const mesa = require('./controllers/mesa.controller');
+    const mesaitem = require('./controllers/mesaitem.controller');
+    const pagamento = require('./controllers/pagamento.controller');
 
     app.get('/', (req, res) => { res.json("Server Online") });
     app.post('/login', auth.login);
@@ -67,10 +69,16 @@ module.exports = (app) => {
     app.post('/mesa/cadastrar', [authMW], mesa.cadastrar);
     app.post('/mesa/remover', [authMW], mesa.remover);
     app.post('/mesa/fechar', [authMW], mesa.fechar);
-    app.post('/mesa/reabrir', [authMW], mesa.reabrir);
-    app.post('/mesa/incluirItem', [authMW], mesa.incluirItem);
-    app.post('/mesa/removerItem', [authMW], mesa.removerItem);
+    app.post('/mesa/reabrir', [authMW], mesa.reabrir);   
     app.post('/mesa/editarDesconto', [authMW], mesa.editarDesconto);
     app.post('/mesa/editarTaxaServico', [authMW], mesa.editarTaxaServico);
+
+    /* MESA - ITEM */
+    app.post('/mesa/item/incluir', [authMW], mesaitem.incluir);
+    app.post('/mesa/item/remover', [authMW], mesaitem.remover);
+
+    /* MESA - PAGAMENTO */
+    app.post('/mesa/pagamento/incluir', [authMW], pagamento.incluir);
+    app.post('/mesa/pagamento/remover', [authMW], pagamento.remover);
 
 }
