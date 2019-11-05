@@ -361,6 +361,23 @@ module.exports.obterEspecialidades = async(req, res) => {
     }
 }
 
+module.exports.obterFormasPagamento = async (req, res) => {
+    try {
+        let query = 'select * from tb_forma_pagamento';
+        let data = await mariadb.query(query);
+        return res.json(data);
+
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+module.exports._obterFormaPagamento = async (id_forma_pagamento) => {
+    let query = 'select * from tb_forma_pagamento where id_forma_pagamento = ?'
+    let data = await mariadb.query(query, [id_forma_pagamento]);
+    return data;
+}
+
 _checarSeCodigoExiste = async(codigo_restaurante) => {
     let data = await mariadb.query("select 1 from tb_restaurante where codigo_restaurante = ?", codigo_restaurante);
     return data.length > 0 ? true : false;

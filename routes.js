@@ -30,11 +30,12 @@ module.exports = (app) => {
     app.post('/restaurante/editar/dadosPessoais', [authMW], restaurante.editarDadosPessoais);
     app.post('/restaurante/inativar', [authMW], restaurante.inativar);
     app.post('/restaurante/reativar', [authMW], restaurante.reativar);
-
+    
     /* VARIAVEIS CADASTRO */
     app.post('/obterBancos', restaurante.obterBancos);
     app.post('/obterMunicipios', restaurante.obterMunicipios);
     app.post('/obterEspecialidades', restaurante.obterEspecialidades);
+    app.post('/obterFormasPagamento', [authMW], restaurante.obterFormasPagamento);
 
     /* OPERADOR */
     app.post('/perfil/listar', [authMW], operador.listarPerfis);

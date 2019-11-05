@@ -11,7 +11,7 @@ let constraintsIncluir = {
         numericality: {
             onlyInteger: true,
             greaterThanOrEqualTo: 1,
-            lessThanOrEqualTo: 4
+            lessThanOrEqualTo: 10
         },
         presence: true,
     },

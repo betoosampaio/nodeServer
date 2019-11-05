@@ -1,6 +1,7 @@
 const mongodb = require('../utils/mongodb.util');
 const ObjectId = require('../utils/mongodb.util').ObjectId;
 const model = require('../models/pagamento.model');
+const restauranteCtrl = require('../controllers/restaurante.controller');
 
 module.exports.incluir = async (req, res) => {
     try {
@@ -16,11 +17,20 @@ module.exports.incluir = async (req, res) => {
         if (errors)
             return res.status(400).send(errors[0]);
 
+        // prepara o objeto que vai inserir no bd
         let pagamento = {
             id_pagamento: new ObjectId(),
             data_inclusao: new Date(),
             id_forma_pagamento: obj.id_forma_pagamento,
-            valor: obj.valor,    
+            valor: obj.valor,
+        }
+
+        // valida a forma de pagamento
+        let formaPgto = await restauranteCtrl._obterFormaPagamento(obj.id_forma_pagamento);
+        if (!formaPgto || formaPgto.length == 0)
+            res.status(400).send("forma de pagamento inválida");
+        else {
+            pagamento.ds_forma_pagamento = formaPgto[0].ds_forma_pagamento;
         }
 
         await mongodb.updateOne('freeddb', 'mesa',
