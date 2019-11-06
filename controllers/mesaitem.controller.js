@@ -9,33 +9,44 @@ module.exports.incluir = async (req, res) => {
         // recupera os dados da requisição
         let obj = {
             id_mesa: req.body.id_mesa,
-            id_produto: req.body.id_produto,
-            quantidade: req.body.quantidade,
+            produtos: req.body.produtos,
         }
 
         // validação dos dados da requisição
         let errors = model.validarIncluir(obj);
         if (errors)
             return res.status(400).send(errors[0]);
+        if (!obj.produtos || obj.produtos.length == 0)
+            return res.status(400).send("Não há produtos na lista");
 
-        // obtendo os dados do produto
-        let produto = await produtoCtrl._obter(req.token.id_restaurante, obj.id_produto);
-        if (!produto || produto.length == 0)
-            res.status(400).send("produto inválido");
-        else {
-            produto = produto[0];
-            // inclui a quantidade e atribui um id
-            produto.quantidade = obj.quantidade;
-            produto.id_item = new ObjectId();
-            produto.data_inclusao = new Date();
-            // incluindo o produto na mesa
-            await mongodb.updateOne('freeddb', 'mesa',
-                { _id: new ObjectId(obj.id_mesa), id_restaurante: req.token.id_restaurante },
-                { $push: { produtos: produto } }
-            );
-
-            return res.json('OK');
+        // obtendo os dados dos produtos
+        let produtos = [];
+        for (p of obj.produtos) {
+            // validando o item
+            let errors = model.validarItem(p);
+            if (errors)
+                return res.status(400).send(errors[0]);
+            // obtendo os dados do produto
+            let produto = await produtoCtrl._obter(req.token.id_restaurante, p.id_produto);
+            if (!produto || produto.length == 0)
+                res.status(400).send("produto(s) inválido(s)");
+            else {
+                produto = produto[0];
+                // inclui a quantidade e atribui um id
+                produto.quantidade = p.quantidade;
+                produto.id_item = new ObjectId();
+                produto.data_inclusao = new Date();
+                produtos.push(produto);
+            }
         }
+
+        // incluindo os produtos na mesa
+        await mongodb.updateOne('freeddb', 'mesa',
+            { _id: new ObjectId(obj.id_mesa), id_restaurante: req.token.id_restaurante },
+            { $push: { produtos: { $each: produtos } } }
+        );
+
+        return res.json('OK');
     } catch (error) {
         return res.status(500).send(error.message);
     }

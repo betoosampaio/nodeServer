@@ -8,6 +8,12 @@ let constraintsIncluir = {
         length: { is: 24 },
         letrasNumeros: true,
     },
+    produtos:{
+        presence: true,
+    },
+}
+
+let constraintsItem = {
     id_produto: {
         numericality: {
             onlyInteger: true,
@@ -42,4 +48,5 @@ validatejs.validators.letrasNumeros = function (value, options, key, attributes)
 };
 
 module.exports.validarIncluir = obj => validatejs.validate(obj, constraintsIncluir, { format: "flat" });
+module.exports.validarItem = obj => validatejs.validate(obj, constraintsItem, { format: "flat" });
 module.exports.validarRemover = obj => validatejs.validate(obj, constraintsRemover, { format: "flat" });
