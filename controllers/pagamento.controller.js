@@ -8,34 +8,39 @@ module.exports.incluir = async (req, res) => {
         // recupera os dados da requisição
         let obj = {
             id_mesa: req.body.id_mesa,
-            id_forma_pagamento: req.body.id_forma_pagamento,
-            valor: req.body.valor,
+            pagamentos: req.body.pagamentos,
         }
 
         // validação dos dados da requisição
         let errors = model.validarIncluir(obj);
         if (errors)
             return res.status(400).send(errors[0]);
+        if (!obj.pagamentos || obj.pagamentos.length == 0)
+            return res.status(400).send("Não há produtos na lista");
 
-        // prepara o objeto que vai inserir no bd
-        let pagamento = {
-            id_pagamento: new ObjectId(),
-            data_inclusao: new Date(),
-            id_forma_pagamento: obj.id_forma_pagamento,
-            valor: obj.valor,
+
+        let pagamentos = [];
+        for (p of obj.pagamentos) {
+            // validando o pagamento
+            let errors = model.validarPagamento(p);
+            if (errors)
+                return res.status(400).send(errors[0]);
+            // valida a forma de pagamento
+            let formaPgto = await restauranteCtrl._obterFormaPagamento(p.id_forma_pagamento);
+            if (!formaPgto || formaPgto.length == 0)
+                return res.status(400).send("forma de pagamento inválida");
+            else {
+                p.ds_forma_pagamento = formaPgto[0].ds_forma_pagamento;
+                p.id_pagamento = new ObjectId();
+                p.data_inclusao = new Date();
+                pagamentos.push(p);
+            }
         }
 
-        // valida a forma de pagamento
-        let formaPgto = await restauranteCtrl._obterFormaPagamento(obj.id_forma_pagamento);
-        if (!formaPgto || formaPgto.length == 0)
-            res.status(400).send("forma de pagamento inválida");
-        else {
-            pagamento.ds_forma_pagamento = formaPgto[0].ds_forma_pagamento;
-        }
-
+        // incluindo os pagamentos na mesa
         await mongodb.updateOne('freeddb', 'mesa',
             { _id: new ObjectId(obj.id_mesa), id_restaurante: req.token.id_restaurante },
-            { $push: { pagamentos: pagamento } }
+            { $push: { pagamentos: { $each: pagamentos } } }
         );
 
         return res.json('OK');

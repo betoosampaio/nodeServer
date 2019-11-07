@@ -7,11 +7,15 @@ let constraintsIncluir = {
         length: { is: 24 },
         letrasNumeros: true,
     },
+    pagamentos:{
+        presence: true,
+    }
+}
+
+let constraintsPagamento = {
     id_forma_pagamento: {
         numericality: {
             onlyInteger: true,
-            greaterThanOrEqualTo: 1,
-            lessThanOrEqualTo: 10
         },
         presence: true,
     },
@@ -44,3 +48,4 @@ validatejs.validators.letrasNumeros = function (value, options, key, attributes)
 
 module.exports.validarIncluir = obj => validatejs.validate(obj, constraintsIncluir, { format: "flat" });
 module.exports.validarRemover = obj => validatejs.validate(obj, constraintsRemover, { format: "flat" });
+module.exports.validarPagamento = obj => validatejs.validate(obj, constraintsPagamento, { format: "flat" });

@@ -29,7 +29,7 @@ module.exports.incluir = async (req, res) => {
             // obtendo os dados do produto
             let produto = await produtoCtrl._obter(req.token.id_restaurante, p.id_produto);
             if (!produto || produto.length == 0)
-                res.status(400).send("produto(s) inválido(s)");
+                return res.status(400).send("produto(s) inválido(s)");
             else {
                 produto = produto[0];
                 // inclui a quantidade e atribui um id
