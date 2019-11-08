@@ -3,6 +3,7 @@ const mongodb = require('../utils/mongodb.util');
 const ObjectId = require('../utils/mongodb.util').ObjectId;
 const model = require('../models/mesaitem.model');
 const produtoCtrl = require('../controllers/produto.controller');
+const operadorCtrl = require('../controllers/operador.controller');
 
 module.exports.incluir = async (req, res) => {
     try {
@@ -10,6 +11,7 @@ module.exports.incluir = async (req, res) => {
         let obj = {
             id_mesa: req.body.id_mesa,
             produtos: req.body.produtos,
+            id_operador: req.token.id_operador,
         }
 
         // validação dos dados da requisição
@@ -19,6 +21,10 @@ module.exports.incluir = async (req, res) => {
         if (!obj.produtos || obj.produtos.length == 0)
             return res.status(400).send("Não há produtos na lista");
 
+        let operador = await operadorCtrl._obter(req.token.id_restaurante, req.token.id_operador);
+        if(operador.length == 0)
+            return res.status(400).send("Operador inválido");
+               
         // obtendo os dados dos produtos
         let produtos = [];
         for (p of obj.produtos) {
@@ -32,10 +38,12 @@ module.exports.incluir = async (req, res) => {
                 return res.status(400).send("produto(s) inválido(s)");
             else {
                 produto = produto[0];
-                // inclui a quantidade e atribui um id
+                // inclui a quantidade e atribui um id e dados da inserção
                 produto.quantidade = p.quantidade;
                 produto.id_item = new ObjectId();
                 produto.data_inclusao = new Date();
+                produto.id_operador = operador[0].id_operador;
+                produto.nome_operador = operador[0].nome_operador;
                 produtos.push(produto);
             }
         }
