@@ -8,6 +8,12 @@ let constraintsIncluir = {
         length: { is: 24 },
         letrasNumeros: true,
     },
+    id_operador: {
+        numericality: {
+            onlyInteger: true,
+        },
+        presence: true,
+    },
     produtos:{
         presence: true,
     },
