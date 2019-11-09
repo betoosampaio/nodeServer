@@ -50,3 +50,11 @@ module.exports.findOneAndUpdate = async (database, collection, filter, obj, opti
     cli.close();
     return res;
 }
+
+module.exports.aggregate = async (database, collection, obj) => {
+    let cli = await MongoClient.connect(url, options);
+    let col = cli.db(database).collection(collection);
+    let res = await col.aggregate(obj);
+    cli.close();
+    return res;
+}
