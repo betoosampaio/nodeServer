@@ -2,6 +2,7 @@ const mongodb = require('../utils/mongodb.util');
 const ObjectId = require('../utils/mongodb.util').ObjectId;
 const emitTo = require('../socket').emitTo;
 const model = require('../models/mesa.model');
+const operadorCtrl = require('../controllers/operador.controller');
 
 module.exports.listar = async (req, res) => {
   try {
@@ -40,15 +41,22 @@ module.exports.cadastrar = async (req, res) => {
 
     let obj = {
       id_restaurante: req.token.id_restaurante,
-      id_operador_abertura: req.token.id_operador,
+      id_operador: req.body.id_operador || req.token.id_operador,
       aberta: true,
       data_abertura: new Date(),
       numero: req.body.numero,
     }
 
+    // validação da mesa
     let errors = model.validarCadastrar(obj);
     if (errors)
       return res.status(400).send(errors[0]);
+
+    // valida o operador
+    let operador = await operadorCtrl._obter(obj.id_restaurante, obj.id_operador);
+    if (operador.length == 0)
+      return res.status(400).send("Operador inválido");
+    obj.nome_operador = operador[0].nome_operador;
 
     // verifica se a mesa com mesmo número está ativa
     let data = await mongodb.find('freeddb', 'mesa', {
@@ -73,7 +81,7 @@ module.exports.remover = async (req, res) => {
   try {
 
     let obj = {
-      id_mesa: req.body.id_mesa
+      id_mesa: req.body.id_mesa,
     }
 
     let errors = model.validarIdMesa(obj);
@@ -89,7 +97,7 @@ module.exports.remover = async (req, res) => {
         $set: {
           aberta: false,
           removida: true,
-          data_removida: new Date()
+          data_removida: new Date(),
         }
       }
     );
@@ -107,17 +115,24 @@ module.exports.fechar = async (req, res) => {
 
     let obj = {
       id_mesa: req.body.id_mesa,
+      id_operador: req.body.id_operador || req.token.id_operador,
     }
 
     let errors = model.validarIdMesa(obj);
     if (errors)
       return res.status(400).send(errors[0]);
 
+    // valida o operador
+    let operador = await operadorCtrl._obter(req.token.id_restaurante, obj.id_operador);
+    if (operador.length == 0)
+      return res.status(400).send("Operador inválido");
+    obj.nome_operador = operador[0].nome_operador;
+
     // validar se tudo foi pago
     let data = await this._obter(req.token.id_restaurante, req.body.id_mesa)
     let mesa = data[0];
-    let 
-      produtos = mesa.produtos || [], 
+    let
+      produtos = mesa.produtos || [],
       pagamentos = mesa.pagamentos || [];
     let
       txservico = parseFloat(mesa.taxa_servico) || 0,
@@ -138,7 +153,9 @@ module.exports.fechar = async (req, res) => {
         $set: {
           aberta: false,
           fechada: true,
-          data_fechamento: new Date()
+          data_fechamento: new Date(),
+          id_operador_fechou: obj.id_operador,
+          nome_operador_fechou: obj.nome_operador,
         }
       }
     );
@@ -171,7 +188,7 @@ module.exports.reabrir = async (req, res) => {
         $set: {
           aberta: true,
           fechada: false,
-          data_fechamento: null
+          data_reabertura: new Date(),
         }
       }
     );

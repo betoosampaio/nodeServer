@@ -10,6 +10,11 @@ let constraintsCadastrar = {
         },
         letrasNumeros: true,
     },
+    id_operador: {
+        numericality: {
+            onlyInteger: true,
+        },
+    },
 }
 
 let constraintsIdMesa = {
@@ -18,7 +23,12 @@ let constraintsIdMesa = {
         presence: true,
         length: { is: 24 },
         letrasNumeros: true,
-    }
+    },
+    id_operador: {
+        numericality: {
+            onlyInteger: true,
+        },
+    },
 }
 
 let constraintsDesconto = {
