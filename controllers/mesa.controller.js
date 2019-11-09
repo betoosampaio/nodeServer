@@ -116,11 +116,14 @@ module.exports.fechar = async (req, res) => {
     // validar se tudo foi pago
     let data = await this._obter(req.token.id_restaurante, req.body.id_mesa)
     let mesa = data[0];
+    let 
+      produtos = mesa.produtos || [], 
+      pagamentos = mesa.pagamentos || [];
     let
       txservico = parseFloat(mesa.taxa_servico) || 0,
       desconto = parseFloat(mesa.desconto) || 0,
-      vlProdutos = mesa.produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.preco * key.quantidade), 0),
-      vlPagamentos = mesa.pagamentos.reduce((sum, key) => sum + (key.removido ? 0 : key.valor), 0);
+      vlProdutos = produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.preco * key.quantidade), 0),
+      vlPagamentos = pagamentos.reduce((sum, key) => sum + (key.removido ? 0 : key.valor), 0);
     let vlrTotal = (vlProdutos + txservico - desconto);
     if (vlPagamentos < vlrTotal)
       return res.status(400).send("Todos os valores devem ser pagos antes de fechar a mesa");
