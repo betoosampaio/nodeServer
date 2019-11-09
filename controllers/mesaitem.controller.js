@@ -11,7 +11,7 @@ module.exports.incluir = async (req, res) => {
         let obj = {
             id_mesa: req.body.id_mesa,
             produtos: req.body.produtos,
-            id_operador: req.token.id_operador,
+            id_operador: req.body.id_operador || req.token.id_operador,
         }
 
         // validação dos dados da requisição
@@ -21,7 +21,7 @@ module.exports.incluir = async (req, res) => {
         if (!obj.produtos || obj.produtos.length == 0)
             return res.status(400).send("Não há produtos na lista");
 
-        let operador = await operadorCtrl._obter(req.token.id_restaurante, req.token.id_operador);
+        let operador = await operadorCtrl._obter(req.token.id_restaurante, obj.id_operador);
         if(operador.length == 0)
             return res.status(400).send("Operador inválido");
                
