@@ -107,27 +107,31 @@ module.exports.fechar = async (req, res) => {
 
     let obj = {
       id_mesa: req.body.id_mesa,
-      id_operador: req.body.id_operador || req.token.id_operador,
     }
 
     let errors = model.validarIdMesa(obj);
     if (errors)
       return res.status(400).send(errors[0]);
 
-    // fechar a mesa
-    await mongodb.updateOne('freeddb', 'mesa',
-      {
-        _id: new ObjectId(obj.id_mesa),
-        id_restaurante: req.token.id_restaurante
-      },
-      {
-        $set: {
-          aberta: false,
-          fechada: true,
-          data_fechou: new Date(),
-        }
-      }
-    );
+    // obtem mesa
+    let mesa = await this._obter(req.token.id_restaurante, req.body.id_mesa);
+    if (mesa.length == 0) return res.status(400).send("Mesa inexistente");
+    mesa = mesa[0];
+
+    // validações
+    if (mesa.fechada) return res.status(400).send("Essa mesa já foi fechada");
+    if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
+
+    // altera os dados
+    mesa.aberta = false;
+    mesa.fechada = true;
+    mesa.data_fechou = new Date();
+
+    // atualiza
+    await mongodb.replaceOne('freeddb', 'mesa', {
+      _id: new ObjectId(obj.id_mesa),
+      id_restaurante: req.token.id_restaurante
+    }, mesa);
 
     //enviarDadosSockets(req.token.id_restaurante);
 
@@ -148,19 +152,25 @@ module.exports.reabrir = async (req, res) => {
     if (errors)
       return res.status(400).send(errors[0]);
 
-    await mongodb.updateOne('freeddb', 'mesa',
-      {
-        _id: new ObjectId(obj.id_mesa),
-        id_restaurante: req.token.id_restaurante
-      },
-      {
-        $set: {
-          aberta: true,
-          fechada: false,
-          data_reabriu: new Date(),
-        }
-      }
-    );
+    // obtem mesa
+    let mesa = await this._obter(req.token.id_restaurante, req.body.id_mesa);
+    if (mesa.length == 0) return res.status(400).send("Mesa inexistente");
+    mesa = mesa[0];
+
+    // validações
+    if (mesa.aberta) return res.status(400).send("Essa mesa já está aberta");
+    if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
+
+    // altera os dados
+    mesa.aberta = true;
+    mesa.fechada = false;
+    mesa.data_reabriu = new Date();
+
+    // atualiza
+    await mongodb.replaceOne('freeddb', 'mesa', {
+      _id: new ObjectId(obj.id_mesa),
+      id_restaurante: req.token.id_restaurante
+    }, mesa);
 
     //enviarDadosSockets(req.token.id_restaurante);
 
@@ -188,9 +198,15 @@ module.exports.encerrar = async (req, res) => {
       return res.status(400).send("Operador inválido");
     obj.nome_operador = operador[0].nome_operador;
 
-    // validar se tudo foi pago
-    let data = await this._obter(req.token.id_restaurante, req.body.id_mesa)
-    let mesa = data[0];
+    // obtem mesa
+    let mesa = await this._obter(req.token.id_restaurante, req.body.id_mesa);
+    if (mesa.length == 0) return res.status(400).send("Mesa inexistente");
+    mesa = mesa[0];
+
+    //validações
+    if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
+
+    // validar se tudo foi pago   
     let
       produtos = mesa.produtos || [],
       pagamentos = mesa.pagamentos || [];
@@ -203,23 +219,19 @@ module.exports.encerrar = async (req, res) => {
     if (vlPagamentos < vlrTotal)
       return res.status(400).send("Todos os valores devem ser pagos antes de fechar a mesa");
 
-    // encerrar a mesa
-    await mongodb.updateOne('freeddb', 'mesa',
-      {
-        _id: new ObjectId(obj.id_mesa),
-        id_restaurante: req.token.id_restaurante
-      },
-      {
-        $set: {
-          aberta: false,
-          fechada: true,
-          encerrada: true,
-          data_encerrou: new Date(),
-          id_operador_encerrou: obj.id_operador,
-          nome_operador_encerrou: obj.nome_operador,
-        }
-      }
-    );
+    // altera os dados
+    mesa.aberta = false;
+    mesa.fechada = true;
+    mesa.encerrada = true;
+    mesa.data_encerrou = new Date();
+    mesa.id_operador_encerrou = obj.id_operador;
+    mesa.nome_operador_encerrou = obj.nome_operador;
+
+    // atualiza
+    await mongodb.replaceOne('freeddb', 'mesa', {
+      _id: new ObjectId(obj.id_mesa),
+      id_restaurante: req.token.id_restaurante
+    }, mesa);
 
     //enviarDadosSockets(req.token.id_restaurante);
 
@@ -241,17 +253,23 @@ module.exports.editarDesconto = async (req, res) => {
     if (errors)
       return res.status(400).send(errors[0]);
 
-    await mongodb.updateOne('freeddb', 'mesa',
-      {
-        _id: new ObjectId(obj.id_mesa),
-        id_restaurante: req.token.id_restaurante
-      },
-      {
-        $set: {
-          desconto: obj.desconto,
-        }
-      }
-    );
+    // obtem mesa
+    let mesa = await this._obter(req.token.id_restaurante, req.body.id_mesa);
+    if (mesa.length == 0) return res.status(400).send("Mesa inexistente");
+    mesa = mesa[0];
+
+    // validações
+    if (mesa.fechada) return res.status(400).send("Essa mesa já foi fechada");
+    if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
+
+    // altera os dados
+    mesa.desconto = obj.desconto;
+
+    // atualiza
+    await mongodb.replaceOne('freeddb', 'mesa', {
+      _id: new ObjectId(obj.id_mesa),
+      id_restaurante: req.token.id_restaurante
+    }, mesa);
 
     //enviarDadosSockets(req.token.id_restaurante);
 
@@ -273,17 +291,23 @@ module.exports.editarTaxaServico = async (req, res) => {
     if (errors)
       return res.status(400).send(errors[0]);
 
-    await mongodb.updateOne('freeddb', 'mesa',
-      {
-        _id: new ObjectId(obj.id_mesa),
-        id_restaurante: req.token.id_restaurante
-      },
-      {
-        $set: {
-          taxa_servico: obj.taxa_servico,
-        }
-      }
-    );
+    // obtem mesa
+    let mesa = await this._obter(req.token.id_restaurante, req.body.id_mesa);
+    if (mesa.length == 0) return res.status(400).send("Mesa inexistente");
+    mesa = mesa[0];
+
+    // validações
+    if (mesa.fechada) return res.status(400).send("Essa mesa já foi fechada");
+    if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
+
+    // altera os dados
+    mesa.taxa_servico = obj.taxa_servico;
+
+    // atualiza
+    await mongodb.replaceOne('freeddb', 'mesa', {
+      _id: new ObjectId(obj.id_mesa),
+      id_restaurante: req.token.id_restaurante
+    }, mesa);
 
     //enviarDadosSockets(req.token.id_restaurante);
 
