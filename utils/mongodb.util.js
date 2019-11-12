@@ -58,3 +58,11 @@ module.exports.aggregate = async (database, collection, obj) => {
     cli.close();
     return res;
 }
+
+module.exports.remove = async (database, collection, obj) => {
+    let cli = await MongoClient.connect(url, options);
+    let col = cli.db(database).collection(collection);
+    let res = await col.remove(obj);
+    cli.close();
+    return res;
+}

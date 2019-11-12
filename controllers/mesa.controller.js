@@ -43,7 +43,7 @@ module.exports.cadastrar = async (req, res) => {
       id_restaurante: req.token.id_restaurante,
       id_operador: req.body.id_operador || req.token.id_operador,
       aberta: true,
-      data_abertura: new Date(),
+      data_abriu: new Date(),
       numero: req.body.numero,
     }
 
@@ -88,19 +88,11 @@ module.exports.remover = async (req, res) => {
     if (errors)
       return res.status(400).send(errors[0]);
 
-    await mongodb.updateOne('freeddb', 'mesa',
+    await mongodb.remove('freeddb', 'mesa',
       {
         _id: new ObjectId(obj.id_mesa),
         id_restaurante: req.token.id_restaurante
-      },
-      {
-        $set: {
-          aberta: false,
-          removida: true,
-          data_removida: new Date(),
-        }
-      }
-    );
+      });
 
     //enviarDadosSockets(req.token.id_restaurante);
 
@@ -122,27 +114,6 @@ module.exports.fechar = async (req, res) => {
     if (errors)
       return res.status(400).send(errors[0]);
 
-    // valida o operador
-    let operador = await operadorCtrl._obter(req.token.id_restaurante, obj.id_operador);
-    if (operador.length == 0)
-      return res.status(400).send("Operador inválido");
-    obj.nome_operador = operador[0].nome_operador;
-
-    // validar se tudo foi pago
-    let data = await this._obter(req.token.id_restaurante, req.body.id_mesa)
-    let mesa = data[0];
-    let
-      produtos = mesa.produtos || [],
-      pagamentos = mesa.pagamentos || [];
-    let
-      txservico = parseFloat(mesa.taxa_servico) || 0,
-      desconto = parseFloat(mesa.desconto) || 0,
-      vlProdutos = produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.preco * key.quantidade), 0),
-      vlPagamentos = pagamentos.reduce((sum, key) => sum + (key.removido ? 0 : key.valor), 0);
-    let vlrTotal = (vlProdutos + txservico - desconto);
-    if (vlPagamentos < vlrTotal)
-      return res.status(400).send("Todos os valores devem ser pagos antes de fechar a mesa");
-
     // fechar a mesa
     await mongodb.updateOne('freeddb', 'mesa',
       {
@@ -153,9 +124,7 @@ module.exports.fechar = async (req, res) => {
         $set: {
           aberta: false,
           fechada: true,
-          data_fechamento: new Date(),
-          id_operador_fechou: obj.id_operador,
-          nome_operador_fechou: obj.nome_operador,
+          data_fechou: new Date(),
         }
       }
     );
@@ -188,7 +157,66 @@ module.exports.reabrir = async (req, res) => {
         $set: {
           aberta: true,
           fechada: false,
-          data_reabertura: new Date(),
+          data_reabriu: new Date(),
+        }
+      }
+    );
+
+    //enviarDadosSockets(req.token.id_restaurante);
+
+    return res.json('OK');
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
+module.exports.encerrar = async (req, res) => {
+  try {
+
+    let obj = {
+      id_mesa: req.body.id_mesa,
+      id_operador: req.body.id_operador || req.token.id_operador,
+    }
+
+    let errors = model.validarIdMesa(obj);
+    if (errors)
+      return res.status(400).send(errors[0]);
+
+    // valida o operador
+    let operador = await operadorCtrl._obter(req.token.id_restaurante, obj.id_operador);
+    if (operador.length == 0)
+      return res.status(400).send("Operador inválido");
+    obj.nome_operador = operador[0].nome_operador;
+
+    // validar se tudo foi pago
+    let data = await this._obter(req.token.id_restaurante, req.body.id_mesa)
+    let mesa = data[0];
+    let
+      produtos = mesa.produtos || [],
+      pagamentos = mesa.pagamentos || [];
+    let
+      txservico = parseFloat(mesa.taxa_servico) || 0,
+      desconto = parseFloat(mesa.desconto) || 0,
+      vlProdutos = produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.preco * key.quantidade), 0),
+      vlPagamentos = pagamentos.reduce((sum, key) => sum + (key.removido ? 0 : key.valor), 0);
+    let vlrTotal = (vlProdutos + txservico - desconto);
+    if (vlPagamentos < vlrTotal)
+      return res.status(400).send("Todos os valores devem ser pagos antes de fechar a mesa");
+
+    // encerrar a mesa
+    await mongodb.updateOne('freeddb', 'mesa',
+      {
+        _id: new ObjectId(obj.id_mesa),
+        id_restaurante: req.token.id_restaurante
+      },
+      {
+        $set: {
+          aberta: false,
+          fechada: true,
+          encerrada: true,
+          data_encerrou: new Date(),
+          id_operador_encerrou: obj.id_operador,
+          nome_operador_encerrou: obj.nome_operador,
         }
       }
     );
