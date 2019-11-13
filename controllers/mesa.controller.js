@@ -36,7 +36,7 @@ module.exports.obter = async (req, res) => {
   }
 }
 
-module.exports.cadastrar = async (req, res) => {
+module.exports.abrir = async (req, res) => {
   try {
 
     let obj = {
