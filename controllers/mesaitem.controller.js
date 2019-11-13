@@ -60,8 +60,8 @@ module.exports.incluir = async (req, res) => {
     }
 
     // altera os dados
-    if (!mesa.produtos) mesa.produtos = [];
     mesa.produtos = mesa.produtos.concat(produtos);
+    mesa.valor_produtos = mesa.produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.preco * key.quantidade), 0);
 
     // atualiza
     await mongodb.replaceOne('freeddb', 'mesa', {
@@ -102,6 +102,7 @@ module.exports.remover = async (req, res) => {
     // altera os dados
     item.removido = true;
     item.data_removeu = new Date();
+    mesa.valor_produtos = mesa.produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.preco * key.quantidade), 0);
 
     // atualiza
     await mongodb.replaceOne('freeddb', 'mesa', {

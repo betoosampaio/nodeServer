@@ -46,6 +46,7 @@ module.exports.incluir = async (req, res) => {
       if (!formaPgto || formaPgto.length == 0)
         return res.status(400).send("forma de pagamento inválida");
       else {
+        p.valor = p.valor.toFixed(2)/1;
         p.ds_forma_pagamento = formaPgto[0].ds_forma_pagamento;
         p.id_pagamento = new ObjectId();
         p.data_incluiu = new Date();
@@ -56,8 +57,8 @@ module.exports.incluir = async (req, res) => {
     }
 
     // altera os dados
-    if (!mesa.pagamentos) mesa.pagamentos = [];
     mesa.pagamentos = mesa.pagamentos.concat(pagamentos);
+    mesa.valor_pagamentos = mesa.pagamentos.reduce((sum, key) => sum + (key.removido ? 0 : key.valor), 0);
 
     // atualiza
     await mongodb.replaceOne('freeddb', 'mesa', {
@@ -97,6 +98,7 @@ module.exports.remover = async (req, res) => {
     // altera os dados
     pagamento.removido = true;
     pagamento.data_removeu = new Date();
+    mesa.valor_pagamentos = mesa.pagamentos.reduce((sum, key) => sum + (key.removido ? 0 : key.valor), 0);
 
     // atualiza
     await mongodb.replaceOne('freeddb', 'mesa', {

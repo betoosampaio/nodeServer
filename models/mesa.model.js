@@ -40,7 +40,11 @@ let constraintsDesconto = {
     },
     desconto: {
         type: "number",
-        presence: true
+        presence: true,
+        numericality: {
+            greaterThanOrEqualTo: 0,
+            lessThanOrEqualTo: 1
+        },
     },
 }
 
@@ -53,7 +57,11 @@ let constraintsTaxaServico = {
     },
     taxa_servico: {
         type: "number",
-        presence: true
+        presence: true,
+        numericality: {
+            greaterThanOrEqualTo: 0,
+            lessThanOrEqualTo: 1
+        },
     },
 }
 

@@ -45,6 +45,12 @@ module.exports.abrir = async (req, res) => {
       aberta: true,
       data_abriu: new Date(),
       numero: req.body.numero,
+      produtos: [],
+      valor_produtos: 0,
+      pagamentos: [],
+      valor_pagamentos: 0,
+      taxa_servico: 0,
+      desconto: 0,
     }
 
     // validação da mesa
@@ -206,17 +212,10 @@ module.exports.encerrar = async (req, res) => {
     //validações
     if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
 
-    // validar se tudo foi pago   
-    let
-      produtos = mesa.produtos || [],
-      pagamentos = mesa.pagamentos || [];
-    let
-      txservico = parseFloat(mesa.taxa_servico) || 0,
-      desconto = parseFloat(mesa.desconto) || 0,
-      vlProdutos = produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.preco * key.quantidade), 0),
-      vlPagamentos = pagamentos.reduce((sum, key) => sum + (key.removido ? 0 : key.valor), 0);
-    let vlrTotal = (vlProdutos + txservico - desconto);
-    if (vlPagamentos < vlrTotal)
+    // validar se tudo foi pago
+    let vlrTotal = mesa.valor_produtos * (1 - mesa.desconto) * (1 + mesa.taxa_servico);
+    vlrTotal = vlrTotal.toFixed(2)/1;
+    if (mesa.valor_pagamentos < vlrTotal)
       return res.status(400).send("Todos os valores devem ser pagos antes de fechar a mesa");
 
     // altera os dados
@@ -263,7 +262,7 @@ module.exports.editarDesconto = async (req, res) => {
     if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
 
     // altera os dados
-    mesa.desconto = obj.desconto;
+    mesa.desconto = obj.desconto.toFixed(2) / 1;
 
     // atualiza
     await mongodb.replaceOne('freeddb', 'mesa', {
@@ -301,7 +300,7 @@ module.exports.editarTaxaServico = async (req, res) => {
     if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
 
     // altera os dados
-    mesa.taxa_servico = obj.taxa_servico;
+    mesa.taxa_servico = obj.taxa_servico.toFixed(2) / 1;
 
     // atualiza
     await mongodb.replaceOne('freeddb', 'mesa', {
