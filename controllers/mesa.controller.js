@@ -46,6 +46,7 @@ module.exports.abrir = async (req, res) => {
       data_abriu: new Date(),
       numero: req.body.numero,
       produtos: [],
+      qtd_produtos: 0,
       valor_produtos: 0,
       pagamentos: [],
       valor_pagamentos: 0,

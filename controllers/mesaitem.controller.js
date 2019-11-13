@@ -61,6 +61,7 @@ module.exports.incluir = async (req, res) => {
 
     // altera os dados
     mesa.produtos = mesa.produtos.concat(produtos);
+    mesa.qtd_produtos = mesa.produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.quantidade), 0);
     mesa.valor_produtos = mesa.produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.preco * key.quantidade), 0);
 
     // atualiza
@@ -102,6 +103,7 @@ module.exports.remover = async (req, res) => {
     // altera os dados
     item.removido = true;
     item.data_removeu = new Date();
+    mesa.qtd_produtos = mesa.produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.quantidade), 0);
     mesa.valor_produtos = mesa.produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.preco * key.quantidade), 0);
 
     // atualiza
