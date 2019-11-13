@@ -263,7 +263,7 @@ module.exports.editarDesconto = async (req, res) => {
     if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
 
     // altera os dados
-    mesa.desconto = obj.desconto.toFixed(2) / 1;
+    mesa.desconto = obj.desconto;
 
     // atualiza
     await mongodb.replaceOne('freeddb', 'mesa', {
@@ -301,7 +301,7 @@ module.exports.editarTaxaServico = async (req, res) => {
     if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
 
     // altera os dados
-    mesa.taxa_servico = obj.taxa_servico.toFixed(2) / 1;
+    mesa.taxa_servico = obj.taxa_servico;
 
     // atualiza
     await mongodb.replaceOne('freeddb', 'mesa', {
