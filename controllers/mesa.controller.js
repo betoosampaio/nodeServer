@@ -330,6 +330,25 @@ module.exports._obter = async (id_restaurante, id_mesa) => {
   });
 }
 
+module.exports.consultar = async (req, res) => {
+  try {
+
+    let obj = {
+      dtini: new Date(req.body.dtini),
+      dtfim: new Date(req.body.dtfim),
+    }
+
+    let data = await mongodb.find('freeddb', 'mesa', {
+      id_restaurante: req.token.id_restaurante,
+      data_abriu: { $gte: obj.dtini, $lte: obj.dtfim }
+    });
+
+    return res.json(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
 enviarDadosSockets = async (id_restaurante) => {
   let data = await mongodb.find('freeddb', 'mesa', {
     id_restaurante: req.token.id_restaurante,
