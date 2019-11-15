@@ -76,7 +76,7 @@ module.exports.abrir = async (req, res) => {
 
     //obter taxa servico padrao
     let config = await mongodb.findOne('freeddb', 'configuracao', { id_restaurante: req.token.id_restaurante });
-    if(config) obj.taxa_servico = config.taxa_servico;
+    if (config) obj.taxa_servico = config.taxa_servico;
 
     await mongodb.insertOne('freeddb', 'mesa', obj);
 
@@ -218,7 +218,7 @@ module.exports.encerrar = async (req, res) => {
     if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
 
     // validar se tudo foi pago
-    let vlrTotal = (mesa.valor_produtos - mesa.desconto) * (1 + mesa.taxa_servico);
+    let vlrTotal = (mesa.valor_produtos * (1 + mesa.taxa_servico)) - mesa.desconto;
     vlrTotal = vlrTotal.toFixed(2) / 1;
     if (mesa.valor_pagamentos < vlrTotal)
       return res.status(400).send("Todos os valores devem ser pagos antes de fechar a mesa");
@@ -265,7 +265,8 @@ module.exports.editarDesconto = async (req, res) => {
     // validações
     if (mesa.fechada) return res.status(400).send("Essa mesa já foi fechada");
     if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
-    if(obj.desconto > mesa.valor_produtos) return res.status(400).send("Desconto superior ao valor de produtos");
+    if (obj.desconto > (mesa.valor_produtos * (1 + mesa.taxa_servico)))
+      return res.status(400).send("Desconto superior ao valor de produtos");
 
     // altera os dados
     mesa.desconto = obj.desconto;
