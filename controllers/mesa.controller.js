@@ -9,7 +9,7 @@ module.exports.listar = async (req, res) => {
 
     let data = await mongodb.find('freeddb', 'mesa', {
       id_restaurante: req.token.id_restaurante,
-      aberta: true
+      encerrada: false,
     });
 
     return res.json(data);
