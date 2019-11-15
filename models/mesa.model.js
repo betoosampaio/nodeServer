@@ -41,10 +41,6 @@ let constraintsDesconto = {
     desconto: {
         type: "number",
         presence: true,
-        numericality: {
-            greaterThanOrEqualTo: 0,
-            lessThanOrEqualTo: 1
-        },
     },
 }
 
