@@ -33,6 +33,38 @@ module.exports.listar = async (req, res) => {
   }
 }
 
+module.exports.listarAtivos = async (req, res) => {
+  try {
+    let query = `
+        select 
+             p.id_produto
+            ,p.codigo_produto
+            ,p.nome_produto
+            ,p.descricao
+            ,p.preco
+            ,p.id_menu
+            ,m.ds_menu
+            ,p.visivel
+            ,p.promocao
+            ,p.imagem
+            ,p.ativo
+        from 
+            tb_produto p
+            inner join tb_menu m
+                on m.id_menu = p.id_menu
+                and m.id_restaurante = p.id_restaurante
+        where 
+            p.id_restaurante = ?
+            and p.removido = 0
+            and p.ativo = 1`
+
+    let data = await mariadb.query(query, [req.token.id_restaurante]);
+    return res.json(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
 module.exports.obter = async (req, res) => {
   try {
     let query = `

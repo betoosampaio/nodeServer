@@ -58,6 +58,7 @@ module.exports = (app) => {
 
     /* PRODUTO */
     app.post('/produto/listar', [authMW], produto.listar);
+    app.post('/produto/listarAtivos', [authMW], produto.listarAtivos);
     app.post('/produto/obter', [authMW], produto.obter);
     app.post('/produto/cadastrar', [authMW], produto.cadastrar);
     app.post('/produto/editar', [authMW], produto.editar);
