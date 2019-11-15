@@ -74,6 +74,10 @@ module.exports.abrir = async (req, res) => {
     if (data.length > 0)
       return res.status(400).send('uma mesa com este número já está aberta');
 
+    //obter taxa servico padrao
+    let config = await mongodb.findOne('freeddb', 'configuracao', { id_restaurante: req.token.id_restaurante });
+    if(config) obj.taxa_servico = config.taxa_servico;
+
     await mongodb.insertOne('freeddb', 'mesa', obj);
 
     //enviarDadosSockets(req.token.id_restaurante);
@@ -215,7 +219,7 @@ module.exports.encerrar = async (req, res) => {
 
     // validar se tudo foi pago
     let vlrTotal = mesa.valor_produtos * (1 - mesa.desconto) * (1 + mesa.taxa_servico);
-    vlrTotal = vlrTotal.toFixed(2)/1;
+    vlrTotal = vlrTotal.toFixed(2) / 1;
     if (mesa.valor_pagamentos < vlrTotal)
       return res.status(400).send("Todos os valores devem ser pagos antes de fechar a mesa");
 
