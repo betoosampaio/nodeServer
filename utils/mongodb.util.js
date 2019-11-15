@@ -11,18 +11,18 @@ let conOptions = {
 
 module.exports.ObjectId = ObjectId;
 
-module.exports.find = async (database, collection, obj) => {
+module.exports.find = async (database, collection, obj, options) => {
     let cli = await MongoClient.connect(url, conOptions);
     let col = cli.db(database).collection(collection);
-    let res = await col.find(obj).toArray();
+    let res = await col.find(obj, options).toArray();
     cli.close();
     return res;
 }
 
-module.exports.findOne = async (database, collection, obj) => {
+module.exports.findOne = async (database, collection, obj, options) => {
     let cli = await MongoClient.connect(url, conOptions);
     let col = cli.db(database).collection(collection);
-    let res = await col.findOne(obj);
+    let res = await col.findOne(obj, options);
     cli.close();
     return res;
 }

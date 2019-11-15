@@ -412,8 +412,25 @@ module.exports.editarConfiguracoes = async (req, res) => {
         upsert: true,
       });
 
-      return res.json('OK');
+    return res.json('OK');
 
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
+module.exports.obterConfiguracoes = async (req, res) => {
+  try {
+    let data = await mongodb.findOne('freeddb', 'configuracao', {
+      id_restaurante: req.token.id_restaurante,
+    },
+    {
+      fields:{
+        _id: false,
+        id_restaurante: false,
+      }   
+    });
+    return res.json(data);
   } catch (error) {
     return res.status(500).send(error.message);
   }
