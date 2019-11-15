@@ -122,7 +122,7 @@ let constraints_cadastrar = {
             onlyInteger: true,
         },
     },
-    cpfcnpj_conta: {      
+    cpfcnpj_conta: {
         cpfcnpj: true
     },
     codigo_banco: {
@@ -267,7 +267,7 @@ let constraints_editarDadosRestaurante = {
         length: {
             is: 2
         }
-    },  
+    },
 }
 
 let constraints_editarDadosBancarios = {
@@ -321,7 +321,7 @@ let constraints_editarDadosBancarios = {
     },
 }
 
-let constraints_editarDadosPessoais = {   
+let constraints_editarDadosPessoais = {
     celular: {
         numericality: {
             onlyInteger: true,
@@ -334,7 +334,7 @@ let constraints_editarDadosPessoais = {
     email: {
         email: true,
         presence: true
-    },   
+    },
     nome_administrador: {
         type: 'string',
         presence: true,
@@ -355,6 +355,17 @@ let constraints_editarDadosPessoais = {
     },
 }
 
+let constraints_editarConfiguracoes = {
+    taxa_servico: {
+        type: "number",
+        presence: true,
+        numericality: {
+            greaterThanOrEqualTo: 0,
+            lessThanOrEqualTo: 1
+        },
+    },
+}
+
 validatejs.validators.cpf = function (value, options, key, attributes) {
     if (!validarCPF(value))
         return 'inválido';
@@ -366,17 +377,17 @@ validatejs.validators.cnpj = function (value, options, key, attributes) {
 };
 
 validatejs.validators.cpfcnpj = function (value, options, key, attributes) {
-    if(value){
+    if (value) {
         if (value.length === 11) {
             if (!validarCPF(value))
                 return 'inválido';
         }
-        else if(value.length === 14){
+        else if (value.length === 14) {
             if (!validarCNPJ(value))
                 return 'inválido';
         }
         else return 'inválido';
-    }   
+    }
 };
 
 validatejs.validators.letrasNumeros = function (value, options, key, attributes) {
@@ -472,11 +483,12 @@ function validarCNPJ(_cnpj) {
     if (resultado != digitos.charAt(1))
         return false;
 
-    return true;    
+    return true;
 }
 
 module.exports.validarCadastrar = obj => validatejs.validate(obj, constraints_cadastrar, { format: "flat" });
 module.exports.validarEditarDadosRestaurante = obj => validatejs.validate(obj, constraints_editarDadosRestaurante, { format: "flat" });
 module.exports.validarEditarDadosBancarios = obj => validatejs.validate(obj, constraints_editarDadosBancarios, { format: "flat" });
 module.exports.validarEditarDadosPessoais = obj => validatejs.validate(obj, constraints_editarDadosPessoais, { format: "flat" });
+module.exports.validarEditarConfiguracoes = obj => validatejs.validate(obj, constraints_editarConfiguracoes, { format: "flat" });
 

@@ -1,43 +1,44 @@
 const mariadb = require('../utils/mariadb.util');
+const mongodb = require('../utils/mongodb.util');
 const model = require('../models/restaurante.model');
 
-module.exports.checarSeCodigoExiste = async(req, res) => {
-    try {
-        let exists = await _checarSeCodigoExiste(req.body.codigo_restaurante)
-        return res.json({ exists: exists });
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+module.exports.checarSeCodigoExiste = async (req, res) => {
+  try {
+    let exists = await _checarSeCodigoExiste(req.body.codigo_restaurante)
+    return res.json({ exists: exists });
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
-module.exports.checarSeCNPJExiste = async(req, res) => {
-    try {
-        let exists = await _checarSeCNPJExiste(req.body.cnpj)
-        return res.json({ exists: exists });
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+module.exports.checarSeCNPJExiste = async (req, res) => {
+  try {
+    let exists = await _checarSeCNPJExiste(req.body.cnpj)
+    return res.json({ exists: exists });
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
-module.exports.cadastrar = async(req, res) => {
-    try {
-        let obj = req.body;
+module.exports.cadastrar = async (req, res) => {
+  try {
+    let obj = req.body;
 
-        let errors = model.validarCadastrar(obj);
-        if (errors)
-            return res.status(400).send(errors[0]);
+    let errors = model.validarCadastrar(obj);
+    if (errors)
+      return res.status(400).send(errors[0]);
 
 
-        let cnpjExists = await _checarSeCNPJExiste(obj.cnpj);
-        if (cnpjExists)
-            return res.status(400).send('CNPJ já cadastrado');
+    let cnpjExists = await _checarSeCNPJExiste(obj.cnpj);
+    if (cnpjExists)
+      return res.status(400).send('CNPJ já cadastrado');
 
-        let loginExists = await _checarSeCodigoExiste(obj.codigo_restaurante);
-        if (loginExists)
-            return res.status(400).send('Codigo de restaurante já está sendo utilizado');
+    let loginExists = await _checarSeCodigoExiste(obj.codigo_restaurante);
+    if (loginExists)
+      return res.status(400).send('Codigo de restaurante já está sendo utilizado');
 
-        // ## INSERE RESTAURANTE ##
-        let query = `insert into tb_restaurante(
+    // ## INSERE RESTAURANTE ##
+    let query = `insert into tb_restaurante(
             cnpj,
             razao_social,
             nome_restaurante,
@@ -65,56 +66,56 @@ module.exports.cadastrar = async(req, res) => {
             values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
             `;
 
-        let data = await mariadb.query(query, [
-            obj.cnpj,
-            obj.razao_social,
-            obj.nome_restaurante,
-            obj.id_especialidade,
-            obj.cep,
-            obj.logradouro,
-            obj.numero,
-            obj.bairro,
-            obj.municipio,
-            obj.uf,
-            obj.complemento,
-            obj.celular,
-            obj.email,
-            obj.pagamento_app,
-            obj.codigo_banco,
-            obj.id_tipo_cadastro_conta,
-            obj.id_tipo_conta,
-            obj.agencia,
-            obj.conta,
-            obj.digito,
-            obj.cpfcnpj_conta,
-            obj.cpf_administrador,
-            obj.nome_administrador,
-            obj.codigo_restaurante
-        ]);
+    let data = await mariadb.query(query, [
+      obj.cnpj,
+      obj.razao_social,
+      obj.nome_restaurante,
+      obj.id_especialidade,
+      obj.cep,
+      obj.logradouro,
+      obj.numero,
+      obj.bairro,
+      obj.municipio,
+      obj.uf,
+      obj.complemento,
+      obj.celular,
+      obj.email,
+      obj.pagamento_app,
+      obj.codigo_banco,
+      obj.id_tipo_cadastro_conta,
+      obj.id_tipo_conta,
+      obj.agencia,
+      obj.conta,
+      obj.digito,
+      obj.cpfcnpj_conta,
+      obj.cpf_administrador,
+      obj.nome_administrador,
+      obj.codigo_restaurante
+    ]);
 
-        let id_restaurante = data.insertId;
+    let id_restaurante = data.insertId;
 
-        // ## INSERE LOGIN ADM ##
-        query = `insert into tb_operador(nome_operador,id_restaurante,id_perfil,login_operador,senha_operador) values (?,?,1,?,?)`;
-        await mariadb.query(query, [obj.nome_administrador, id_restaurante, obj.login, obj.senha]);
+    // ## INSERE LOGIN ADM ##
+    query = `insert into tb_operador(nome_operador,id_restaurante,id_perfil,login_operador,senha_operador) values (?,?,1,?,?)`;
+    await mariadb.query(query, [obj.nome_administrador, id_restaurante, obj.login, obj.senha]);
 
-        // ## INSERE OS MENUS PADRÕES ##
-        query = `
+    // ## INSERE OS MENUS PADRÕES ##
+    query = `
         insert into tb_menu(ds_menu, id_restaurante, ativo)
         select ds_menu,?,1 from tb_menu_padrao
         `
-        await mariadb.query(query, [id_restaurante]);
+    await mariadb.query(query, [id_restaurante]);
 
-        return res.json('OK');
+    return res.json('OK');
 
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
-module.exports.obter = async(req, res) => {
-    try {
-        let query = `
+module.exports.obter = async (req, res) => {
+  try {
+    let query = `
         select
            codigo_restaurante,
            cnpj,
@@ -157,27 +158,27 @@ module.exports.obter = async(req, res) => {
                 on e.id_especialidade = r.id_especialidade
         where 
             id_restaurante = ?`;
-        let data = await mariadb.query(query, [req.token.id_restaurante]);
-        return res.json(data);
+    let data = await mariadb.query(query, [req.token.id_restaurante]);
+    return res.json(data);
 
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
-module.exports.editarDadosRestaurante = async(req, res) => {
-    try {
-        let obj = req.body;
+module.exports.editarDadosRestaurante = async (req, res) => {
+  try {
+    let obj = req.body;
 
-        let errors = model.validarEditarDadosRestaurante(obj);
-        if (errors)
-            return res.status(400).send(errors[0]);
+    let errors = model.validarEditarDadosRestaurante(obj);
+    if (errors)
+      return res.status(400).send(errors[0]);
 
-        let loginExists = await _checarSeCodigoExisteExclusive(obj.codigo_restaurante, req.token.id_restaurante);
-        if (loginExists)
-            return res.status(400).send('Codigo de restaurante já está sendo utilizado');
+    let loginExists = await _checarSeCodigoExisteExclusive(obj.codigo_restaurante, req.token.id_restaurante);
+    if (loginExists)
+      return res.status(400).send('Codigo de restaurante já está sendo utilizado');
 
-        let query = `
+    let query = `
         update tb_restaurante
         set
              codigo_restaurante = ?
@@ -194,37 +195,37 @@ module.exports.editarDadosRestaurante = async(req, res) => {
         where
             id_restaurante = ?;`;
 
-        await mariadb.query(query, [
-            obj.codigo_restaurante,
-            obj.razao_social,
-            obj.nome_restaurante,
-            obj.id_especialidade,
-            obj.cep,
-            obj.logradouro,
-            obj.numero,
-            obj.bairro,
-            obj.municipio,
-            obj.uf,
-            obj.complemento,          
-            req.token.id_restaurante
-        ]);
+    await mariadb.query(query, [
+      obj.codigo_restaurante,
+      obj.razao_social,
+      obj.nome_restaurante,
+      obj.id_especialidade,
+      obj.cep,
+      obj.logradouro,
+      obj.numero,
+      obj.bairro,
+      obj.municipio,
+      obj.uf,
+      obj.complemento,
+      req.token.id_restaurante
+    ]);
 
-        return res.json('OK');
+    return res.json('OK');
 
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
-module.exports.editarDadosBancarios = async(req, res) => {
-    try {
-        let obj = req.body;
+module.exports.editarDadosBancarios = async (req, res) => {
+  try {
+    let obj = req.body;
 
-        let errors = model.validarEditarDadosBancarios(obj);
-        if (errors)
-            return res.status(400).send(errors[0]);
+    let errors = model.validarEditarDadosBancarios(obj);
+    if (errors)
+      return res.status(400).send(errors[0]);
 
-        let query = `
+    let query = `
         update tb_restaurante
         set
              pagamento_app = ?
@@ -238,34 +239,34 @@ module.exports.editarDadosBancarios = async(req, res) => {
         where
             id_restaurante = ?;`;
 
-        await mariadb.query(query, [
-            obj.pagamento_app,
-            obj.id_tipo_cadastro_conta,
-            obj.id_tipo_conta,
-            obj.codigo_banco,
-            obj.agencia,
-            obj.conta,
-            obj.digito,
-            obj.cpfcnpj_conta,          
-            req.token.id_restaurante
-        ]);
+    await mariadb.query(query, [
+      obj.pagamento_app,
+      obj.id_tipo_cadastro_conta,
+      obj.id_tipo_conta,
+      obj.codigo_banco,
+      obj.agencia,
+      obj.conta,
+      obj.digito,
+      obj.cpfcnpj_conta,
+      req.token.id_restaurante
+    ]);
 
-        return res.json('OK');
+    return res.json('OK');
 
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
-module.exports.editarDadosPessoais = async(req, res) => {
-    try {
-        let obj = req.body;
+module.exports.editarDadosPessoais = async (req, res) => {
+  try {
+    let obj = req.body;
 
-        let errors = model.validarEditarDadosPessoais(obj);
-        if (errors)
-            return res.status(400).send(errors[0]);
+    let errors = model.validarEditarDadosPessoais(obj);
+    if (errors)
+      return res.status(400).send(errors[0]);
 
-        let query = `
+    let query = `
         update tb_restaurante
         set
              cpf_administrador = ?
@@ -275,121 +276,145 @@ module.exports.editarDadosPessoais = async(req, res) => {
         where
             id_restaurante = ?;`;
 
-        await mariadb.query(query, [
-            obj.cpf_administrador,
-            obj.nome_administrador,
-            obj.email,
-            obj.celular,
-            req.token.id_restaurante
-        ]);
+    await mariadb.query(query, [
+      obj.cpf_administrador,
+      obj.nome_administrador,
+      obj.email,
+      obj.celular,
+      req.token.id_restaurante
+    ]);
 
-        return res.json('OK');
+    return res.json('OK');
 
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
-module.exports.inativar = async(req, res) => {
-    try {
-        let obj = req.body;
+module.exports.inativar = async (req, res) => {
+  try {
+    let obj = req.body;
 
-        let query = `
+    let query = `
         update tb_restaurante
         set
             ativo = 0
         where
             id_restaurante = ?;`;
 
-        await mariadb.query(query, [req.token.id_restaurante]);
+    await mariadb.query(query, [req.token.id_restaurante]);
 
-        return res.json('OK');
+    return res.json('OK');
 
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
-module.exports.reativar = async(req, res) => {
-    try {
-        let query = `
+module.exports.reativar = async (req, res) => {
+  try {
+    let query = `
         update tb_restaurante
         set
             ativo = 1
         where
             id_restaurante = ?;`;
 
-        await mariadb.query(query, [req.token.id_restaurante]);
+    await mariadb.query(query, [req.token.id_restaurante]);
 
-        return res.json('OK');
+    return res.json('OK');
 
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
-module.exports.obterBancos = async(req, res) => {
-    try {
-        let query = 'select * from tb_banco';
-        let data = await mariadb.query(query);
-        return res.json(data);
+module.exports.obterBancos = async (req, res) => {
+  try {
+    let query = 'select * from tb_banco';
+    let data = await mariadb.query(query);
+    return res.json(data);
 
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
-module.exports.obterMunicipios = async(req, res) => {
-    try {
-        let query = 'select * from tb_municipio';
-        let data = await mariadb.query(query);
-        return res.json(data);
+module.exports.obterMunicipios = async (req, res) => {
+  try {
+    let query = 'select * from tb_municipio';
+    let data = await mariadb.query(query);
+    return res.json(data);
 
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
-module.exports.obterEspecialidades = async(req, res) => {
-    try {
-        let query = 'select * from tb_especialidade';
-        let data = await mariadb.query(query);
-        return res.json(data);
+module.exports.obterEspecialidades = async (req, res) => {
+  try {
+    let query = 'select * from tb_especialidade';
+    let data = await mariadb.query(query);
+    return res.json(data);
 
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
 module.exports.obterFormasPagamento = async (req, res) => {
-    try {
-        let query = 'select * from tb_forma_pagamento';
-        let data = await mariadb.query(query);
-        return res.json(data);
+  try {
+    let query = 'select * from tb_forma_pagamento';
+    let data = await mariadb.query(query);
+    return res.json(data);
 
-    } catch (error) {
-        return res.status(500).send(error.message);
-    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }
 
 module.exports._obterFormaPagamento = async (id_forma_pagamento) => {
-    let query = 'select * from tb_forma_pagamento where id_forma_pagamento = ?'
-    let data = await mariadb.query(query, [id_forma_pagamento]);
-    return data;
+  let query = 'select * from tb_forma_pagamento where id_forma_pagamento = ?'
+  let data = await mariadb.query(query, [id_forma_pagamento]);
+  return data;
 }
 
-_checarSeCodigoExiste = async(codigo_restaurante) => {
-    let data = await mariadb.query("select 1 from tb_restaurante where codigo_restaurante = ?", codigo_restaurante);
-    return data.length > 0 ? true : false;
+_checarSeCodigoExiste = async (codigo_restaurante) => {
+  let data = await mariadb.query("select 1 from tb_restaurante where codigo_restaurante = ?", codigo_restaurante);
+  return data.length > 0 ? true : false;
 }
 
-_checarSeCodigoExisteExclusive = async(codigo_restaurante, id_restaurante) => {
-    let query = `select 1 from tb_restaurante where codigo_restaurante = ? and id_restaurante != ?`;
-    let data = await mariadb.query(query, [codigo_restaurante, id_restaurante]);
-    return data.length > 0 ? true : false;
+_checarSeCodigoExisteExclusive = async (codigo_restaurante, id_restaurante) => {
+  let query = `select 1 from tb_restaurante where codigo_restaurante = ? and id_restaurante != ?`;
+  let data = await mariadb.query(query, [codigo_restaurante, id_restaurante]);
+  return data.length > 0 ? true : false;
 }
 
-_checarSeCNPJExiste = async(cnpj) => {
-    let data = await mariadb.query("select 1 from tb_restaurante where cnpj = ?", cnpj);
-    return data.length > 0 ? true : false;
+_checarSeCNPJExiste = async (cnpj) => {
+  let data = await mariadb.query("select 1 from tb_restaurante where cnpj = ?", cnpj);
+  return data.length > 0 ? true : false;
+}
+
+module.exports.editarConfiguracoes = async (req, res) => {
+  try {
+    let errors = model.validarEditarConfiguracoes(req.body);
+    if (errors)
+      return res.status(400).send(errors[0]);
+
+    await mongodb.updateOne('freeddb', 'configuracao', { id_restaurante: req.token.id_restaurante },
+      {
+        $set: {
+          "id_restaurante": req.token.id_restaurante,
+          "taxa_servico": req.body.taxa_servico,
+        }
+      },
+      {
+        upsert: true,
+      });
+
+      return res.json('OK');
+
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
 }

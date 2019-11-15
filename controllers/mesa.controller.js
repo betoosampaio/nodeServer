@@ -50,7 +50,7 @@ module.exports.abrir = async (req, res) => {
       valor_produtos: 0,
       pagamentos: [],
       valor_pagamentos: 0,
-      taxa_servico: 0,
+      taxa_servico: 0.1,
       desconto: 0,
     }
 

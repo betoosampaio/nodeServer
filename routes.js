@@ -30,6 +30,7 @@ module.exports = (app) => {
     app.post('/restaurante/editar/dadosPessoais', [authMW], restaurante.editarDadosPessoais);
     app.post('/restaurante/inativar', [authMW], restaurante.inativar);
     app.post('/restaurante/reativar', [authMW], restaurante.reativar);
+    app.post('/restaurante/editar/configuracoes', [authMW], restaurante.editarConfiguracoes);
     
     /* VARIAVEIS CADASTRO */
     app.post('/obterBancos', restaurante.obterBancos);
