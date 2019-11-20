@@ -10,6 +10,7 @@ module.exports.listar = async (req, res) => {
     let data = await mongodb.find('freeddb', 'mesa', {
       id_restaurante: req.token.id_restaurante,
       encerrada: { $exists: false },
+      removida: { $exists: false },
     });
 
     return res.json(data);
@@ -52,6 +53,8 @@ module.exports.abrir = async (req, res) => {
       valor_pagamentos: 0,
       taxa_servico: 0.1,
       desconto: 0,
+      id_status: 1,
+      status: 'Aberta'
     }
 
     // validação da mesa
@@ -93,17 +96,55 @@ module.exports.remover = async (req, res) => {
 
     let obj = {
       id_mesa: req.body.id_mesa,
+      id_operador: req.body.id_operador || req.token.id_operador,
     }
 
     let errors = model.validarIdMesa(obj);
     if (errors)
       return res.status(400).send(errors[0]);
 
-    await mongodb.remove('freeddb', 'mesa',
-      {
-        _id: new ObjectId(obj.id_mesa),
-        id_restaurante: req.token.id_restaurante
-      });
+    // valida o operador
+    let operador = await operadorCtrl._obter(req.token.id_restaurante, obj.id_operador);
+    if (operador.length == 0)
+      return res.status(400).send("Operador inválido");
+    obj.nome_operador = operador[0].nome_operador;
+
+    // obtem mesa
+    let mesa = await this._obter(req.token.id_restaurante, req.body.id_mesa);
+    if (mesa.length == 0) return res.status(400).send("Mesa inexistente");
+    mesa = mesa[0];
+
+    // altera os dados
+    mesa.id_status = 4;
+    mesa.status = 'Removida'
+    mesa.aberta = false;
+    mesa.fechada = true;
+    mesa.encerrada = true;
+    mesa.removida = true;
+    mesa.data_removeu = new Date();
+    mesa.id_operador_removeu = obj.id_operador;
+    mesa.nome_operador_removeu = obj.nome_operador;
+
+    // remove todos os produtos
+    mesa.produtos.forEach(p => {
+      p.removido = true;
+      p.data_removeu = new Date();
+    });
+    mesa.qtd_produtos = mesa.produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.quantidade), 0);
+    mesa.valor_produtos = mesa.produtos.reduce((sum, key) => sum + (key.removido ? 0 : key.preco * key.quantidade), 0);
+
+    // remove todos os pagamentos
+    mesa.pagamentos.forEach(p => {
+      p.removido = true;
+      p.data_removeu = new Date();
+    });
+    mesa.valor_pagamentos = mesa.pagamentos.reduce((sum, key) => sum + (key.removido ? 0 : key.valor), 0);
+
+    // atualiza
+    await mongodb.replaceOne('freeddb', 'mesa', {
+      _id: new ObjectId(obj.id_mesa),
+      id_restaurante: req.token.id_restaurante
+    }, mesa);
 
     //enviarDadosSockets(req.token.id_restaurante);
 
@@ -134,6 +175,8 @@ module.exports.fechar = async (req, res) => {
     if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
 
     // altera os dados
+    mesa.id_status = 2;
+    mesa.status = 'Fechada';
     mesa.aberta = false;
     mesa.fechada = true;
     mesa.data_fechou = new Date();
@@ -173,6 +216,8 @@ module.exports.reabrir = async (req, res) => {
     if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
 
     // altera os dados
+    mesa.id_status = 1;
+    mesa.status = 'Aberta'
     mesa.aberta = true;
     mesa.fechada = false;
     mesa.data_reabriu = new Date();
@@ -224,6 +269,8 @@ module.exports.encerrar = async (req, res) => {
       return res.status(400).send("Todos os valores devem ser pagos antes de fechar a mesa");
 
     // altera os dados
+    mesa.id_status = 3;
+    mesa.status = 'Encerrada'
     mesa.aberta = false;
     mesa.fechada = true;
     mesa.encerrada = true;
