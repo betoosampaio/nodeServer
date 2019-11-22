@@ -15,6 +15,7 @@ module.exports = (app) => {
     const mesa = require('./controllers/mesa.controller');
     const mesaitem = require('./controllers/mesaitem.controller');
     const pagamento = require('./controllers/pagamento.controller');
+    const caixa = require('./controllers/caixa.controller');
 
     app.get('/', (req, res) => { res.json("Server Online") });
     app.post('/login', auth.login);
@@ -86,5 +87,13 @@ module.exports = (app) => {
     /* MESA - PAGAMENTO */
     app.post('/mesa/pagamento/incluir', [authMW], pagamento.incluir);
     app.post('/mesa/pagamento/remover', [authMW], pagamento.remover);
+
+    /* CAIXA */
+    app.post('/caixa/listar', [authMW], caixa.listar);
+    app.post('/caixa/obter', [authMW], caixa.obter);
+    app.post('/caixa/abrir', [authMW], caixa.abrir);
+    app.post('/caixa/fechar', [authMW], caixa.fechar);
+    app.post('/caixa/reabrir', [authMW], caixa.reabrir); 
+    app.post('/caixa/consultar', [authMW], caixa.consultar);
 
 }
