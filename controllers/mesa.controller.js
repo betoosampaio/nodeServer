@@ -116,7 +116,7 @@ module.exports.remover = async (req, res) => {
 
     // altera os dados
     mesa.id_status = 4;
-    mesa.status = 'Removida'
+    mesa.status = 'Cancelada'
     mesa.aberta = false;
     mesa.fechada = true;
     mesa.encerrada = true;
