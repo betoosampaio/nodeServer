@@ -75,6 +75,7 @@ module.exports.abrir = async (req, res) => {
       qtd_sangrias: 0,
       valor_sangrias: 0,
       suprimentos: [],
+      qtd_suprimentos: 0,
       valor_suprimentos: 0,
       id_status: 1,
       status: 'Aberto'

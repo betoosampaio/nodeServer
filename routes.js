@@ -17,6 +17,7 @@ module.exports = (app) => {
     const pagamento = require('./controllers/pagamento.controller');
     const caixa = require('./controllers/caixa.controller');
     const suprimento = require('./controllers/suprimento.controller');
+    const sangria = require('./controllers/sangria.controller');
 
     app.get('/', (req, res) => { res.json("Server Online") });
     app.post('/login', auth.login);
@@ -34,7 +35,7 @@ module.exports = (app) => {
     app.post('/restaurante/reativar', [authMW], restaurante.reativar);
     app.post('/restaurante/editar/configuracoes', [authMW], restaurante.editarConfiguracoes);
     app.post('/restaurante/obter/configuracoes', [authMW], restaurante.obterConfiguracoes);
-    
+
     /* VARIAVEIS CADASTRO */
     app.post('/obterBancos', restaurante.obterBancos);
     app.post('/obterMunicipios', restaurante.obterMunicipios);
@@ -75,8 +76,8 @@ module.exports = (app) => {
     app.post('/mesa/abrir', [authMW], mesa.abrir);
     app.post('/mesa/remover', [authMW], mesa.remover);
     app.post('/mesa/fechar', [authMW], mesa.fechar);
-    app.post('/mesa/reabrir', [authMW], mesa.reabrir); 
-    app.post('/mesa/encerrar', [authMW], mesa.encerrar);  
+    app.post('/mesa/reabrir', [authMW], mesa.reabrir);
+    app.post('/mesa/encerrar', [authMW], mesa.encerrar);
     app.post('/mesa/editarDesconto', [authMW], mesa.editarDesconto);
     app.post('/mesa/editarTaxaServico', [authMW], mesa.editarTaxaServico);
     app.post('/mesa/consultar', [authMW], mesa.consultar);
@@ -94,11 +95,15 @@ module.exports = (app) => {
     app.post('/caixa/obter', [authMW], caixa.obter);
     app.post('/caixa/abrir', [authMW], caixa.abrir);
     app.post('/caixa/fechar', [authMW], caixa.fechar);
-    app.post('/caixa/reabrir', [authMW], caixa.reabrir); 
+    app.post('/caixa/reabrir', [authMW], caixa.reabrir);
     app.post('/caixa/consultar', [authMW], caixa.consultar);
 
     /* CAIXA - SUPRIMENTO */
     app.post('/caixa/suprimento/incluir', [authMW], suprimento.incluir);
     app.post('/caixa/suprimento/remover', [authMW], suprimento.remover);
+
+    /* CAIXA - SANGRIA */
+    app.post('/caixa/sangria/incluir', [authMW], sangria.incluir);
+    app.post('/caixa/sangria/remover', [authMW], sangria.remover);
 
 }
