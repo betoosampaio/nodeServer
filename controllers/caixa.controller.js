@@ -94,7 +94,7 @@ module.exports.abrir = async (req, res) => {
     // verifica se o caixa com mesmo número está ativo
     let data = await mongodb.find('freeddb', 'caixa', {
       id_restaurante: req.token.id_restaurante,
-      aberta: true,
+      aberto: true,
       numero: req.body.numero
     });
     if (data.length > 0)
