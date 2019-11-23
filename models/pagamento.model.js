@@ -22,7 +22,13 @@ let constraintsPagamento = {
     valor: {
         type: "number",
         presence: true,
-    }
+    },
+    id_caixa: {
+        type: "string",
+        presence: true,
+        length: { is: 24 },
+        letrasNumeros: true,
+    },
 }
 
 let constraintsRemover = {
