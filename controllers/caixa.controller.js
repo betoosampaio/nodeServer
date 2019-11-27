@@ -35,7 +35,31 @@ module.exports.obter = async (req, res) => {
     if (errors)
       return res.status(400).send(errors[0]);
 
-    let data = await this._obter(req.token.id_restaurante, req.body.id_caixa)
+    let data = await this._obter(req.token.id_restaurante, req.body.id_caixa);
+
+    // obtem os pagamentos
+    let mesas = await mongodb.aggregate('freeddb', 'mesa', [
+      { $match: { id_restaurante: req.token.id_restaurante } },
+      {
+        $project: {
+          pagamentos: {
+            $filter: {
+              input: '$pagamentos',
+              cond: { $eq: ['$$this.id_caixa', ObjectId(req.body.id_caixa)] }
+            }
+          }
+        }
+      },
+      { $unwind: "$pagamentos" },
+      {
+        $group: {
+          _id: null,
+          pagamentos: { $push: "$pagamentos" }
+        },
+      }
+    ]);
+    data[0].pagamentos = mesas[0] ? mesas[0].pagamentos : [];
+
     return res.json(data);
   } catch (error) {
     return res.status(500).send(error.message);
