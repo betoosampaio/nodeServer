@@ -45,7 +45,12 @@ module.exports.obter = async (req, res) => {
           pagamentos: {
             $filter: {
               input: '$pagamentos',
-              cond: { $eq: ['$$this.id_caixa', ObjectId(req.body.id_caixa)] }
+              cond: {
+                $and: [
+                  { $eq: ['$$this.id_caixa', ObjectId(req.body.id_caixa)] },
+                  { $ne: ['$$this.removido', true] }
+                ]
+              }
             }
           }
         }
