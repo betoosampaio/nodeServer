@@ -218,7 +218,7 @@ module.exports.remover = async (req, res) => {
 
 module.exports.uploadimg = async (req, res) => {
   try {
-    await mongodb.insertOne('logdb', 'uploadimg', req.file);
+    await mongodb.insertOne('logdb', 'uploadimgproduto', req.file);
     return res.json(req.file.path);
   } catch (error) {
     return res.status(500).send(error.message);

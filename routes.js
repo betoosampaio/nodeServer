@@ -3,7 +3,8 @@ module.exports = (app) => {
     /* MIDDLEWARES */
     const logMW = require('./middlewares/log.middleware');
     const authMW = require('./middlewares/auth.middleware');
-    const uploadimgMW = require("./middlewares/multer.uploadimg.middleware").upload;
+    const imgprodutoMW = require("./middlewares/multer.imgproduto.middleware").upload;
+    const imgrestauranteMW = require("./middlewares/multer.imgrestaurante.middleware").upload;
     app.use(logMW);
 
     /* CONTROLLERS */
@@ -27,6 +28,7 @@ module.exports = (app) => {
     app.post('/restaurante/checarSeCodigoExiste', restaurante.checarSeCodigoExiste);
     app.post('/restaurante/checarSeCNPJExiste', restaurante.checarSeCNPJExiste);
     app.post('/restaurante/cadastrar', restaurante.cadastrar);
+    app.post('/restaurante/uploadimg', [imgrestauranteMW], restaurante.uploadimg);
     app.post('/restaurante/obter', [authMW], restaurante.obter);
     app.post('/restaurante/editar/dadosRestaurante', [authMW], restaurante.editarDadosRestaurante);
     app.post('/restaurante/editar/dadosBancarios', [authMW], restaurante.editarDadosBancarios);
@@ -35,6 +37,7 @@ module.exports = (app) => {
     app.post('/restaurante/reativar', [authMW], restaurante.reativar);
     app.post('/restaurante/editar/configuracoes', [authMW], restaurante.editarConfiguracoes);
     app.post('/restaurante/obter/configuracoes', [authMW], restaurante.obterConfiguracoes);
+    
 
     /* VARIAVEIS CADASTRO */
     app.post('/obterBancos', restaurante.obterBancos);
@@ -66,7 +69,7 @@ module.exports = (app) => {
     app.post('/produto/cadastrar', [authMW], produto.cadastrar);
     app.post('/produto/editar', [authMW], produto.editar);
     app.post('/produto/remover', [authMW], produto.remover);
-    app.post('/produto/uploadimg', [authMW, uploadimgMW], produto.uploadimg)
+    app.post('/produto/uploadimg', [authMW, imgprodutoMW], produto.uploadimg)
     app.post('/produto/checarSeCodigoProdutoExiste', [authMW], produto.checarSeCodigoProdutoExiste);
     app.post('/produto/obterProximoCodigoProduto', [authMW], produto.obterProximoCodigoProduto);
 

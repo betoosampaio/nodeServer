@@ -50,6 +50,6 @@ redimensionar = async (file) =>{
     fs.unlink(file.path, () => { });
     file.sizeResized = img.byteLength;
     file.filename = `${file._id}.png`
-    file.path = `public\\uploadimg\\${file.filename}`
+    file.path = `public\\imgproduto\\${file.filename}`
     fs.writeFile(file.path, img, (err) => { if (err) throw err; });
 }

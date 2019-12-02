@@ -20,6 +20,15 @@ module.exports.checarSeCNPJExiste = async (req, res) => {
   }
 }
 
+module.exports.uploadimg = async (req, res) => {
+  try {
+    await mongodb.insertOne('logdb', 'uploadimgrestaurante', req.file);
+    return res.json(req.file.path);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
 module.exports.cadastrar = async (req, res) => {
   try {
     let obj = req.body;

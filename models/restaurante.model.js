@@ -184,6 +184,11 @@ let constraints_cadastrar = {
             maximum: 100,
         },
         letrasNumeros: true,
+    },
+
+    imagem: {
+        type: "string",
+        presence: true,
     }
 }
 
@@ -268,6 +273,11 @@ let constraints_editarDadosRestaurante = {
             is: 2
         }
     },
+
+    imagem: {
+        type: "string",
+        presence: true,
+    }
 }
 
 let constraints_editarDadosBancarios = {
