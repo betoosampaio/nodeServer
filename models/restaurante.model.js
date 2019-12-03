@@ -201,6 +201,10 @@ let constraints_editarDadosRestaurante = {
             maximum: 50
         }
     },
+    imagem: {
+        type: "string",
+        presence: true,
+    },
     razao_social: {
         type: 'string',
         presence: true,
@@ -272,12 +276,8 @@ let constraints_editarDadosRestaurante = {
         length: {
             is: 2
         }
-    },
-
-    imagem: {
-        type: "string",
-        presence: true,
     }
+
 }
 
 let constraints_editarDadosBancarios = {

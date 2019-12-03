@@ -49,6 +49,7 @@ module.exports.cadastrar = async (req, res) => {
     // ## INSERE RESTAURANTE ##
     let query = `insert into tb_restaurante(
             cnpj,
+            imagem,
             razao_social,
             nome_restaurante,
             id_especialidade,
@@ -77,6 +78,7 @@ module.exports.cadastrar = async (req, res) => {
 
     let data = await mariadb.query(query, [
       obj.cnpj,
+      obj.imagem,
       obj.razao_social,
       obj.nome_restaurante,
       obj.id_especialidade,
@@ -128,6 +130,7 @@ module.exports.obter = async (req, res) => {
         select
            codigo_restaurante,
            cnpj,
+           imagem,
            razao_social,
            nome_restaurante,
            r.id_especialidade,
@@ -192,6 +195,7 @@ module.exports.editarDadosRestaurante = async (req, res) => {
         set
              codigo_restaurante = ?
             ,razao_social = ?
+            ,imagem = ?
             ,nome_restaurante = ?
             ,id_especialidade = ?
             ,cep = ?
@@ -207,6 +211,7 @@ module.exports.editarDadosRestaurante = async (req, res) => {
     await mariadb.query(query, [
       obj.codigo_restaurante,
       obj.razao_social,
+      obj.imagem,
       obj.nome_restaurante,
       obj.id_especialidade,
       obj.cep,
