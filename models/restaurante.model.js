@@ -185,11 +185,10 @@ let constraints_cadastrar = {
         },
         letrasNumeros: true,
     },
-
     imagem: {
         type: "string",
         presence: true,
-    }
+    },
 }
 
 let constraints_editarDadosRestaurante = {
