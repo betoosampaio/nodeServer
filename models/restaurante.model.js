@@ -41,6 +41,12 @@ let constraints_cadastrar = {
         },
         presence: true,
     },
+    id_tipo_atendimento: {
+        numericality: {
+            onlyInteger: true,
+        },
+        presence: true,
+    },
     cep: {
         numericality: {
             onlyInteger: true,
@@ -226,7 +232,7 @@ let constraints_editarDadosRestaurante = {
         },
         presence: true,
     },
-    tipo_atendimento: {
+    id_tipo_atendimento: {
         numericality: {
             onlyInteger: true,
         },

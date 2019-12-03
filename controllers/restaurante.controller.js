@@ -53,7 +53,7 @@ module.exports.cadastrar = async (req, res) => {
             razao_social,
             nome_restaurante,
             id_especialidade,
-            tipo_atendimento,
+            id_id_tipo_atendimento,
             cep,
             logradouro,
             numero,
@@ -83,7 +83,7 @@ module.exports.cadastrar = async (req, res) => {
       obj.razao_social,
       obj.nome_restaurante,
       obj.id_especialidade,
-      obj.tipo_atendimento,
+      obj.id_tipo_atendimento,
       obj.cep,
       obj.logradouro,
       obj.numero,
@@ -137,8 +137,8 @@ module.exports.obter = async (req, res) => {
            nome_restaurante,
            r.id_especialidade,
            ds_especialidade,
-           r.tipo_atendimento,
-           ds_tipo_atendimento,
+           r.id_tipo_atendimento,
+           ds_id_tipo_atendimento,
            cep,
            logradouro,
            numero,
@@ -172,6 +172,8 @@ module.exports.obter = async (req, res) => {
                 on tcc.id_tipo_cadastro_conta = r.id_tipo_cadastro_conta
             left join tb_especialidade e
                 on e.id_especialidade = r.id_especialidade
+            left join tb_tipo_atendimento ta
+                on ta.id_tipo_atendimento = r.id_tipo_atendimento
         where 
             id_restaurante = ?`;
     let data = await mariadb.query(query, [req.token.id_restaurante]);
@@ -202,7 +204,7 @@ module.exports.editarDadosRestaurante = async (req, res) => {
             ,imagem = ?
             ,nome_restaurante = ?
             ,id_especialidade = ?
-            ,tipo_atendimento = ?
+            ,id_tipo_atendimento = ?
             ,cep = ?
             ,logradouro = ?
             ,numero = ?
@@ -219,7 +221,7 @@ module.exports.editarDadosRestaurante = async (req, res) => {
       obj.imagem,
       obj.nome_restaurante,
       obj.id_especialidade,
-      obj.tipo_atendimento,
+      obj.id_tipo_atendimento,
       obj.cep,
       obj.logradouro,
       obj.numero,
@@ -382,6 +384,17 @@ module.exports.obterEspecialidades = async (req, res) => {
   }
 }
 
+module.exports.obterTipoAtendimento = async (req, res) => {
+  try {
+    let query = 'select * from tb_tipo_atendimento';
+    let data = await mariadb.query(query);
+    return res.json(data);
+
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
 module.exports.obterFormasPagamento = async (req, res) => {
   try {
     let query = 'select * from tb_forma_pagamento';
@@ -444,12 +457,12 @@ module.exports.obterConfiguracoes = async (req, res) => {
     let data = await mongodb.findOne('freeddb', 'configuracao', {
       id_restaurante: req.token.id_restaurante,
     },
-    {
-      fields:{
-        _id: false,
-        id_restaurante: false,
-      }   
-    });
+      {
+        fields: {
+          _id: false,
+          id_restaurante: false,
+        }
+      });
     return res.json(data);
   } catch (error) {
     return res.status(500).send(error.message);

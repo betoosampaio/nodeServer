@@ -43,6 +43,7 @@ module.exports = (app) => {
     app.post('/obterBancos', restaurante.obterBancos);
     app.post('/obterMunicipios', restaurante.obterMunicipios);
     app.post('/obterEspecialidades', restaurante.obterEspecialidades);
+    app.post('/obterTipoAtendimento', restaurante.obterTipoAtendimento);
     app.post('/obterFormasPagamento', [authMW], restaurante.obterFormasPagamento);
 
     /* OPERADOR */
