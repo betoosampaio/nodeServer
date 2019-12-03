@@ -226,6 +226,12 @@ let constraints_editarDadosRestaurante = {
         },
         presence: true,
     },
+    tipo_atendimento: {
+        numericality: {
+            onlyInteger: true,
+        },
+        presence: true,
+    },
     cep: {
         numericality: {
             onlyInteger: true,

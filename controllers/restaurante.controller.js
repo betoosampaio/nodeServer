@@ -53,6 +53,7 @@ module.exports.cadastrar = async (req, res) => {
             razao_social,
             nome_restaurante,
             id_especialidade,
+            tipo_atendimento,
             cep,
             logradouro,
             numero,
@@ -73,7 +74,7 @@ module.exports.cadastrar = async (req, res) => {
             cpf_administrador,
             nome_administrador,
             codigo_restaurante)
-            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
             `;
 
     let data = await mariadb.query(query, [
@@ -82,6 +83,7 @@ module.exports.cadastrar = async (req, res) => {
       obj.razao_social,
       obj.nome_restaurante,
       obj.id_especialidade,
+      obj.tipo_atendimento,
       obj.cep,
       obj.logradouro,
       obj.numero,
@@ -135,6 +137,8 @@ module.exports.obter = async (req, res) => {
            nome_restaurante,
            r.id_especialidade,
            ds_especialidade,
+           r.tipo_atendimento,
+           ds_tipo_atendimento,
            cep,
            logradouro,
            numero,
@@ -198,6 +202,7 @@ module.exports.editarDadosRestaurante = async (req, res) => {
             ,imagem = ?
             ,nome_restaurante = ?
             ,id_especialidade = ?
+            ,tipo_atendimento = ?
             ,cep = ?
             ,logradouro = ?
             ,numero = ?
@@ -214,6 +219,7 @@ module.exports.editarDadosRestaurante = async (req, res) => {
       obj.imagem,
       obj.nome_restaurante,
       obj.id_especialidade,
+      obj.tipo_atendimento,
       obj.cep,
       obj.logradouro,
       obj.numero,
