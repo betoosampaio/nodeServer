@@ -12,6 +12,7 @@ module.exports = (app) => {
     const auth = require('./controllers/auth.controller');
     const produto = require('./controllers/produto.controller');
     const operador = require('./controllers/operador.controller');
+    const perfil = require('./controllers/perfil.controller');
     const menu = require('./controllers/menu.controller');
     const mesa = require('./controllers/mesa.controller');
     const mesaitem = require('./controllers/mesaitem.controller');
@@ -46,13 +47,20 @@ module.exports = (app) => {
     app.post('/obterFormasPagamento', [authMW], restaurante.obterFormasPagamento);
 
     /* OPERADOR */
-    app.post('/perfil/listar', [authMW], operador.listarPerfis);
     app.post('/operador/listar', [authMW], operador.listar);
     app.post('/operador/obter', [authMW], operador.obter);
     app.post('/operador/cadastrar', [authMW], operador.cadastrar);
     app.post('/operador/editar', [authMW], operador.editar);
     app.post('/operador/remover', [authMW], operador.remover);
     app.post('/operador/checarSeLoginExiste', [authMW], operador.checarSeLoginExiste);
+
+    /* PERFIL */
+    app.post('/perfil/existe', [authMW], perfil.checarSeMenuExiste);
+    app.post('/perfil/listar', [authMW], perfil.listar);
+    app.post('/perfil/obter', [authMW], perfil.obter);
+    app.post('/perfil/cadastrar', [authMW], perfil.cadastrar);
+    app.post('/perfil/editar', [authMW], perfil.editar);
+    app.post('/perfil/remover', [authMW], perfil.remover);
 
     /* MENU */
     app.post('/menu/checarSeMenuExiste', [authMW], menu.checarSeMenuExiste);
