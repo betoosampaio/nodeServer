@@ -81,6 +81,9 @@ module.exports.editar = async (req, res) => {
         if (errors)
             return res.status(400).send(errors[0]);
 
+        if (obj.id_perfil == 1)
+            return res.status(400).send('Este perfil não pode ser editado');
+
         let exists = await _existeExclusive(obj.ds_perfil, obj.id_perfil, req.token.id_restaurante);
         if (exists)
             return res.status(400).send('Esta perfil já está cadastrado');
@@ -110,6 +113,10 @@ module.exports.editar = async (req, res) => {
 module.exports.remover = async (req, res) => {
     try {
         let obj = req.body;
+
+        if (obj.id_perfil == 1)
+            return res.status(400).send('Este perfil não pode ser removido');
+
         let query = `
         update tb_perfil
         set
