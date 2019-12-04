@@ -9,16 +9,17 @@ module.exports.listar = async (req, res) => {
              o.id_operador
             ,o.nome_operador
             ,o.id_perfil
-            ,p.tipo_perfil
+            ,p.ds_perfil
             ,o.login_operador
             ,o.ativo
         from 
             tb_operador o
-            inner join tb_perfil p
-                on p.id_perfil = o.id_perfil
+            left join tb_perfil p
+                on p.id_restaurante = o.id_restaurante
+                and p.id_perfil = o.id_perfil
         where 
-            id_restaurante = ?
-            and removido = 0`
+            o.id_restaurante = ?
+            and o.removido = 0`
 
     let data = await mariadb.query(query, [req.token.id_restaurante]);
     return res.json(data);
@@ -144,16 +145,6 @@ module.exports.remover = async (req, res) => {
   }
 }
 
-module.exports.listarPerfis = async (req, res) => {
-  try {
-    let query = 'select id_perfil,tipo_perfil from tb_perfil'
-    let data = await mariadb.query(query);
-    return res.json(data);
-  } catch (error) {
-    return res.status(500).send(error.message);
-  }
-}
-
 module.exports.checarSeLoginExiste = async (req, res) => {
   try {
     let exists;
@@ -174,17 +165,18 @@ module.exports._obter = async (id_restaurante, id_operador) => {
          o.id_operador
         ,o.nome_operador
         ,o.id_perfil
-        ,p.tipo_perfil
+        ,p.ds_perfil
         ,o.login_operador
         ,o.senha_operador
         ,o.ativo
     from 
         tb_operador o
-        inner join tb_perfil p
-            on p.id_perfil = o.id_perfil
+        left join tb_perfil p
+          on p.id_restaurante = o.id_restaurante
+          and p.id_perfil = o.id_perfil
     where 
-        id_restaurante = ?
-        and id_operador = ?`
+        o.id_restaurante = ?
+        and o.id_operador = ?`
 
   let data = await mariadb.query(query, [id_restaurante, id_operador]);
   return data;

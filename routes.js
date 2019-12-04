@@ -56,7 +56,7 @@ module.exports = (app) => {
     app.post('/operador/checarSeLoginExiste', [authMW], operador.checarSeLoginExiste);
 
     /* PERFIL */
-    app.post('/perfil/existe', [authMW], perfil.checarSeMenuExiste);
+    app.post('/perfil/existe', [authMW], perfil.existe);
     app.post('/perfil/listar', [authMW], perfil.listar);
     app.post('/perfil/obter', [authMW], perfil.obter);
     app.post('/perfil/cadastrar', [authMW], perfil.cadastrar);
