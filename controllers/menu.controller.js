@@ -58,13 +58,15 @@ module.exports.cadastrar = async (req, res) => {
         let query = `
         insert into tb_menu(
               ds_menu
+             ,ds_menu_unq
              ,id_restaurante
             )
-        values(?,?)`
+        values(?,?,?)`
 
         await mariadb.query(query, [
-            obj.ds_menu
-            , req.token.id_restaurante
+            obj.ds_menu,
+            obj.ds_menu,
+            req.token.id_restaurante
         ]);
 
         return res.json("OK");
@@ -89,12 +91,14 @@ module.exports.editar = async (req, res) => {
         update tb_menu
         set
             ds_menu = ?,
+            ds_menu_unq = ?,
             ativo = ?
         where
             id_menu = ?
             and id_restaurante = ?`
 
         await mariadb.query(query, [
+            obj.ds_menu,
             obj.ds_menu,
             obj.ativo,
             obj.id_menu,
@@ -114,8 +118,7 @@ module.exports.remover = async (req, res) => {
         update tb_menu
         set
              removido = 1
-            ,ds_menu_removido = ds_menu
-            ,ds_menu = uuid()
+            ,ds_menu_unq = uuid()
         where
             id_menu = ?
             and id_restaurante = ?`
@@ -142,7 +145,7 @@ _existe = async (ds_menu, id_restaurante) => {
     let data = await mariadb.query(`
     select 1 
     from tb_menu 
-    where ds_menu = ? and id_restaurante = ?`,
+    where ds_menu_unq = ? and id_restaurante = ?`,
         [ds_menu, id_restaurante]);
     return data.length > 0 ? true : false;
 }
@@ -153,7 +156,7 @@ _existeExclusive = async (ds_menu, id_menu, id_restaurante) => {
     from 
         tb_menu 
     where 
-        ds_menu = ? 
+        ds_menu_unq = ? 
         and id_menu != ? 
         and id_restaurante = ?`,
         [ds_menu, id_menu, id_restaurante]);

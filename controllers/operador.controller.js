@@ -14,7 +14,7 @@ module.exports.listar = async (req, res) => {
             ,o.ativo
         from 
             tb_operador o
-            left join tb_perfil p
+            inner join tb_perfil p
                 on p.id_restaurante = o.id_restaurante
                 and p.id_perfil = o.id_perfil
         where 
@@ -171,7 +171,7 @@ module.exports._obter = async (id_restaurante, id_operador) => {
         ,o.ativo
     from 
         tb_operador o
-        left join tb_perfil p
+        inner join tb_perfil p
           on p.id_restaurante = o.id_restaurante
           and p.id_perfil = o.id_perfil
     where 

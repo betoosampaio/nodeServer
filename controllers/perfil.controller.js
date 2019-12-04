@@ -57,12 +57,14 @@ module.exports.cadastrar = async (req, res) => {
 
         let query = `
         insert into tb_perfil(
-              ds_perfil
-             ,id_restaurante
+            ds_perfil,
+            ds_perfil_unq,
+            id_restaurante
             )
-        values(?,?)`
+        values(?,?,?)`
 
         await mariadb.query(query, [
+            obj.ds_perfil,
             obj.ds_perfil,
             req.token.id_restaurante
         ]);
@@ -92,12 +94,14 @@ module.exports.editar = async (req, res) => {
         update tb_perfil
         set
             ds_perfil = ?,
+            ds_perfil_unq = ?,
             ativo = ?
         where
             id_perfil = ?
             and id_restaurante = ?`
 
         await mariadb.query(query, [
+            obj.ds_perfil,
             obj.ds_perfil,
             obj.ativo,
             obj.id_perfil,
@@ -121,8 +125,7 @@ module.exports.remover = async (req, res) => {
         update tb_perfil
         set
              removido = 1
-            ,ds_perfil_removido = ds_perfil
-            ,ds_perfil = uuid()
+            ,ds_perfil_unq = uuid()
         where
             id_perfil = ?
             and id_restaurante = ?`
@@ -149,7 +152,7 @@ _existe = async (ds_perfil, id_restaurante) => {
     let data = await mariadb.query(`
     select 1 
     from tb_perfil
-    where ds_perfil = ? and id_restaurante = ?`,
+    where ds_perfil_unq = ? and id_restaurante = ?`,
         [ds_perfil, id_restaurante]);
     return data.length > 0 ? true : false;
 }
@@ -160,7 +163,7 @@ _existeExclusive = async (ds_perfil, id_perfil, id_restaurante) => {
     from 
         tb_perfil
     where 
-        ds_perfil = ? 
+        ds_perfil_unq = ? 
         and id_perfil != ? 
         and id_restaurante = ?`,
         [ds_perfil, id_perfil, id_restaurante]);
