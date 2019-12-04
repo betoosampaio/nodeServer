@@ -53,7 +53,7 @@ module.exports.cadastrar = async (req, res) => {
             razao_social,
             nome_restaurante,
             id_especialidade,
-            id_id_tipo_atendimento,
+            id_tipo_atendimento,
             cep,
             logradouro,
             numero,
