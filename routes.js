@@ -64,7 +64,7 @@ module.exports = (app) => {
     app.post('/perfil/remover', [authMW], perfil.remover);
 
     /* MENU */
-    app.post('/menu/checarSeMenuExiste', [authMW], menu.checarSeMenuExiste);
+    app.post('/menu/existe', [authMW], menu.existe);
     app.post('/menu/listar', [authMW], menu.listar);
     app.post('/menu/obter', [authMW], menu.obter);
     app.post('/menu/cadastrar', [authMW], menu.cadastrar);

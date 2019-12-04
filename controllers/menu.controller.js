@@ -51,7 +51,7 @@ module.exports.cadastrar = async (req, res) => {
         if (errors)
             return res.status(400).send(errors[0]);
 
-        let exists = await _checarSeMenuExiste(obj.ds_menu, req.token.id_restaurante);
+        let exists = await _existe(obj.ds_menu, req.token.id_restaurante);
         if (exists)
             return res.status(400).send('Esta descrição de menu já está sendo utilizada');
 
@@ -81,7 +81,7 @@ module.exports.editar = async (req, res) => {
         if (errors)
             return res.status(400).send(errors[0]);
 
-        let exists = await _checarSeMenuExisteExclusive(obj.ds_menu, obj.id_menu, req.token.id_restaurante);
+        let exists = await _existeExclusive(obj.ds_menu, obj.id_menu, req.token.id_restaurante);
         if (exists)
             return res.status(400).send('Esta descrição de menu já está sendo utilizada');
 
@@ -128,9 +128,9 @@ module.exports.remover = async (req, res) => {
     }
 }
 
-module.exports.checarSeMenuExiste = async (req, res) => {
+module.exports.existe = async (req, res) => {
     try {
-        let exists = await _checarSeMenuExiste(req.body.ds_menu, req.token.id_restaurante)
+        let exists = await _existe(req.body.ds_menu, req.token.id_restaurante)
         return res.json({ exists: exists });
     } catch (error) {
         return res.status(500).send(error.message);
@@ -138,7 +138,7 @@ module.exports.checarSeMenuExiste = async (req, res) => {
 }
 
 
-_checarSeMenuExiste = async (ds_menu, id_restaurante) => {
+_existe = async (ds_menu, id_restaurante) => {
     let data = await mariadb.query(`
     select 1 
     from tb_menu 
@@ -147,7 +147,7 @@ _checarSeMenuExiste = async (ds_menu, id_restaurante) => {
     return data.length > 0 ? true : false;
 }
 
-_checarSeMenuExisteExclusive = async (ds_menu, id_menu, id_restaurante) => {
+_existeExclusive = async (ds_menu, id_menu, id_restaurante) => {
     let data = await mariadb.query(`
     select 1 
     from 
