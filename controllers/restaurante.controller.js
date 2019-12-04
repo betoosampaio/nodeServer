@@ -108,6 +108,10 @@ module.exports.cadastrar = async (req, res) => {
 
     let id_restaurante = data.insertId;
 
+    // ## INSERE O PERFIL ADM ##
+    query = `insert into tb_perfil(id_restaurante,ds_perfil) values (?,'Administrador')`;
+    await mariadb.query(query, [id_restaurante]);
+
     // ## INSERE LOGIN ADM ##
     query = `insert into tb_operador(nome_operador,id_restaurante,id_perfil,login_operador,senha_operador) values (?,?,1,?,?)`;
     await mariadb.query(query, [obj.nome_administrador, id_restaurante, obj.login, obj.senha]);
