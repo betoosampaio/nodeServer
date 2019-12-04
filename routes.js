@@ -56,12 +56,12 @@ module.exports = (app) => {
     app.post('/operador/checarSeLoginExiste', [authMW], operador.checarSeLoginExiste);
 
     /* PERFIL */
-    app.post('/perfil/existe', [authMW], perfil.checarSeMenuExiste);
-    app.post('/perfil/listar', [authMW], perfil.listar);
-    app.post('/perfil/obter', [authMW], perfil.obter);
-    app.post('/perfil/cadastrar', [authMW], perfil.cadastrar);
-    app.post('/perfil/editar', [authMW], perfil.editar);
-    app.post('/perfil/remover', [authMW], perfil.remover);
+    //app.post('/perfil/existe', [authMW], perfil.checarSeMenuExiste);
+    //app.post('/perfil/listar', [authMW], perfil.listar);
+    //app.post('/perfil/obter', [authMW], perfil.obter);
+    //app.post('/perfil/cadastrar', [authMW], perfil.cadastrar);
+    //app.post('/perfil/editar', [authMW], perfil.editar);
+    //app.post('/perfil/remover', [authMW], perfil.remover);
 
     /* MENU */
     app.post('/menu/checarSeMenuExiste', [authMW], menu.checarSeMenuExiste);

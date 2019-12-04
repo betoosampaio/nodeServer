@@ -138,7 +138,7 @@ module.exports.obter = async (req, res) => {
            r.id_especialidade,
            ds_especialidade,
            r.id_tipo_atendimento,
-           ds_id_tipo_atendimento,
+           ds_tipo_atendimento,
            cep,
            logradouro,
            numero,
