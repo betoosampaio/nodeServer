@@ -13,6 +13,7 @@ module.exports = (app) => {
     const produto = require('./controllers/produto.controller');
     const operador = require('./controllers/operador.controller');
     const perfil = require('./controllers/perfil.controller');
+    const ambiente = require('./controllers/ambiente.controller');
     const menu = require('./controllers/menu.controller');
     const mesa = require('./controllers/mesa.controller');
     const mesaitem = require('./controllers/mesaitem.controller');
@@ -62,6 +63,14 @@ module.exports = (app) => {
     app.post('/perfil/cadastrar', [authMW], perfil.cadastrar);
     app.post('/perfil/editar', [authMW], perfil.editar);
     app.post('/perfil/remover', [authMW], perfil.remover);
+
+    /* AMBIENTE */
+    app.post('/ambiente/existe', [authMW], ambiente.existe);
+    app.post('/ambiente/listar', [authMW], ambiente.listar);
+    app.post('/ambiente/obter', [authMW], ambiente.obter);
+    app.post('/ambiente/cadastrar', [authMW], ambiente.cadastrar);
+    app.post('/ambiente/editar', [authMW], ambiente.editar);
+    app.post('/ambiente/remover', [authMW], ambiente.remover);
 
     /* MENU */
     app.post('/menu/existe', [authMW], menu.existe);
