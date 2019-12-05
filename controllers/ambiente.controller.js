@@ -11,12 +11,12 @@ module.exports.listar = async (req, res) => {
         from 
             tb_ambiente
         where 
-            id_ambiente = ?
+            id_restaurante = ?
             and removido = 0
         order by
             ds_ambiente`
 
-    let data = await mariadb.query(query, [req.token.id_ambiente]);
+    let data = await mariadb.query(query, [req.token.id_restaurante]);
     return res.json(data);
   } catch (error) {
     return res.status(500).send(error.message);
@@ -33,12 +33,13 @@ module.exports.obter = async (req, res) => {
         from 
           tb_ambiente
         where 
-            id_ambiente = ?
+            id_restaurante = ?
             and id_ambiente = ?`
 
-    let data = await mariadb.query(query, [req.token.id_ambiente, req.body.id_ambiente]);
+    let data = await mariadb.query(query, [req.token.id_restaurante, req.body.id_ambiente]);
     return res.json(data);
-  } catch (error) {0
+  } catch (error) {
+    0
     return res.status(500).send(error.message);
   }
 }
