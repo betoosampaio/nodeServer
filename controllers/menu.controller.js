@@ -141,7 +141,7 @@ module.exports.existe = async (req, res) => {
 }
 
 
-_existe = async (ds_menu, id_restaurante) => {
+let _existe = async (ds_menu, id_restaurante) => {
     let data = await mariadb.query(`
     select 1 
     from tb_menu 
@@ -150,7 +150,7 @@ _existe = async (ds_menu, id_restaurante) => {
     return data.length > 0 ? true : false;
 }
 
-_existeExclusive = async (ds_menu, id_menu, id_restaurante) => {
+let _existeExclusive = async (ds_menu, id_menu, id_restaurante) => {
     let data = await mariadb.query(`
     select 1 
     from 

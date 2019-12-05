@@ -58,14 +58,12 @@ module.exports.cadastrar = async (req, res) => {
 
     let query = `
         insert into tb_ambiente(
-            ds_ambiente,
-            ds_ambiente_unq,
+            ds_ambiente,            
             id_restaurante
             )
-        values(?,?,?)`
+        values(?,?)`
 
     await mariadb.query(query, [
-      obj.ds_ambiente,
       obj.ds_ambiente,
       req.token.id_restaurante
     ]);
@@ -94,15 +92,13 @@ module.exports.editar = async (req, res) => {
     let query = `
         update tb_ambiente
         set
-            ds_ambiente = ?,
-            ds_ambiente_unq = ?,
+            ds_ambiente = ?,           
             ativo = ?
         where
             id_ambiente = ?
             and id_restaurante = ?`
 
     await mariadb.query(query, [
-      obj.ds_ambiente,
       obj.ds_ambiente,
       obj.ativo,
       obj.id_ambiente,
@@ -149,22 +145,22 @@ module.exports.existe = async (req, res) => {
 }
 
 
-_existe = async (ds_ambiente, id_restaurante) => {
+let _existe = async (ds_ambiente, id_restaurante) => {
   let data = await mariadb.query(`
     select 1 
     from tb_ambiente
-    where ds_ambiente_unq = ? and id_restaurante = ?`,
+    where ds_ambiente = ? and id_restaurante = ?`,
     [ds_ambiente, id_restaurante]);
   return data.length > 0 ? true : false;
 }
 
-_existeExclusive = async (ds_ambiente, id_ambiente, id_restaurante) => {
+let _existeExclusive = async (ds_ambiente, id_ambiente, id_restaurante) => {
   let data = await mariadb.query(`
     select 1 
     from 
         tb_ambiente
     where 
-        ds_ambiente_unq = ? 
+        ds_ambiente = ? 
         and id_ambiente != ? 
         and id_restaurante = ?`,
     [ds_ambiente, id_ambiente, id_restaurante]);
