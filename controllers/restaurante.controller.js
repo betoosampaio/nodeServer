@@ -135,7 +135,7 @@ module.exports.cadastrar = async (req, res) => {
     // ## INSERE PERMISSÕES METODO DO ADM
     query = `
         INSERT INTO tb_permissao_metodo(id_restaurante, id_perfil, id_metodo)
-        SELECT ?, 1, id_pagina FROM tb_metodo`
+        SELECT ?, 1, id_metodo FROM tb_metodo`
     await mariadb.query(query, [id_restaurante]);
 
     // ## INSERE LOGIN ADM ##
