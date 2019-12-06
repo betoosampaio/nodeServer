@@ -118,9 +118,20 @@ module.exports.cadastrar = async (req, res) => {
 
     // ## INSERE OS MENUS PADRÕES ##
     query = `
-        insert into tb_menu(ds_menu, id_restaurante, ativo)
-        select ds_menu,?,1 from tb_menu_padrao
-        `
+        insert into tb_menu(id_restaurante, ds_menu, ds_menu_unq)
+        select ?,ds_menu,ds_menu from tb_menu_padrao`
+    await mariadb.query(query, [id_restaurante]);
+
+    // ## INSERE OS AMBIENTES PADRÕES ##
+    query = `
+        insert into tb_ambiente(id_restaurante, ds_ambiente, ds_ambiente_unq)
+        select ?,ds_ambiente,ds_ambiente from tb_ambiente_padrao`
+    await mariadb.query(query, [id_restaurante]);
+
+    // ## INSERE OS PERFIS PADRÕES ##
+    query = `
+        insert into tb_perfil(id_restaurante, ds_perfil, ds_perfil_unq)
+        select ?,ds_perfil,ds_perfil from tb_perfil_padrao`
     await mariadb.query(query, [id_restaurante]);
 
     return res.json('OK');
