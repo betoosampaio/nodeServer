@@ -21,6 +21,7 @@ module.exports = (app) => {
     const caixa = require('./controllers/caixa.controller');
     const suprimento = require('./controllers/suprimento.controller');
     const sangria = require('./controllers/sangria.controller');
+    const permissao = require('./controllers/permissao.controller');
 
     app.get('/', (req, res) => { res.json("Server Online") });
     app.post('/login', auth.login);
@@ -126,5 +127,15 @@ module.exports = (app) => {
     /* CAIXA - SANGRIA */
     app.post('/caixa/sangria/incluir', [authMW], sangria.incluir);
     app.post('/caixa/sangria/remover', [authMW], sangria.remover);
+
+    /* PERMISSAO */
+    app.post('/permissao/listarPaginas', [authMW], permissao.listarPaginas);
+    app.post('/permissao/listarPermissaoPaginas', [authMW], permissao.listarPermissaoPaginas);
+    app.post('/permissao/incluirPermissaoPagina', [authMW], permissao.incluirPermissaoPagina);
+    app.post('/permissao/removerPermissaoPagina', [authMW], permissao.removerPermissaoPagina);
+    app.post('/permissao/listarMetodos', [authMW], permissao.listarMetodos);
+    app.post('/permissao/listarPermissaoMetodos', [authMW], permissao.listarPermissaoMetodos);
+    app.post('/permissao/incluirPermissaoMetodo', [authMW], permissao.incluirPermissaoMetodo);
+    app.post('/permissao/removerPermissaoMetodo', [authMW], permissao.removerPermissaoMetodo);
 
 }
