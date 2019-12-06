@@ -12,8 +12,6 @@ let constraints_cadastrar = {
     id_perfil: {
         numericality: {
             onlyInteger: true,
-            greaterThanOrEqualTo: 1,
-            lessThanOrEqualTo: 4
         }, 
         presence: true
     },
@@ -48,8 +46,6 @@ let constraints_editar = {
     id_perfil: {
         numericality: {
             onlyInteger: true,
-            greaterThanOrEqualTo: 1,
-            lessThanOrEqualTo: 4
         }, 
         presence: true
     },
