@@ -108,14 +108,6 @@ module.exports.cadastrar = async (req, res) => {
 
     let id_restaurante = data.insertId;
 
-    // ## INSERE O PERFIL ADM ##
-    query = `insert into tb_perfil(id_restaurante,ds_perfil,ds_perfil_unq) values (?,'Administrador','Administrador')`;
-    await mariadb.query(query, [id_restaurante]);
-
-    // ## INSERE LOGIN ADM ##
-    query = `insert into tb_operador(nome_operador,id_restaurante,id_perfil,login_operador,senha_operador) values (?,?,1,?,?)`;
-    await mariadb.query(query, [obj.nome_administrador, id_restaurante, obj.login, obj.senha]);
-
     // ## INSERE OS MENUS PADRÕES ##
     query = `
         insert into tb_menu(id_restaurante, ds_menu, ds_menu_unq)
@@ -145,6 +137,10 @@ module.exports.cadastrar = async (req, res) => {
         INSERT INTO tb_permissao_metodo(id_restaurante, id_perfil, id_metodo)
         SELECT ?, 1, id_pagina FROM tb_metodo`
     await mariadb.query(query, [id_restaurante]);
+
+    // ## INSERE LOGIN ADM ##
+    query = `insert into tb_operador(nome_operador,id_restaurante,id_perfil,login_operador,senha_operador) values (?,?,1,?,?)`;
+    await mariadb.query(query, [obj.nome_administrador, id_restaurante, obj.login, obj.senha]);
 
     return res.json('OK');
 
