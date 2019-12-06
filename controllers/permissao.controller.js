@@ -16,7 +16,8 @@ module.exports.listarPermissaoPaginas = async (req, res) => {
       let query = `
       SELECT 
 	      p.id_pagina,
-	      p.ds_pagina,
+        p.ds_pagina,
+        p.icone,
 	      case when pp.id_pagina is null then 0 else 1 end permissao
       FROM 
 	      tb_pagina p
@@ -84,7 +85,8 @@ module.exports.listarPermissaoMetodos = async (req, res) => {
       let query = `
       SELECT 
 	      m.id_metodo,
-	      m.ds_metodo,
+        m.ds_metodo,
+        m.funcionalidade,
 	      case when pm.id_metodo is null then 0 else 1 end permissao
       FROM 
 	      tb_metodo m
