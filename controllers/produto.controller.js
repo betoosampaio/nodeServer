@@ -13,6 +13,8 @@ module.exports.listar = async (req, res) => {
             ,p.preco
             ,p.id_menu
             ,m.ds_menu
+            ,p.id_ambiente
+            ,a.ds_ambiente
             ,p.visivel
             ,p.promocao
             ,p.imagem
@@ -22,6 +24,9 @@ module.exports.listar = async (req, res) => {
             inner join tb_menu m
                 on m.id_menu = p.id_menu
                 and m.id_restaurante = p.id_restaurante
+            left join tb_ambiente a
+                on a.id_ambiente = p.id_ambiente
+                and a.id_restaurante = p.id_restaurante
         where 
             p.id_restaurante = ?
             and p.removido = 0`
@@ -44,6 +49,8 @@ module.exports.listarAtivos = async (req, res) => {
             ,p.preco
             ,p.id_menu
             ,m.ds_menu
+            ,p.id_ambiente
+            ,a.ds_ambiente
             ,p.visivel
             ,p.promocao
             ,p.imagem
@@ -53,6 +60,9 @@ module.exports.listarAtivos = async (req, res) => {
             inner join tb_menu m
                 on m.id_menu = p.id_menu
                 and m.id_restaurante = p.id_restaurante
+            left join tb_ambiente a
+                on a.id_ambiente = p.id_ambiente
+                and a.id_restaurante = p.id_restaurante
         where 
             p.id_restaurante = ?
             and p.removido = 0
@@ -76,6 +86,8 @@ module.exports.obter = async (req, res) => {
             ,p.preco
             ,p.id_menu
             ,m.ds_menu
+            ,p.id_ambiente
+            ,a.ds_ambiente
             ,p.visivel
             ,p.promocao
             ,p.imagem
@@ -85,7 +97,10 @@ module.exports.obter = async (req, res) => {
             inner join tb_menu m
                 on m.id_menu = p.id_menu
                 and m.id_restaurante = p.id_restaurante
-        where 
+            left join tb_ambiente a
+                on a.id_ambiente = p.id_ambiente
+                and a.id_restaurante = p.id_restaurante
+        where
             p.id_restaurante = ?
             and p.id_produto = ?`
 
@@ -118,11 +133,12 @@ module.exports.cadastrar = async (req, res) => {
             ,descricao
             ,preco
             ,id_menu
+            ,id_ambiente
             ,visivel
             ,promocao
             ,imagem
             )
-        values(?,?,?,?,?,?,?,?,?)`
+        values(?,?,?,?,?,?,?,?,?,?)`
 
     await mariadb.query(query, [
       req.token.id_restaurante
@@ -131,6 +147,7 @@ module.exports.cadastrar = async (req, res) => {
       , obj.descricao
       , obj.preco
       , obj.id_menu
+      , obj.id_ambiente
       , obj.visivel
       , obj.promocao
       , obj.imagem
@@ -164,6 +181,7 @@ module.exports.editar = async (req, res) => {
             ,descricao = ?
             ,preco = ?
             ,id_menu = ?
+            ,id_ambiente = ?
             ,visivel = ?
             ,promocao = ?
             ,imagem = ?
@@ -178,6 +196,7 @@ module.exports.editar = async (req, res) => {
       , obj.descricao
       , obj.preco
       , obj.id_menu
+      , obj.id_ambiente
       , obj.visivel
       , obj.promocao
       , obj.imagem
@@ -235,6 +254,8 @@ module.exports._obter = async (id_restaurante, id_produto) => {
             ,p.preco
             ,p.id_menu
             ,m.ds_menu
+            ,p.id_ambiente
+            ,a.ds_ambiente
             ,p.visivel
             ,p.promocao
             ,p.imagem
@@ -244,6 +265,9 @@ module.exports._obter = async (id_restaurante, id_produto) => {
             inner join tb_menu m
                 on m.id_menu = p.id_menu
                 and m.id_restaurante = p.id_restaurante
+            left join tb_ambiente a
+                on a.id_ambiente = p.id_ambiente
+                and a.id_restaurante = p.id_restaurante
         where 
             p.id_restaurante = ?
             and p.id_produto = ?`

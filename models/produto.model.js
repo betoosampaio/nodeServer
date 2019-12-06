@@ -31,6 +31,12 @@ let constraints_cadastrar = {
         },
         presence: true,
     },
+    id_ambiente: {
+        numericality:{
+            onlyInteger: true,
+        },
+        presence: true,
+    },
     visivel: {
         presence: true,
         numericality:{
@@ -80,6 +86,12 @@ let constraints_editar = {
     },
     id_menu: {
         numericality: {
+            onlyInteger: true,
+        },
+        presence: true,
+    },
+    id_ambiente: {
+        numericality:{
             onlyInteger: true,
         },
         presence: true,
