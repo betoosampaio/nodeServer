@@ -13,6 +13,8 @@ module.exports.listar = async (req, res) => {
             ,p.preco
             ,p.id_menu
             ,m.ds_menu
+            ,p.id_ambiente
+            ,a.ds_ambiente
             ,p.visivel
             ,p.promocao
             ,p.imagem
@@ -44,6 +46,8 @@ module.exports.listarAtivos = async (req, res) => {
             ,p.preco
             ,p.id_menu
             ,m.ds_menu
+            ,p.id_ambiente
+            ,a.ds_ambiente
             ,p.visivel
             ,p.promocao
             ,p.imagem
@@ -76,6 +80,8 @@ module.exports.obter = async (req, res) => {
             ,p.preco
             ,p.id_menu
             ,m.ds_menu
+            ,p.id_ambiente
+            ,a.ds_ambiente
             ,p.visivel
             ,p.promocao
             ,p.imagem
@@ -118,11 +124,12 @@ module.exports.cadastrar = async (req, res) => {
             ,descricao
             ,preco
             ,id_menu
+            ,id_ambiente
             ,visivel
             ,promocao
             ,imagem
             )
-        values(?,?,?,?,?,?,?,?,?)`
+        values(?,?,?,?,?,?,?,?,?,?)`
 
     await mariadb.query(query, [
       req.token.id_restaurante
@@ -131,6 +138,7 @@ module.exports.cadastrar = async (req, res) => {
       , obj.descricao
       , obj.preco
       , obj.id_menu
+      , obj.id_ambiente
       , obj.visivel
       , obj.promocao
       , obj.imagem
@@ -164,6 +172,7 @@ module.exports.editar = async (req, res) => {
             ,descricao = ?
             ,preco = ?
             ,id_menu = ?
+            ,id_ambiente = ?
             ,visivel = ?
             ,promocao = ?
             ,imagem = ?
@@ -178,6 +187,7 @@ module.exports.editar = async (req, res) => {
       , obj.descricao
       , obj.preco
       , obj.id_menu
+      , obj.id_ambiente
       , obj.visivel
       , obj.promocao
       , obj.imagem
@@ -235,6 +245,8 @@ module.exports._obter = async (id_restaurante, id_produto) => {
             ,p.preco
             ,p.id_menu
             ,m.ds_menu
+            ,p.id_ambiente
+            ,a.ds_ambiente
             ,p.visivel
             ,p.promocao
             ,p.imagem
