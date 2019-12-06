@@ -25,7 +25,7 @@ module.exports.listar = async (req, res) => {
                 on m.id_menu = p.id_menu
                 and m.id_restaurante = p.id_restaurante
             left join tb_ambiente a
-            on p.id_ambiente = p.id_ambiente
+                on a.id_ambiente = p.id_ambiente
                 and a.id_restaurante = p.id_restaurante
         where 
             p.id_restaurante = ?
@@ -61,7 +61,7 @@ module.exports.listarAtivos = async (req, res) => {
                 on m.id_menu = p.id_menu
                 and m.id_restaurante = p.id_restaurante
             left join tb_ambiente a
-              on p.id_ambiente = p.id_ambiente
+                on a.id_ambiente = p.id_ambiente
                 and a.id_restaurante = p.id_restaurante
         where 
             p.id_restaurante = ?
@@ -98,7 +98,7 @@ module.exports.obter = async (req, res) => {
                 on m.id_menu = p.id_menu
                 and m.id_restaurante = p.id_restaurante
             left join tb_ambiente a
-              on p.id_ambiente = p.id_ambiente
+                on a.id_ambiente = p.id_ambiente
                 and a.id_restaurante = p.id_restaurante
         where
             p.id_restaurante = ?
@@ -266,7 +266,7 @@ module.exports._obter = async (id_restaurante, id_produto) => {
                 on m.id_menu = p.id_menu
                 and m.id_restaurante = p.id_restaurante
             left join tb_ambiente a
-                on p.id_ambiente = p.id_ambiente
+                on a.id_ambiente = p.id_ambiente
                 and a.id_restaurante = p.id_restaurante
         where 
             p.id_restaurante = ?
