@@ -19,6 +19,9 @@ module.exports.listarPermissaoPaginas = async (req, res) => {
 	      p.id_pagina,
         p.ds_pagina,
         p.icone,
+        p.id_pai,
+        p.url,
+        p.ordem,
 	      case when pp.id_pagina is null then 0 else 1 end permissao
       FROM 
 	      tb_pagina p
@@ -50,7 +53,7 @@ module.exports.incluirPermissaoPagina = async (req, res) => {
       return res.status(400).send('Página inexistente');
 
     let query = `
-      insert into tb_permissao_pagina(
+      insert ignore into tb_permissao_pagina(
         id_restaurante,id_perfil,id_pagina)
       values (?,?,?)`
 
@@ -140,7 +143,7 @@ module.exports.incluirPermissaoMetodo = async (req, res) => {
       return res.status(400).send('Método inexistente');
 
     let query = `
-      insert into tb_permissao_metodo(
+      insert ignore into tb_permissao_metodo(
         id_restaurante,id_perfil,id_metodo)
       values (?,?,?)`
 
