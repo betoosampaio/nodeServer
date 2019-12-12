@@ -132,6 +132,7 @@ module.exports = (app) => {
     app.post('/caixa/sangria/remover', [authMW], sangria.remover);
 
     /* PERMISSAO */
+    app.post('/permissao/listarMenu', [authMW], permissao.listarMenu);
     app.post('/permissao/listarPaginas', [authMW], permissao.listarPaginas);
     app.post('/permissao/listarPermissaoPaginas', [authMW], permissao.listarPermissaoPaginas);
     app.post('/permissao/incluirPermissaoPagina', [authMW], permissao.incluirPermissaoPagina);

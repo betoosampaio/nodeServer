@@ -24,6 +24,7 @@ module.exports.login = async (req, res) => {
 SELECT
 	 r.id_restaurante
     ,o.id_operador
+    ,o.id_perfil
     ,o.ativo
 FROM
 	tb_restaurante r
@@ -52,7 +53,8 @@ WHERE
 
         let token = { 
             id_restaurante: data[0].id_restaurante,
-            id_operador: data[0].id_operador 
+            id_operador: data[0].id_operador,
+            id_perfil: data[0].id_perfil,
         };
 
         token.expire = (new Date()).setHours((new Date()).getHours() + 6);

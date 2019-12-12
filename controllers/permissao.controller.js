@@ -2,6 +2,32 @@
 const mariadb = require('../utils/mariadb.util');
 const model = require('../models/permissao.model');
 
+
+module.exports.listarMenu = async (req, res) => {
+  try {
+    let query = `
+      SELECT 
+	      p.id_pagina,
+        p.ds_pagina,
+        p.icone,
+        p.id_pai,
+        p.url,
+        p.ordem,
+	      case when pp.id_pagina is null then 0 else 1 end permissao
+      FROM 
+	      tb_pagina p
+	      inner join tb_permissao_pagina pp
+		      ON pp.id_pagina = p.id_pagina
+		      AND id_restaurante = ?
+		      AND id_perfil = ? `
+
+    let data = await mariadb.query(query, [req.token.id_restaurante, req.token.id_perfil]);
+    return res.json(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
 module.exports.listarPaginas = async (req, res) => {
   try {
     let query = `select * from tb_pagina order by ordem`
