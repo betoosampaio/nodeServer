@@ -107,6 +107,9 @@ module.exports = (app) => {
     /* MESA - ITEM */
     app.post('/mesa/item/incluir', [authMW], mesaitem.incluir);
     app.post('/mesa/item/remover', [authMW], mesaitem.remover);
+    app.post('/mesa/item/listaPreparar', [authMW], mesaitem.listaPreparar);
+    app.post('/mesa/item/listaPrepararAmbiente', [authMW], mesaitem.listaPrepararAmbiente);
+    app.post('/mesa/item/preparar', [authMW], mesaitem.preparar);
 
     /* MESA - PAGAMENTO */
     app.post('/mesa/pagamento/incluir', [authMW], pagamento.incluir);

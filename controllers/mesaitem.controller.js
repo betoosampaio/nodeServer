@@ -117,3 +117,93 @@ module.exports.remover = async (req, res) => {
     return res.status(500).send(error.message);
   }
 }
+
+module.exports.listaPreparar = async (req, res) => {
+  try {
+
+    let data = await mongodb.aggregate('freeddb', 'mesa', [
+      {
+        $match: {
+          id_restaurante: req.token.id_restaurante,
+          aberta: true,
+        }
+      }, {
+        $unwind: '$produtos'
+      }, {
+        $match: {
+          'produtos.id_ambiente': { $ne: 0 },
+          'produtos.preparado': { $exists: false }
+        }
+      }
+    ]);
+
+    return res.json(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
+module.exports.listaPrepararAmbiente = async (req, res) => {
+  try {
+
+    let data = await mongodb.aggregate('freeddb', 'mesa', [
+      {
+        $match: {
+          id_restaurante: req.token.id_restaurante,
+          aberta: true,
+        }
+      }, {
+        $unwind: '$produtos'
+      }, {
+        $match: {
+          'produtos.id_ambiente': req.body.id_ambiente,
+          'produtos.preparado': { $exists: false }
+        }
+      }
+    ]);
+
+    return res.json(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
+module.exports.preparar = async(req,res) => {
+  try {
+
+    let obj = {
+      id_mesa: req.body.id_mesa,
+      id_item: req.body.id_item,
+    }
+
+    let errors = model.validarRemover(obj);
+    if (errors)
+      return res.status(400).send(errors[0]);
+
+    // obtem mesa
+    let mesa = await mesaCtrl._obter(req.token.id_restaurante, req.body.id_mesa);
+    if (mesa.length == 0) return res.status(400).send("Mesa inexistente");
+    mesa = mesa[0];
+
+    // validações
+    if (mesa.fechada) return res.status(400).send("Essa mesa já foi fechada");
+    if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
+
+    // obtem o item
+    let item = mesa.produtos.find(p => p.id_item == req.body.id_item);
+
+    // altera os dados
+    item.preparado = true;
+    item.data_preparou = new Date();
+    
+    // atualiza
+    await mongodb.replaceOne('freeddb', 'mesa', {
+      _id: new ObjectId(obj.id_mesa),
+      id_restaurante: req.token.id_restaurante
+    }, mesa);
+
+    return res.json('OK');
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
