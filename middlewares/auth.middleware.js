@@ -8,8 +8,8 @@ module.exports = async (req, res, next) => {
         try {
             req.token = validarToken(req.headers.token)
 
-            // verificar permissao ao metodo (exceto do proprio menu)
-            if(req.originalUrl !== "/permissao/listarMenu"){
+            // verificar permissao ao metodo (exceto do proprio menu e do perfil admin)
+            if(req.token.id_perfil !== 1 && req.originalUrl !== "/permissao/listarMenu"){
                 let permissao = await permissaoCtrl.temPermissaoMetodo(req.originalUrl, req.token.id_restaurante, req.token.id_perfil);
                 if(!permissao) return res.status(403).send("Seu perfil de acesso não tem permissão a este recurso. Contate o administrador do sistema.");
             }            
