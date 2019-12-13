@@ -47,7 +47,7 @@ module.exports = (app) => {
     app.post('/obterMunicipios', restaurante.obterMunicipios);
     app.post('/obterEspecialidades', restaurante.obterEspecialidades);
     app.post('/obterTipoAtendimento', restaurante.obterTipoAtendimento);
-    app.post('/obterFormasPagamento', [authMW], restaurante.obterFormasPagamento);
+    app.post('/obterFormasPagamento', restaurante.obterFormasPagamento);
 
     /* OPERADOR */
     app.post('/operador/listar', [authMW], operador.listar);
@@ -133,11 +133,9 @@ module.exports = (app) => {
 
     /* PERMISSAO */
     app.post('/permissao/listarMenu', [authMW], permissao.listarMenu);
-    app.post('/permissao/listarPaginas', [authMW], permissao.listarPaginas);
     app.post('/permissao/listarPermissaoPaginas', [authMW], permissao.listarPermissaoPaginas);
     app.post('/permissao/incluirPermissaoPagina', [authMW], permissao.incluirPermissaoPagina);
     app.post('/permissao/removerPermissaoPagina', [authMW], permissao.removerPermissaoPagina);
-    app.post('/permissao/listarMetodos', [authMW], permissao.listarMetodos);
     app.post('/permissao/listarPermissaoMetodos', [authMW], permissao.listarPermissaoMetodos);
     app.post('/permissao/incluirPermissaoMetodo', [authMW], permissao.incluirPermissaoMetodo);
     app.post('/permissao/removerPermissaoMetodo', [authMW], permissao.removerPermissaoMetodo);

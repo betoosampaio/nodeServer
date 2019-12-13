@@ -1,11 +1,18 @@
 
 const crypto = require('../utils/crypto.util')
+const permissaoCtrl = require('../controllers/permissao.controller');
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
     try {
 
         try {
             req.token = validarToken(req.headers.token)
+
+            // verificar permissao ao metodo (exceto do proprio menu)
+            if(req.originalUrl !== "/permissao/listarMenu"){
+                let permissao = await permissaoCtrl.temPermissaoMetodo(req.originalUrl, req.token.id_restaurante, req.token.id_perfil);
+                if(!permissao) return res.status(403).send("Seu perfil de acesso não tem permissão a este recurso. Contate o administrador do sistema.");
+            }            
         }
         catch (err) {
             return res.status(401).send(err.message);

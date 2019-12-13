@@ -28,16 +28,6 @@ module.exports.listarMenu = async (req, res) => {
   }
 }
 
-module.exports.listarPaginas = async (req, res) => {
-  try {
-    let query = `select * from tb_pagina order by ordem`
-    let data = await mariadb.query(query);
-    return res.json(data);
-  } catch (error) {
-    return res.status(500).send(error.message);
-  }
-}
-
 module.exports.listarPermissaoPaginas = async (req, res) => {
   try {
     let query = `
@@ -117,20 +107,6 @@ module.exports.removerPermissaoPagina = async (req, res) => {
 
 
 
-module.exports.listarMetodos = async (req, res) => {
-  try {
-    let query = `
-      select 
-        * 
-      from 
-        tb_metodo`
-    let data = await mariadb.query(query);
-    return res.json(data);
-  } catch (error) {
-    return res.status(500).send(error.message);
-  }
-}
-
 module.exports.listarPermissaoMetodos = async (req, res) => {
   try {
     let query = `
@@ -205,6 +181,22 @@ module.exports.removerPermissaoMetodo = async (req, res) => {
   }
 }
 
+module.exports.temPermissaoMetodo = async (url, id_restaurante, id_perfil) => {
+  let data = await mariadb.query(`
+  select
+	  m.id_metodo
+  from 
+	  tb_metodo m
+	  inner join tb_permissao_metodo p
+		  on p.id_metodo = m.id_metodo
+  where 
+	  m.url = ?
+	  and p.id_restaurante = ?
+    and p.id_perfil = ?`,
+    [url, id_restaurante, id_perfil]);
+  return data.length > 0 ? true : false;
+}
+
 let _paginaExiste = async (id_pagina) => {
   let data = await mariadb.query(`
   select 1 
@@ -222,3 +214,4 @@ let _metodoExiste = async (id_metodo) => {
     [id_metodo]);
   return data.length > 0 ? true : false;
 }
+
