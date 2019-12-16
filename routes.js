@@ -143,5 +143,4 @@ module.exports = (app) => {
     app.post('/permissao/listarPermissaoMetodos', [authMW], permissao.listarPermissaoMetodos);
     app.post('/permissao/incluirPermissaoMetodo', [authMW], permissao.incluirPermissaoMetodo);
     app.post('/permissao/removerPermissaoMetodo', [authMW], permissao.removerPermissaoMetodo);
-
 }
