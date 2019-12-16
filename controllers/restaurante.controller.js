@@ -126,18 +126,6 @@ module.exports.cadastrar = async (req, res) => {
         select ?,ds_perfil,ds_perfil from tb_perfil_padrao`
     await mariadb.query(query, [id_restaurante]);
 
-    // ## INSERE PERMISSÕES PAGINA DO ADM
-    query = `
-        INSERT INTO tb_permissao_pagina(id_restaurante, id_perfil, id_pagina)
-        SELECT ?, 1, id_pagina FROM tb_pagina`
-    await mariadb.query(query, [id_restaurante]);
-
-    // ## INSERE PERMISSÕES METODO DO ADM
-    query = `
-        INSERT INTO tb_permissao_metodo(id_restaurante, id_perfil, id_metodo)
-        SELECT ?, 1, id_metodo FROM tb_metodo`
-    await mariadb.query(query, [id_restaurante]);
-
     // ## INSERE LOGIN ADM ##
     query = `insert into tb_operador(nome_operador,id_restaurante,id_perfil,login_operador,senha_operador) values (?,?,1,?,?)`;
     await mariadb.query(query, [obj.nome_administrador, id_restaurante, obj.login, obj.senha]);

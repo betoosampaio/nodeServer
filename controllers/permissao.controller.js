@@ -12,14 +12,19 @@ module.exports.listarMenu = async (req, res) => {
         p.icone,
         p.id_pai,
         p.url,
-        p.ordem,
-	      case when pp.id_pagina is null then 0 else 1 end permissao
+        p.ordem
       FROM 
 	      tb_pagina p
 	      inner join tb_permissao_pagina pp
 		      ON pp.id_pagina = p.id_pagina
 		      AND id_restaurante = ?
-		      AND id_perfil = ? `
+          AND id_perfil = ?
+      ORDER BY
+        ordem`
+    
+    if(req.token.id_perfil === 1){
+      query = `select * from tb_pagina order by ordem`
+    }      
 
     let data = await mariadb.query(query, [req.token.id_restaurante, req.token.id_perfil]);
     return res.json(data);
