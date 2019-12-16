@@ -182,7 +182,8 @@ module.exports.listaPreparados = async (req, res) => {
       }, {
         $match: {
           'produtos.id_ambiente': { $ne: 0 },
-          'produtos.preparado': { $exists: false }
+          'produtos.preparado': true,
+          'produtos.entregue': { $exists: false }          
         }
       }
     ]);
@@ -233,6 +234,46 @@ module.exports.preparar = async(req,res) => {
   }
 }
 
+module.exports.entregue = async(req,res) => {
+  try {
+
+    let obj = {
+      id_mesa: req.body.id_mesa,
+      id_item: req.body.id_item,
+    }
+
+    let errors = model.validarRemover(obj);
+    if (errors)
+      return res.status(400).send(errors[0]);
+
+    // obtem mesa
+    let mesa = await mesaCtrl._obter(req.token.id_restaurante, req.body.id_mesa);
+    if (mesa.length == 0) return res.status(400).send("Mesa inexistente");
+    mesa = mesa[0];
+
+    // validações
+    if (mesa.fechada) return res.status(400).send("Essa mesa já foi fechada");
+    if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
+
+    // obtem o item
+    let item = mesa.produtos.find(p => p.id_item == req.body.id_item);
+
+    // altera os dados
+    item.entregue = true;
+    item.data_entregou = new Date();
+    
+    // atualiza
+    await mongodb.replaceOne('freeddb', 'mesa', {
+      _id: new ObjectId(obj.id_mesa),
+      id_restaurante: req.token.id_restaurante
+    }, mesa);
+
+    return res.json('OK');
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
 module.exports.cancelarPreparo = async(req,res) => {
   try {
 
@@ -260,6 +301,46 @@ module.exports.cancelarPreparo = async(req,res) => {
     // altera os dados
     item.preparado = false;
     item.data_cancelouPreparo = new Date();
+    
+    // atualiza
+    await mongodb.replaceOne('freeddb', 'mesa', {
+      _id: new ObjectId(obj.id_mesa),
+      id_restaurante: req.token.id_restaurante
+    }, mesa);
+
+    return res.json('OK');
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
+module.exports.cancelarEntrega = async(req,res) => {
+  try {
+
+    let obj = {
+      id_mesa: req.body.id_mesa,
+      id_item: req.body.id_item,
+    }
+
+    let errors = model.validarRemover(obj);
+    if (errors)
+      return res.status(400).send(errors[0]);
+
+    // obtem mesa
+    let mesa = await mesaCtrl._obter(req.token.id_restaurante, req.body.id_mesa);
+    if (mesa.length == 0) return res.status(400).send("Mesa inexistente");
+    mesa = mesa[0];
+
+    // validações
+    if (mesa.fechada) return res.status(400).send("Essa mesa já foi fechada");
+    if (mesa.encerrada) return res.status(400).send("Essa mesa já foi encerrada");
+
+    // obtem o item
+    let item = mesa.produtos.find(p => p.id_item == req.body.id_item);
+
+    // altera os dados
+    item.entregue = false;
+    item.data_cancelouEntrega = new Date();
     
     // atualiza
     await mongodb.replaceOne('freeddb', 'mesa', {
