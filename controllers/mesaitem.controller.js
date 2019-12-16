@@ -168,6 +168,31 @@ module.exports.listaPrepararAmbiente = async (req, res) => {
   }
 }
 
+module.exports.listaPreparados = async (req, res) => {
+  try {
+
+    let data = await mongodb.aggregate('freeddb', 'mesa', [
+      {
+        $match: {
+          id_restaurante: req.token.id_restaurante,
+          aberta: true,
+        }
+      }, {
+        $unwind: '$produtos'
+      }, {
+        $match: {
+          'produtos.id_ambiente': { $ne: 0 },
+          'produtos.preparado': { $exists: false }
+        }
+      }
+    ]);
+
+    return res.json(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
 module.exports.preparar = async(req,res) => {
   try {
 
