@@ -19,7 +19,6 @@ module.exports.listar = async (req, res) => {
             ,p.promocao
             ,p.imagem
             ,p.ativo
-            ,p.observacao
         from 
             tb_produto p
             inner join tb_menu m
@@ -56,7 +55,6 @@ module.exports.listarAtivos = async (req, res) => {
             ,p.promocao
             ,p.imagem
             ,p.ativo
-            ,p.observacao
         from 
             tb_produto p
             inner join tb_menu m
@@ -94,7 +92,6 @@ module.exports.obter = async (req, res) => {
             ,p.promocao
             ,p.imagem
             ,p.ativo
-            ,p.observacao
         from 
             tb_produto p
             inner join tb_menu m
@@ -140,9 +137,8 @@ module.exports.cadastrar = async (req, res) => {
             ,visivel
             ,promocao
             ,imagem
-            ,observacao
             )
-        values(?,?,?,?,?,?,?,?,?,?,?)`
+        values(?,?,?,?,?,?,?,?,?,?)`
 
     await mariadb.query(query, [
       req.token.id_restaurante
@@ -155,7 +151,6 @@ module.exports.cadastrar = async (req, res) => {
       , obj.visivel
       , obj.promocao
       , obj.imagem
-      , obj.observacao
     ]);
 
     return res.json('OK');
@@ -191,7 +186,6 @@ module.exports.editar = async (req, res) => {
             ,promocao = ?
             ,imagem = ?
             ,ativo = ?
-            ,observacao = ?
         where
             id_produto = ?
             and id_restaurante = ?`
@@ -207,7 +201,6 @@ module.exports.editar = async (req, res) => {
       , obj.promocao
       , obj.imagem
       , obj.ativo
-      , obj.observacao
       , obj.id_produto
       , req.token.id_restaurante
     ]);
@@ -267,7 +260,6 @@ module.exports._obter = async (id_restaurante, id_produto) => {
             ,p.promocao
             ,p.imagem
             ,p.ativo
-            ,p.observacao
         from 
             tb_produto p
             inner join tb_menu m

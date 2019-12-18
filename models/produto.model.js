@@ -21,10 +21,6 @@ let constraints_cadastrar = {
         type: "string",
         presence: true,
     },
-    observacao: {
-        type: "string",
-        presence: true,
-    },
     preco: {
         numericality: true,
         presence: true,
@@ -81,10 +77,6 @@ let constraints_editar = {
         },
     },
     descricao: {
-        type: "string",
-        presence: true,
-    },
-    observacao: {
         type: "string",
         presence: true,
     },
