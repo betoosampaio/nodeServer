@@ -181,7 +181,7 @@ module.exports.listaPreparados = async (req, res) => {
         $unwind: '$produtos'
       }, {
         $match: {
-          'produtos.id_ambiente': { $ne: 0 },
+          'produtos.id_ambiente': req.body.id_ambiente,
           'produtos.preparado': true,
           'produtos.entregue': { $exists: false }          
         }
