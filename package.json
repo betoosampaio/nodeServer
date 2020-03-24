@@ -1,12 +1,12 @@
 {
   "name": "nodesrv",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Node Server",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "author": "",
+  "author": "Brendon Guedes",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
